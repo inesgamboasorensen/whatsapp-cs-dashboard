@@ -1,0 +1,2925 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Análisis WhatsApp Customer Success Agents</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            navy: { DEFAULT: '#1B2A4A', dark: '#0F1A33', card: '#1F2E52', light: '#253A5E' },
+            coral: { DEFAULT: '#E8505B', light: '#FEE2E2' },
+            teal: { DEFAULT: '#2EC4B6', light: '#D1FAE5' },
+          },
+          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
+        },
+      },
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      margin: 0;
+      background: #FAFAF7;
+      color: #0F1A33;
+    }
+    /* Subtle warm ambient gradient for the whole app */
+    .app-bg {
+      background:
+        radial-gradient(ellipse 60% 40% at 0% 30%, rgba(46, 196, 182, 0.04) 0%, transparent 50%),
+        radial-gradient(ellipse 60% 40% at 100% 60%, rgba(232, 80, 91, 0.04) 0%, transparent 50%),
+        #FAFAF7;
+      min-height: 100vh;
+    }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #0F1A33; }
+    ::-webkit-scrollbar-thumb { background: #2EC4B6; border-radius: 4px; }
+    @keyframes growBar { from { width: 0; } }
+    .animate-bar { animation: growBar 0.8s ease-out forwards; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-fade { animation: fadeIn 0.5s ease-out forwards; }
+    @keyframes drawDonut { from { stroke-dashoffset: var(--circumference); } }
+    .donut-segment { animation: drawDonut 1s ease-out forwards; }
+    /* Atmospheric hero — warm fog at the bottom, like Legend */
+    .hero-bg {
+      background:
+        radial-gradient(ellipse 80% 60% at 50% 110%, rgba(232, 80, 91, 0.13) 0%, transparent 55%),
+        radial-gradient(ellipse 60% 40% at 80% 100%, rgba(232, 168, 87, 0.10) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 40% at 20% 100%, rgba(168, 142, 217, 0.08) 0%, transparent 60%),
+        linear-gradient(180deg, #FAFAF7 0%, #F4F1EA 100%);
+    }
+    .grid-decoration {
+      background-image:
+        linear-gradient(to right, rgba(15,26,51,0.035) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(15,26,51,0.035) 1px, transparent 1px);
+      background-size: 96px 96px;
+      mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, black 30%, transparent 90%);
+      -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, black 30%, transparent 90%);
+    }
+    .glass {
+      background: rgba(255,255,255,0.7);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
+    @keyframes blurIn { from { opacity: 0; filter: blur(8px); transform: translateY(8px); } to { opacity: 1; filter: blur(0); transform: translateY(0); } }
+    .animate-blur-in { animation: blurIn 0.8s ease-out forwards; opacity: 0; }
+    .hero-number {
+      font-feature-settings: 'tnum' 1;
+      letter-spacing: -0.04em;
+      line-height: 0.9;
+    }
+    .coords {
+      font-family: ui-monospace, 'SF Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.05em;
+      color: rgba(15,26,51,0.4);
+    }
+  </style>
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body class="bg-gray-50">
+  <div id="root"></div>
+  <script type="text/babel">
+    // ─── DATA ───
+    const PERIOD = "Feb - Jun 2026";
+    const PERIOD_NEW = "Actualizado Jun 2, 2026";
+    // Metadata about runs for dashboard summary
+    const runsMeta = {
+      totalRuns: 6,
+      lastRunDate: "2026-06-02",
+      lastRunLabel: "2 jun 2026",
+      agentsLastRun: 21,
+      totalAgentsAnalyzed: 27,
+    };
+    const overviewStats = [
+      { label: "Corridas Realizadas", value: String(runsMeta.totalRuns), sub: "Mar 11 → Mar 30 → May 4 AM/PM → May 13 → Jun 2", icon: "🔁", accent: "#2EC4B6" },
+      { label: "Última Corrida", value: runsMeta.lastRunLabel, sub: "623 conversaciones · 34k mensajes", icon: "📅", accent: "#1B2A4A" },
+      { label: "Agentes en Última Corrida", value: String(runsMeta.agentsLastRun), sub: "Cuentas conectadas a Evolution API", icon: "👥", accent: "#F97316" },
+      { label: "Total Agentes Analizados", value: String(runsMeta.totalAgentsAnalyzed), sub: "Histórico desde Mar 11", icon: "📊", accent: "#E8505B" },
+    ];
+    const topRequests = [
+      { label: "Modificaciones de contrato", count: 94, pct: 47 },
+      { label: "Proceso de firma", count: 79, pct: 39.5 },
+      { label: "Investigación de inquilinos", count: 59, pct: 29.5 },
+      { label: "Gestión de renovaciones", count: 48, pct: 24 },
+      { label: "Carga de documentos", count: 38, pct: 19 },
+      { label: "Pagos / facturación", count: 34, pct: 17 },
+      { label: "Consultas generales", count: 26, pct: 13 },
+      { label: "Estatus de operación", count: 20, pct: 10 },
+      { label: "Problemas técnicos app", count: 12, pct: 6 },
+      { label: "Comisiones", count: 11, pct: 5.5 },
+    ];
+    const frustrationSeverity = [
+      { level: "Severa", count: 5, pct: 3, color: "#DC2626", desc: "Posible fraude, amenazas legales, info incorrecta" },
+      { level: "Moderada", count: 13, pct: 6, color: "#F97316", desc: "Quejas explícitas, seguimientos repetidos" },
+      { level: "Leve", count: 14, pct: 7, color: "#FACC15", desc: "Impaciencia, emojis tristes" },
+      { level: "Sin frustración", count: 168, pct: 84, color: "#2EC4B6", desc: "" },
+    ];
+    const frustrationCauses = [
+      { cause: "Comentarios al contrato no aplicados", pct: 25 },
+      { cause: "App falla / se traba / no envía código SMS", pct: 22 },
+      { cause: "Liga de pago expira o sale con monto erróneo", pct: 13 },
+      { cause: "Pagos / investigación no se reflejan en la app", pct: 11 },
+      { cause: "Ciclos largos de investigación / docs rechazados", pct: 9 },
+      { cause: "Comisión retenida sin aviso", pct: 6 },
+      { cause: "Precios o info incorrecta dada al cliente", pct: 5 },
+    ];
+    // Agent comparison data (6 runs: Mar 11 / Mar 30 / May 4 morning / May 4 evening / May 13 / Jun 2)
+    // lastSeen: latest message timestamp we have for this agent
+    // rate = Mar 11 baseline, jun2 = current run (Jun 2, 21 agents connected)
+    const agentRanking = [
+      // Historical-only agents (no longer connected — kept for trend continuity)
+      { name: "Daniela Álvarez",    rate: 50, mar30: null, may4: null, may4pm: null, may13: null, jun2: null, hasNew: false, lastSeen: "2026-03-11" },
+      { name: "Itzel Gómez",        rate: 50, mar30: null, may4: null, may4pm: null, may13: null, jun2: null, hasNew: false, lastSeen: "2026-03-11" },
+      { name: "Zayret Cornejo",     rate: 40, mar30: 33,   may4: null, may4pm: null, may13: null, jun2: null, hasNew: false, lastSeen: "2026-03-22" },
+      { name: "Wendy Varela",       rate: 20, mar30: null, may4: null, may4pm: null, may13: null, jun2: null, hasNew: false, lastSeen: "2026-03-11" },
+      { name: "Ana Guzmán",         rate: null, mar30: null, may4: 0,    may4pm: 45,  may13: null, jun2: null, hasNew: false, lastSeen: "2026-05-04" },
+      // Active agents (in Jun 2 run) — sorted by current frustration desc
+      { name: "Cesar",              rate: null, mar30: null, may4: null, may4pm: 8,   may13: 25, jun2: 33, hasNew: true, lastSeen: "2026-06-02" },
+      { name: "Elizabeth Castro",   rate: 50,   mar30: null, may4: null, may4pm: null, may13: 22, jun2: 33, hasNew: true, lastSeen: "2026-06-02" },
+      { name: "Eduardo",            rate: null, mar30: null, may4: null, may4pm: 25,  may13: 0,  jun2: 30, hasNew: true, lastSeen: "2026-06-02" },
+      { name: "Itzel Alarcón",      rate: 40,   mar30: null, may4: null, may4pm: null, may13: 11, jun2: 30, hasNew: true, lastSeen: "2026-06-02" },
+      { name: "Iran",               rate: null, mar30: null, may4: null, may4pm: 42,  may13: 9,  jun2: 27, hasNew: true, lastSeen: "2026-06-02" },
+      { name: "Elvia",              rate: null, mar30: null, may4: null, may4pm: null, may13: 11, jun2: 25, hasNew: true, lastSeen: "2026-06-02" },
+      { name: "Paola Viveros",      rate: null, mar30: null, may4: null, may4pm: null, may13: 25, jun2: 25, hasNew: true, lastSeen: "2026-06-02" },
+      { name: "Daniel Luna",        rate: null, mar30: null, may4: null, may4pm: null, may13: 8,  jun2: 22, hasNew: true, lastSeen: "2026-06-02" },
+      { name: "Horacio Gómez",      rate: 30,   mar30: 8,    may4: null, may4pm: null, may13: 10, jun2: 20, hasNew: true, lastSeen: "2026-06-02" },
+      { name: "Gabriel García",     rate: 58,   mar30: 17,   may4: 31,   may4pm: null, may13: 22, jun2: 17, hasNew: true, lastSeen: "2026-06-02" },
+      { name: "Carlos",             rate: null, mar30: null, may4: null, may4pm: 8,   may13: 22, jun2: 11, hasNew: true, lastSeen: "2026-06-02" },
+      { name: "Dylan Arellano",     rate: 20,   mar30: 20,   may4: null, may4pm: null, may13: 11, jun2: 11, hasNew: true, lastSeen: "2026-06-02" },
+      { name: "Elizabeth Bustos",   rate: null, mar30: null, may4: null, may4pm: null, may13: 14, jun2: 11, hasNew: true, lastSeen: "2026-06-02" },
+      { name: "Hugo",               rate: null, mar30: null, may4: null, may4pm: null, may13: 14, jun2: 10, hasNew: true, lastSeen: "2026-06-02" },
+      { name: "Fernanda Figueroa",  rate: 40,   mar30: null, may4: null, may4pm: null, may13: 20, jun2: 9,  hasNew: true, lastSeen: "2026-06-02" },
+      { name: "Jenifer",            rate: null, mar30: null, may4: null, may4pm: 17,  may13: 25, jun2: 8,  hasNew: true, lastSeen: "2026-06-02" },
+      { name: "Kate González",      rate: 30,   mar30: 17,   may4: 25,   may4pm: null, may13: 10, jun2: 8,  hasNew: true, lastSeen: "2026-06-02" },
+      { name: "Dana Lugo",          rate: 58,   mar30: 25,   may4: 33,   may4pm: null, may13: 13, jun2: 0,  hasNew: true, lastSeen: "2026-06-02" },
+      { name: "Karen Pérez",        rate: null, mar30: null, may4: null, may4pm: null, may13: 17, jun2: 0,  hasNew: true, lastSeen: "2026-06-02" },
+      { name: "Lorena Domínguez",   rate: null, mar30: null, may4: 0,    may4pm: 50,  may13: 8,  jun2: 0,  hasNew: true, lastSeen: "2026-06-02" },
+      { name: "Xel Xanat",          rate: 42,   mar30: 17,   may4: 50,   may4pm: null, may13: 22, jun2: 0,  hasNew: true, lastSeen: "2026-06-02" },
+      // Connected in May 13 but not in the Jun 2 run
+      { name: "Diego Cedillo",      rate: 0,    mar30: null, may4: null, may4pm: null, may13: 14, jun2: null, hasNew: false, lastSeen: "2026-05-13" },
+      { name: "Elsa Hernández",     rate: null, mar30: null, may4: null, may4pm: null, may13: 13, jun2: null, hasNew: false, lastSeen: "2026-05-13" },
+    ];
+    // Resolution effectiveness — did the agent actually solve the broker's problem?
+    // Jun 2 run: sample of 200 conversations across 21 agents.
+    // resolvedPct / unresolvedPct / unclearPct computed from end-of-conversation signals;
+    // escalationPct = cross-team escalation (legal/tech/pagos) detected.
+    const resolutionData = [
+      { agent: "Lorena Domínguez",  total: 11, resolvedPct: 82, unresolvedPct: 18, unclearPct: 0,  avgMsgs: 59, escalationPct: 27 },
+      { agent: "Xel Xanat",         total: 8,  resolvedPct: 75, unresolvedPct: 25, unclearPct: 0,  avgMsgs: 44, escalationPct: 12 },
+      { agent: "Fernanda Figueroa", total: 11, resolvedPct: 73, unresolvedPct: 18, unclearPct: 9,  avgMsgs: 53, escalationPct: 36 },
+      { agent: "Dana Lugo",         total: 7,  resolvedPct: 71, unresolvedPct: 14, unclearPct: 14, avgMsgs: 31, escalationPct: 0  },
+      { agent: "Hugo",              total: 10, resolvedPct: 70, unresolvedPct: 20, unclearPct: 10, avgMsgs: 57, escalationPct: 40 },
+      { agent: "Daniel Luna",       total: 9,  resolvedPct: 67, unresolvedPct: 33, unclearPct: 0,  avgMsgs: 41, escalationPct: 11 },
+      { agent: "Dylan Arellano",    total: 9,  resolvedPct: 67, unresolvedPct: 22, unclearPct: 11, avgMsgs: 67, escalationPct: 22 },
+      { agent: "Elizabeth Bustos",  total: 9,  resolvedPct: 67, unresolvedPct: 22, unclearPct: 11, avgMsgs: 50, escalationPct: 0  },
+      { agent: "Karen Pérez",       total: 9,  resolvedPct: 67, unresolvedPct: 11, unclearPct: 22, avgMsgs: 49, escalationPct: 33 },
+      { agent: "Paola Viveros",     total: 8,  resolvedPct: 62, unresolvedPct: 38, unclearPct: 0,  avgMsgs: 39, escalationPct: 38 },
+      { agent: "Eduardo",           total: 10, resolvedPct: 60, unresolvedPct: 40, unclearPct: 0,  avgMsgs: 40, escalationPct: 40 },
+      { agent: "Elvia",             total: 12, resolvedPct: 58, unresolvedPct: 33, unclearPct: 8,  avgMsgs: 64, escalationPct: 25 },
+      { agent: "Gabriel García",    total: 12, resolvedPct: 58, unresolvedPct: 42, unclearPct: 0,  avgMsgs: 63, escalationPct: 33 },
+      { agent: "Cesar",             total: 9,  resolvedPct: 56, unresolvedPct: 44, unclearPct: 0,  avgMsgs: 71, escalationPct: 22 },
+      { agent: "Iran",              total: 11, resolvedPct: 55, unresolvedPct: 45, unclearPct: 0,  avgMsgs: 62, escalationPct: 18 },
+      { agent: "Elizabeth Castro",  total: 6,  resolvedPct: 50, unresolvedPct: 33, unclearPct: 17, avgMsgs: 53, escalationPct: 50 },
+      { agent: "Jenifer",           total: 12, resolvedPct: 50, unresolvedPct: 50, unclearPct: 0,  avgMsgs: 63, escalationPct: 58 },
+      { agent: "Kate González",     total: 13, resolvedPct: 46, unresolvedPct: 31, unclearPct: 23, avgMsgs: 61, escalationPct: 46 },
+      { agent: "Carlos",            total: 9,  resolvedPct: 44, unresolvedPct: 44, unclearPct: 11, avgMsgs: 68, escalationPct: 44 },
+      { agent: "Horacio Gómez",     total: 5,  resolvedPct: 40, unresolvedPct: 40, unclearPct: 20, avgMsgs: 38, escalationPct: 60 },
+      { agent: "Itzel Alarcón",     total: 10, resolvedPct: 40, unresolvedPct: 60, unclearPct: 0,  avgMsgs: 57, escalationPct: 40 },
+    ];
+
+    // Writing quality per agent (gramática, profesionalismo, tono)
+    // Lower score = better. Computed from heuristics on real broker-side messages.
+    // Formula: typos*1.5 + missingAccents*0.8 + capsAbuse*0.5 + lowerStart*0.3
+    // Jun 2 run — full 21-agent dataset, 623 conversations.
+    const writingQuality = [
+      { agent: "Carlos",            msgs: 815, avgLen: 119, typos: 0.2,  missingAccents: 9.0,  capsAbuse: 0.4, emojiPerMsg: 0.14, lowerStart: 4,  score: 8.9,  examples: { good: [], bad: [] } },
+      { agent: "Elvia",             msgs: 892, avgLen: 87,  typos: 0.9,  missingAccents: 9.4,  capsAbuse: 1.1, emojiPerMsg: 0.64, lowerStart: 2,  score: 10.0, examples: { good: [], bad: [] } },
+      { agent: "Paola Viveros",     msgs: 548, avgLen: 75,  typos: 1.8,  missingAccents: 7.8,  capsAbuse: 1.0, emojiPerMsg: 0.07, lowerStart: 4,  score: 10.6, examples: { good: [], bad: [] } },
+      { agent: "Iran",              msgs: 818, avgLen: 66,  typos: 0.1,  missingAccents: 9.9,  capsAbuse: 0.4, emojiPerMsg: 0.26, lowerStart: 8,  score: 10.7, examples: { good: [], bad: [] } },
+      { agent: "Hugo",              msgs: 805, avgLen: 92,  typos: 1.0,  missingAccents: 10.0, capsAbuse: 1.9, emojiPerMsg: 0.33, lowerStart: 2,  score: 11.0, examples: { good: [], bad: [] } },
+      { agent: "Kate González",     msgs: 952, avgLen: 59,  typos: 0.0,  missingAccents: 8.2,  capsAbuse: 1.4, emojiPerMsg: 0.12, lowerStart: 13, score: 11.2, examples: { good: [], bad: [] } },
+      { agent: "Karen Pérez",       msgs: 724, avgLen: 77,  typos: 0.4,  missingAccents: 9.2,  capsAbuse: 6.3, emojiPerMsg: 0.15, lowerStart: 7,  score: 13.2, examples: { good: [], bad: [] } },
+      { agent: "Eduardo",           msgs: 470, avgLen: 133, typos: 2.8,  missingAccents: 10.9, capsAbuse: 1.3, emojiPerMsg: 0.23, lowerStart: 4,  score: 14.8, examples: { good: [], bad: ["Mensajes muy largos (133 chars promedio)"] } },
+      { agent: "Dana Lugo",         msgs: 341, avgLen: 55,  typos: 1.8,  missingAccents: 8.9,  capsAbuse: 0.2, emojiPerMsg: 0.27, lowerStart: 19, score: 15.6, examples: { good: [], bad: [] } },
+      { agent: "Daniel Luna",       msgs: 552, avgLen: 79,  typos: 1.4,  missingAccents: 10.2, capsAbuse: 2.4, emojiPerMsg: 0.01, lowerStart: 21, score: 17.8, examples: { good: [], bad: [] } },
+      { agent: "Lorena Domínguez",  msgs: 836, avgLen: 68,  typos: 1.0,  missingAccents: 10.8, capsAbuse: 0.8, emojiPerMsg: 0.17, lowerStart: 30, score: 19.5, examples: { good: [], bad: ["Inicia con minúscula 30% del tiempo"] } },
+      { agent: "Gabriel García",    msgs: 912, avgLen: 60,  typos: 0.5,  missingAccents: 11.9, capsAbuse: 0.8, emojiPerMsg: 0.09, lowerStart: 33, score: 20.6, examples: { good: [], bad: ["33% mensajes inician con minúscula"] } },
+      { agent: "Elizabeth Bustos",  msgs: 581, avgLen: 84,  typos: 6.0,  missingAccents: 11.2, capsAbuse: 2.5, emojiPerMsg: 0.05, lowerStart: 6,  score: 21.0, examples: { good: [], bad: ["Tasa de typos alta (6.0%)"] } },
+      { agent: "Itzel Alarcón",     msgs: 761, avgLen: 73,  typos: 1.1,  missingAccents: 10.0, capsAbuse: 2.3, emojiPerMsg: 0.32, lowerStart: 35, score: 21.3, examples: { good: [], bad: [] } },
+      { agent: "Xel Xanat",         msgs: 445, avgLen: 94,  typos: 7.9,  missingAccents: 12.4, capsAbuse: 0.8, emojiPerMsg: 0.08, lowerStart: 1,  score: 22.5, examples: { good: [], bad: ["Tasa de typos alta (7.9%)"] } },
+      { agent: "Cesar",             msgs: 926, avgLen: 94,  typos: 1.7,  missingAccents: 12.2, capsAbuse: 1.7, emojiPerMsg: 0.0,  lowerStart: 32, score: 22.8, examples: { good: [], bad: ["32% mensajes inician con minúscula"] } },
+      { agent: "Fernanda Figueroa", msgs: 618, avgLen: 101, typos: 1.6,  missingAccents: 10.6, capsAbuse: 1.2, emojiPerMsg: 0.31, lowerStart: 53, score: 27.4, examples: { good: [], bad: ["53% mensajes inician con minúscula"] } },
+      { agent: "Jenifer",           msgs: 829, avgLen: 96,  typos: 4.9,  missingAccents: 10.1, capsAbuse: 0.4, emojiPerMsg: 0.21, lowerStart: 47, score: 29.7, examples: { good: [], bad: ["47% mensajes inician con minúscula", "Tasa de typos 4.9%"] } },
+      { agent: "Elizabeth Castro",  msgs: 765, avgLen: 70,  typos: 0.3,  missingAccents: 10.1, capsAbuse: 0.7, emojiPerMsg: 0.05, lowerStart: 73, score: 30.8, examples: { good: [], bad: ["73% mensajes inician con minúscula"] } },
+      { agent: "Dylan Arellano",    msgs: 936, avgLen: 51,  typos: 2.0,  missingAccents: 15.0, capsAbuse: 1.3, emojiPerMsg: 0.03, lowerStart: 72, score: 37.2, examples: { good: [], bad: ["72% mensajes inician con minúscula", "Acentos faltantes 15%"] } },
+      { agent: "Horacio Gómez",     msgs: 408, avgLen: 66,  typos: 13.2, missingAccents: 8.7,  capsAbuse: 0.2, emojiPerMsg: 0.22, lowerStart: 45, score: 40.4, examples: { good: [], bad: ["Tasa de typos muy alta (13.2%)", "45% mensajes inician con minúscula"] } },
+    ];
+
+    // Response time per agent (business hours only: M-F 9-19, Sat 9-15)
+    // Jun 2 run — across full 21-agent dataset, ~33,551 messages.
+    const responseTimes = [
+      { agent: "Dylan Arellano",    avg: 19.8, median: 1.7,  pairs: 362, under5: 71, under30: 90 },
+      { agent: "Karen Pérez",       avg: 10.0, median: 2.0,  pairs: 415, under5: 72, under30: 93 },
+      { agent: "Horacio Gómez",     avg: 11.8, median: 2.5,  pairs: 179, under5: 61, under30: 89 },
+      { agent: "Cesar",             avg: 13.3, median: 3.5,  pairs: 573, under5: 59, under30: 90 },
+      { agent: "Hugo",              avg: 13.5, median: 3.6,  pairs: 421, under5: 57, under30: 88 },
+      { agent: "Lorena Domínguez",  avg: 25.0, median: 3.6,  pairs: 337, under5: 54, under30: 80 },
+      { agent: "Elvia",             avg: 12.9, median: 4.5,  pairs: 576, under5: 53, under30: 89 },
+      { agent: "Fernanda Figueroa", avg: 27.0, median: 4.8,  pairs: 354, under5: 51, under30: 80 },
+      { agent: "Jenifer",           avg: 18.2, median: 5.5,  pairs: 497, under5: 47, under30: 88 },
+      { agent: "Gabriel García",    avg: 22.3, median: 5.8,  pairs: 341, under5: 46, under30: 83 },
+      { agent: "Itzel Alarcón",     avg: 22.7, median: 5.9,  pairs: 357, under5: 46, under30: 78 },
+      { agent: "Elizabeth Castro",  avg: 34.2, median: 7.3,  pairs: 280, under5: 46, under30: 72 },
+      { agent: "Xel Xanat",         avg: 23.1, median: 9.2,  pairs: 300, under5: 38, under30: 81 },
+      { agent: "Elizabeth Bustos",  avg: 25.7, median: 9.3,  pairs: 351, under5: 38, under30: 74 },
+      { agent: "Eduardo",           avg: 24.5, median: 9.6,  pairs: 258, under5: 35, under30: 78 },
+      { agent: "Iran",              avg: 18.8, median: 9.6,  pairs: 450, under5: 38, under30: 82 },
+      { agent: "Paola Viveros",     avg: 20.1, median: 11.2, pairs: 238, under5: 32, under30: 78 },
+      { agent: "Dana Lugo",         avg: 28.5, median: 14.2, pairs: 213, under5: 27, under30: 76 },
+      { agent: "Daniel Luna",       avg: 29.6, median: 14.2, pairs: 264, under5: 29, under30: 73 },
+      { agent: "Kate González",     avg: 23.7, median: 14.2, pairs: 363, under5: 26, under30: 77 },
+      { agent: "Carlos",            avg: 53.1, median: 41.9, pairs: 397, under5: 19, under30: 44 },
+    ];
+
+    // Evolution of problems — comparing baseline (Mar 11) vs latest (Jun 2, 21 agents)
+    const problemEvolution = {
+      reduced: [
+        { problem: "Frustración global del equipo", before: 39.7, after: 16, unit: "%",
+          note: "Gran mejora sostenida — 39.7% (Mar 11) → 28% (May 4) → 14% (May 13) → 16% (Jun 2). Ligero repunte sobre sample de 200 convs / 21 agentes." },
+        { problem: "Tiempo de respuesta lento", before: 31, after: 8, unit: "% frustrados por esto",
+          note: "Mediana del equipo: 8.8 min en horario laboral · 45% bajo 5 min" },
+        { problem: "Confusión vista previa vs liga de firma", before: 67, after: 18, unit: "menciones",
+          note: "ZapSign sigue mejorando el flujo; persisten casos aislados de biométrico" },
+      ],
+      disappeared: [
+        { problem: "Chrome extension disconnections", note: "Solo en datos Mar 11" },
+        { problem: "Brokers no podían hacer login (código WhatsApp)", note: "No reportado desde Mar 30" },
+        { problem: "Modificaciones múltiples al contrato (volumen masivo)", note: "El patrón cambió a 'comentarios no se aplican / se aplican parcialmente'" },
+      ],
+      newProblems: [
+        // Multi-agente: aparecen en conversaciones de varios CS y/o varios brokers
+        { problem: "App falla / no carga / se traba / no envía código SMS — obliga a trabajar fuera de la app",
+          severity: "alto", reportType: "multi",
+          agents: ["Gabriel", "Kate González", "Itzel A.", "Daniel Luna", "Jenifer", "Fernanda"],
+          mentions: 12, note: "Queja más transversal del run · intermitencia general, iOS se traba días, ligas 'undefined', mensaje 'rastreen mi actividad' que bloquea altas · workaround: Google Docs y código fijo 111111" },
+        { problem: "Cambios al contrato no se aplican o se aplican parcialmente — hay que insistir o esperar días",
+          severity: "alto", reportType: "multi",
+          agents: ["Cesar", "Iran", "Hugo", "Fernanda", "Itzel A.", "Kate González", "Xel Xanat"],
+          mentions: 11, note: "Legal corrige sólo parte de las fechas/cláusulas por iteración, o un cambio de 2 palabras tarda días pese a urgencia · causa frecuente de frustración explícita" },
+        { problem: "Liga de pago caduca, sale con monto/pagador incorrecto o se anula sin previo aviso",
+          severity: "alto", reportType: "multi",
+          agents: ["Kate González", "Karen Pérez", "Eduardo", "Hugo", "Eli Bustos"],
+          mentions: 8, note: "Stripe caduca repetidamente 'fuera de tiempo'; en renovación regenera con monto distinto al acordado · bloquea operaciones listas para cerrar" },
+        { problem: "Pago o investigación ya realizados no se reflejan en la app y bloquean avanzar al contrato",
+          severity: "alto", reportType: "multi",
+          agents: ["Eli Bustos", "Fernanda", "Elvia", "Horacio"],
+          mentions: 7, note: "Aparece pendiente aunque ya hay comprobante; a veces el proveedor de pagos no lo envía · retrasa liberación de contratos" },
+        { problem: "No se pueden subir archivos pesados (escrituras, inventario, contratos) en la app",
+          severity: "medio", reportType: "multi",
+          agents: ["Cesar", "Kate González", "Fernanda", "Itzel A.", "Gabriel"],
+          mentions: 7, note: "Escrituras en varios PDF, inventarios con muchas fotos · el aviso de privacidad a veces impide al broker subir docs y debe hacerlo el cliente" },
+        { problem: "Documentos / estados de cuenta rechazados o perfil de obligado solidario que no se crea",
+          severity: "medio", reportType: "multi",
+          agents: ["Lorena", "Horacio", "Elvia", "Fernanda", "Cesar"],
+          mentions: 7, note: "Estados de cuenta de tarjeta rechazados como ingreso; CFE que no coincide; OS que no quedó creado y obliga a repagar investigación" },
+        { problem: "Investigación caduca a los 30 días por retrasos del propietario y obliga a repagar",
+          severity: "medio", reportType: "multi",
+          agents: ["Jenifer", "Lorena", "Cesar", "Itzel A."],
+          mentions: 6, note: "Patrón persistente · la investigación no es reembolsable; remodelaciones o demoras del dueño hacen perder el pago al inquilino" },
+        { problem: "Sin disponibilidad de abogado para firma presencial o inmueble fuera de cobertura — detectado tarde",
+          severity: "medio", reportType: "multi",
+          agents: ["Horacio", "Cesar", "Dana Lugo", "Jenifer", "Elvia", "Carlos"],
+          mentions: 6, note: "Saturación de quincena / fin de semana sin abogado; falta claridad del radio de cobertura · obliga a migrar a firma digital que el cliente no esperaba" },
+        { problem: "Comisión / pago al asesor retenido o tardío sin notificación clara",
+          severity: "medio", reportType: "multi",
+          agents: ["Gabriel", "Cesar", "Dylan"],
+          mentions: 4, note: "Operación cerrada sin pago; bono por referido reportado como pagado pero no depositado · riesgo de NPS bajo" },
+        { problem: "Documentos / datos del propietario enviados no se reflejan en el perfil correcto",
+          severity: "medio", reportType: "multi",
+          agents: ["Carlos", "Gabriel", "Elvia"],
+          mentions: 4, note: "Enviados a otro compañero o a un correo que no se identifica; el contrato no se puede crear hasta que existe el perfil · bloquea entregas urgentes" },
+        // Edge cases pero con muy alta frustración
+        { problem: "Cliente pagó a una cuenta bancaria ajena a MoradaUno (posible fraude de un excolaborador)",
+          severity: "alto", reportType: "edge-severe", agents: ["Carlos"],
+          mentions: 1, note: "Pago a una cuenta Mifel que no es de MoradaUno; sin pago identificable y exigía firmar ese día · riesgo reputacional y de fraude" },
+        { problem: "Ex-agente informó que la investigación estaba aprobada cuando había sido rechazada",
+          severity: "alto", reportType: "edge-severe", agents: ["Cesar"],
+          mentions: 1, note: "El cambio de titular/fiador obliga además a repagar la investigación · mala experiencia grave por información incorrecta" },
+        { problem: "Precios de la protección inconsistentes entre distintos agentes para el mismo caso",
+          severity: "alto", reportType: "edge-severe", agents: ["Elizabeth Castro"],
+          mentions: 1, note: "Cotizaciones 4640/5800 vs 8700 y no logra contactar a nadie por teléfono · genera desconfianza en el pricing" },
+        { problem: "La app muestra al propietario información de otra operación / otro departamento (privacidad)",
+          severity: "alto", reportType: "edge-severe", agents: ["Jenifer", "Horacio"],
+          mentions: 2, note: "Al registrarse o descargar docs ve datos de otro depto ya con póliza · riesgo de privacidad de datos" },
+        { problem: "Inquilino lleva ~15 días acondicionando el local sin contrato vigente ni documentación",
+          severity: "alto", reportType: "edge-severe", agents: ["Elizabeth Castro"],
+          mentions: 1, note: "Cliente pide junta con gerencia legal por la situación de riesgo · operación comercial expuesta jurídicamente" },
+        { problem: "Demanda / litigio en curso sin seguimiento ni avance comunicado al cliente",
+          severity: "alto", reportType: "edge-severe", agents: ["Elvia"],
+          mentions: 1, note: "Caso reportado previamente sin avance, muy poca comunicación · riesgo de churn del propietario" },
+        { problem: "Clientes en el extranjero (Europa, China) no pueden acceder a la app (acceso depende de SMS a celular MX)",
+          severity: "medio", reportType: "edge-severe", agents: ["Eduardo", "Elvia", "Jenifer"],
+          mentions: 3, note: "No reciben código ni cambian contraseña; workaround código fijo 111111 o incógnito · bloquea operaciones internacionales" },
+        { problem: "Renovación gestionada directo con el propietario sin avisar al asesor — se brinca su rol",
+          severity: "medio", reportType: "edge-severe", agents: ["Daniel Luna"],
+          mentions: 1, note: "MoradaUno contactó al propietario y retuvo el contacto · riesgo de churn de asesores" },
+      ],
+      persistent: [
+        { problem: "Perfil duplicado al registrar mismo correo", note: "Vinculación de propietarios recurrentes — sigue desde Mar 11" },
+        { problem: "Bot fuera de horario no enruta a humano", note: "Mismo problema desde Mar 11" },
+        { problem: "Documentos subidos no visibles internamente", note: "Visibilidad rota entre broker y CS" },
+        { problem: "Renovaciones no aparecen en la app después de crearlas", note: "Workaround: re-login. Persiste desde May 4." },
+      ],
+    };
+
+    const improvementAreas = [
+      { priority: "CRÍTICO", color: "#E8505B", bgLight: "#FEE2E2", items: [
+        { title: "Precisión de Contratos", description: "Contratos requieren 2-3+ rondas de corrección. Montos, fechas y cláusulas incorrectas retrasan firmas; los cambios no siempre se aplican.", stat: "94 menciones en 200 conversaciones" },
+        { title: "Confiabilidad de la App", description: "No pueden subir documentos, descargar contratos ni iniciar sesión. Links de pago expiran. Intermitencia general.", stat: "Queja más transversal del run" },
+      ]},
+      { priority: "ALTA", color: "#F59E0B", bgLight: "#FEF3C7", items: [
+        { title: "Tiempo de Respuesta", description: "Brokers esperan horas o días sin respuesta. No existe ruta de escalación para urgencias." },
+        { title: "Claridad en Firma", description: "Confusión entre vista previa y liga de firma. Problemas frecuentes con ZapSign." },
+      ]},
+      { priority: "MEDIA", color: "#2EC4B6", bgLight: "#D1FAE5", items: [
+        { title: "Seguimiento de Pagos", description: "Pagos aparecen pendientes después de realizarse." },
+        { title: "Transparencia Investigación", description: "Sin visibilidad de tiempos para screening de inquilinos." },
+        { title: "UX de Onboarding", description: "Proceso complejo confunde a brokers y clientes nuevos." },
+        { title: "Handoffs Internos", description: "Clientes rebotan entre personas sin contexto previo." },
+      ]},
+    ];
+
+    // ─── COMPONENTS ───
+    function Header() {
+      return (
+        <header className="sticky top-0 z-50 border-b border-navy-light" style={{background: 'rgba(15,26,51,0.97)', backdropFilter: 'blur(12px)'}}>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-1.5 h-7 bg-gradient-to-b from-teal to-teal/40 rounded-full shrink-0"></div>
+              <h1 className="text-sm sm:text-base font-semibold text-white tracking-tight truncate">
+                <span className="text-gray-400 font-normal">MoradaUno</span> · Análisis WhatsApp CS
+              </h1>
+            </div>
+            <div className="flex items-center gap-3 shrink-0">
+              <span className="hidden md:inline text-[10px] font-mono text-gray-500 tracking-widest">{PERIOD.toUpperCase()}</span>
+              <span className="flex items-center gap-1.5 text-[10px] font-mono text-teal/80 bg-teal/10 border border-teal/20 rounded-full px-2.5 py-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-teal animate-pulse"></span>
+                LIVE
+              </span>
+            </div>
+          </div>
+        </header>
+      );
+    }
+
+    function Hero() {
+      const lastFrust = 16; // Jun 2 run — across 200 conversations, 21 agents
+      const baselineFrust = 39.7;
+      const improvement = (baselineFrust - lastFrust).toFixed(1);
+      return (
+        <section className="hero-bg relative overflow-hidden border-b border-gray-200/60">
+          <div className="absolute inset-0 grid-decoration opacity-60"></div>
+          <div className="relative max-w-7xl mx-auto px-4 sm:px-8 pt-16 pb-20 sm:pt-24 sm:pb-28">
+            {/* Coords decoration */}
+            <div className="hidden sm:flex absolute top-8 left-8 right-8 justify-between coords">
+              <span>19.4326° N · 99.1332° W</span>
+              <span>CDMX · MX</span>
+            </div>
+
+            <div className="text-center max-w-4xl mx-auto">
+              <div className="animate-blur-in inline-flex items-center gap-2 bg-white/60 backdrop-blur border border-gray-200/60 rounded-full px-3 py-1 text-xs text-gray-700 mb-6" style={{animationDelay: '0.05s'}}>
+                <span className="w-1.5 h-1.5 rounded-full bg-teal"></span>
+                <span className="font-medium">{runsMeta.totalRuns} mediciones · última {runsMeta.lastRunLabel}</span>
+              </div>
+              <h2 className="animate-blur-in hero-number text-5xl sm:text-7xl lg:text-8xl font-extrabold text-navy-dark" style={{animationDelay: '0.15s'}}>
+                Tu equipo de CS,
+                <br/>
+                <span className="bg-gradient-to-r from-coral via-coral to-orange-500 bg-clip-text text-transparent">en evolución.</span>
+              </h2>
+              <p className="animate-blur-in mt-6 text-base sm:text-lg text-gray-500 max-w-2xl mx-auto leading-relaxed" style={{animationDelay: '0.3s'}}>
+                Análisis automático de conversaciones de WhatsApp para medir frustración de brokers, tiempo de respuesta, calidad de escritura y resolución de problemas — por agente, en el tiempo.
+              </p>
+
+              {/* Big numbers */}
+              <div className="animate-blur-in mt-12 grid grid-cols-3 gap-4 sm:gap-8 max-w-3xl mx-auto" style={{animationDelay: '0.45s'}}>
+                <div className="text-center">
+                  <div className="hero-number text-4xl sm:text-6xl font-extrabold text-coral">{baselineFrust}<span className="text-2xl sm:text-3xl">%</span></div>
+                  <div className="coords mt-2">FRUSTRACIÓN BASELINE</div>
+                  <div className="text-xs text-gray-400 mt-1">Mar 11, 2026</div>
+                </div>
+                <div className="text-center border-x border-gray-200/80">
+                  <div className="hero-number text-4xl sm:text-6xl font-extrabold text-teal">↓ {improvement}<span className="text-2xl sm:text-3xl"> pts</span></div>
+                  <div className="coords mt-2">REDUCCIÓN</div>
+                  <div className="text-xs text-gray-400 mt-1">en 8 semanas</div>
+                </div>
+                <div className="text-center">
+                  <div className="hero-number text-4xl sm:text-6xl font-extrabold text-navy-dark">{lastFrust}<span className="text-2xl sm:text-3xl">%</span></div>
+                  <div className="coords mt-2">FRUSTRACIÓN ACTUAL</div>
+                  <div className="text-xs text-gray-400 mt-1">{runsMeta.lastRunLabel}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      );
+    }
+
+    function Section({ title, dark, children, id }) {
+      return (
+        <section id={id} className={`py-12 sm:py-20 ${dark ? 'bg-navy-dark' : ''}`} style={!dark ? {background: 'transparent'} : undefined}>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6">
+            {title && (
+              <div className="mb-10 flex items-end justify-between flex-wrap gap-2">
+                <div>
+                  <div className={`text-[10px] font-mono tracking-widest uppercase ${dark ? 'text-teal/60' : 'text-gray-400'}`}>{(id || '').toUpperCase().replace(/-/g, ' / ')}</div>
+                  <h2 className={`mt-1 text-3xl sm:text-4xl font-extrabold tracking-tight ${dark ? 'text-white' : 'text-navy-dark'}`}>{title}</h2>
+                </div>
+                <div className={`hidden sm:block h-px flex-1 ml-8 ${dark ? 'bg-white/10' : 'bg-navy-dark/10'}`}></div>
+              </div>
+            )}
+            {children}
+          </div>
+        </section>
+      );
+    }
+
+    function ReminderCard() {
+      const lastRun = new Date(runsMeta.lastRunDate);
+      const today = new Date();
+      const daysSince = Math.floor((today - lastRun) / (1000 * 60 * 60 * 24));
+      const daysUntilNext = Math.max(0, 30 - daysSince);
+      const overdue = daysUntilNext === 0;
+      const soon = daysUntilNext <= 7 && !overdue;
+      const color = overdue ? '#E8505B' : soon ? '#F97316' : '#2EC4B6';
+      const bg = overdue ? 'from-coral/10 to-coral/5' : soon ? 'from-orange-100/60 to-orange-50/30' : 'from-teal/10 to-teal/5';
+      const icon = overdue ? '🚨' : soon ? '⏰' : '📅';
+      const message = overdue
+        ? `Han pasado ${daysSince} días desde el último análisis. Hora de correr una nueva medición.`
+        : soon
+        ? `En ${daysUntilNext} días toca correr el próximo análisis.`
+        : `Próximo análisis recomendado en ${daysUntilNext} días.`;
+      return (
+        <div className={`relative overflow-hidden rounded-2xl bg-gradient-to-br ${bg} border p-5 mb-6`} style={{borderColor: color + '40'}}>
+          <div className="flex items-start justify-between gap-4 flex-wrap">
+            <div className="flex items-start gap-3">
+              <div className="text-2xl">{icon}</div>
+              <div>
+                <p className="text-xs font-bold uppercase tracking-wider" style={{color}}>Recordatorio mensual</p>
+                <p className="text-sm font-semibold text-navy-dark mt-0.5">{message}</p>
+                <p className="text-xs text-gray-500 mt-1">Última corrida: {new Date(runsMeta.lastRunDate).toLocaleDateString('es-MX', { day: 'numeric', month: 'long', year: 'numeric' })} · Hace {daysSince} {daysSince === 1 ? 'día' : 'días'}</p>
+              </div>
+            </div>
+            {(overdue || soon) && (
+              <a href="#how-to-run" onClick={(e) => { e.preventDefault(); document.getElementById('how-to-run')?.scrollIntoView({behavior: 'smooth'}); }}
+                className="text-xs font-semibold px-3 py-2 rounded-full hover:opacity-90 transition-opacity shrink-0" style={{backgroundColor: color, color: 'white'}}>
+                Ver cómo correr →
+              </a>
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    function HowToRunCard() {
+      return (
+        <div id="how-to-run" className="rounded-2xl bg-navy-dark p-6 mb-6 mt-6">
+          <p className="text-teal text-xs font-bold uppercase tracking-wider mb-2">Cómo correr el análisis</p>
+          <h3 className="text-white text-xl font-bold mb-4">Para la próxima medición</h3>
+          <div className="space-y-3 text-sm text-gray-300">
+            <div className="flex gap-3">
+              <span className="text-teal font-mono shrink-0">01</span>
+              <div><strong className="text-white">Verificar conexiones</strong> — Abrir <a href="http://165.232.159.10:8080/manager/" target="_blank" className="text-teal underline">Evolution Manager</a> y reconectar las cuentas que estén "close".</div>
+            </div>
+            <div className="flex gap-3">
+              <span className="text-teal font-mono shrink-0">02</span>
+              <div><strong className="text-white">Descargar conversaciones</strong> — <code className="bg-navy-card px-1.5 py-0.5 rounded text-xs text-teal">cd whatsapp_analysis && python3 download_conversations.py</code></div>
+            </div>
+            <div className="flex gap-3">
+              <span className="text-teal font-mono shrink-0">03</span>
+              <div><strong className="text-white">Pedir a Claude que analice</strong> — En Claude Code: "Corre el análisis de WhatsApp otra vez y actualiza el dashboard con los nuevos números"</div>
+            </div>
+            <div className="flex gap-3">
+              <span className="text-teal font-mono shrink-0">04</span>
+              <div><strong className="text-white">Subir a Netlify</strong> — Arrastrar el folder <code className="bg-navy-card px-1.5 py-0.5 rounded text-xs text-teal">whatsapp-dashboard-public</code> a tu sitio existente en Netlify.</div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    function StatsCards() {
+      return (
+        <Section title="Resumen General" id="stats">
+          <ReminderCard />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {overviewStats.map((s, i) => (
+              <div key={i} className="group bg-white rounded-2xl p-6 shadow-sm hover:shadow-xl transition-all duration-300 animate-fade hover:-translate-y-0.5" style={{borderLeft: `3px solid ${s.accent}`, animationDelay: `${i * 0.08}s`}}>
+                <div className="text-2xl mb-3 opacity-80 group-hover:opacity-100 transition-opacity">{s.icon}</div>
+                <div className="text-4xl font-extrabold tracking-tight" style={{color: s.accent}}>{s.value}</div>
+                <div className="text-sm text-gray-700 mt-1 font-semibold">{s.label}</div>
+                {s.sub && <div className="text-xs text-gray-400 mt-1">{s.sub}</div>}
+              </div>
+            ))}
+          </div>
+          <HowToRunCard />
+        </Section>
+      );
+    }
+
+    function ComparisonSection() {
+      const agentsWithMay13 = agentRanking.filter(a => a.may13 !== null && a.may13 !== undefined);
+      const avgMay13 = (agentsWithMay13.reduce((s, a) => s + a.may13, 0) / agentsWithMay13.length).toFixed(1);
+      const agentsWithJun2 = agentRanking.filter(a => a.jun2 !== null && a.jun2 !== undefined);
+      const avgJun2 = (agentsWithJun2.reduce((s, a) => s + a.jun2, 0) / agentsWithJun2.length).toFixed(1);
+      return (
+        <Section title="Evolución de Frustración (6 Mediciones)" dark id="comparison">
+          {/* Big KPI - 6 columns */}
+          <div className="grid grid-cols-2 lg:grid-cols-6 gap-4 mb-10">
+            <div className="bg-navy-card rounded-xl p-5 text-center">
+              <div className="text-gray-400 text-xs uppercase tracking-wide mb-1">Mar 11 (Baseline)</div>
+              <div className="text-3xl font-extrabold text-coral">39.7%</div>
+              <div className="text-gray-500 text-xs mt-1">14 agentes</div>
+            </div>
+            <div className="bg-navy-card rounded-xl p-5 text-center">
+              <div className="text-gray-400 text-xs uppercase tracking-wide mb-1">Mar 30</div>
+              <div className="text-3xl font-extrabold text-teal">19.6%</div>
+              <div className="text-gray-500 text-xs mt-1">7 agentes</div>
+            </div>
+            <div className="bg-navy-card rounded-xl p-5 text-center">
+              <div className="text-gray-400 text-xs uppercase tracking-wide mb-1">May 4 (mañana)</div>
+              <div className="text-3xl font-extrabold text-orange-400">23%</div>
+              <div className="text-gray-500 text-xs mt-1">6 agentes</div>
+            </div>
+            <div className="bg-navy-card rounded-xl p-5 text-center">
+              <div className="text-gray-400 text-xs uppercase tracking-wide mb-1">May 4 (tarde)</div>
+              <div className="text-3xl font-extrabold text-teal">21.4%</div>
+              <div className="text-gray-500 text-xs mt-1">7 agentes</div>
+            </div>
+            <div className="bg-navy-card rounded-xl p-5 text-center">
+              <div className="text-gray-400 text-xs uppercase tracking-wide mb-1">May 13</div>
+              <div className="text-3xl font-extrabold text-green-400">{avgMay13}%</div>
+              <div className="text-gray-500 text-xs mt-1">23 agentes</div>
+            </div>
+            <div className="bg-navy-card rounded-xl p-5 text-center" style={{border: '1px solid rgba(34,197,94,0.5)'}}>
+              <div className="text-gray-400 text-xs uppercase tracking-wide mb-1">Jun 2 NUEVO</div>
+              <div className="text-3xl font-extrabold text-green-400">{avgJun2}%</div>
+              <div className="text-gray-500 text-xs mt-1">21 agentes</div>
+            </div>
+          </div>
+          {/* Per-agent sparkline - clearer trajectory view */}
+          <div className="bg-navy-card rounded-xl p-6 sm:p-8">
+            <div className="flex items-baseline justify-between flex-wrap gap-2 mb-6">
+              <h3 className="text-white text-lg font-bold">Trayectoria de Frustración por Agente</h3>
+              <div className="text-xs text-gray-400 flex gap-3 flex-wrap">
+                <span>📈 Subió</span>
+                <span>📉 Bajó (mejoró)</span>
+                <span>➡️ Sin cambio</span>
+                <span className="text-gray-500">| Bajo % = mejor</span>
+              </div>
+            </div>
+
+            {/* Header row with measurement dates */}
+            <div className="grid items-center gap-3 mb-3 pb-2 border-b border-navy-light/50" style={{gridTemplateColumns: '180px 70px 1fr 80px 70px'}}>
+              <div className="text-xs text-gray-500 uppercase tracking-wide">Agente</div>
+              <div className="text-xs text-gray-500 uppercase tracking-wide text-right">Inicio</div>
+              <div className="text-xs text-gray-500 uppercase tracking-wide text-center">Mar 11 → Mar 30 → May 4 AM → May 4 PM → May 13 → Jun 2</div>
+              <div className="text-xs text-gray-500 uppercase tracking-wide text-right">Actual</div>
+              <div className="text-xs text-gray-500 uppercase tracking-wide text-right">Δ</div>
+            </div>
+
+            <div className="space-y-2">
+              {agentRanking
+                .filter(a => a.rate !== null || a.mar30 !== null || a.may4 !== null || a.may4pm !== null || a.may13 !== null || a.jun2 !== null)
+                .map((a, i) => {
+                  // Build sequence of points (with which measurement each is)
+                  const points = [
+                    { date: 'Mar 11',     value: a.rate,   color: '#E8505B' },
+                    { date: 'Mar 30',     value: a.mar30,  color: '#2EC4B6' },
+                    { date: 'May 4 AM',   value: a.may4,   color: '#F97316' },
+                    { date: 'May 4 PM',   value: a.may4pm, color: '#22C55E' },
+                    { date: 'May 13',     value: a.may13,  color: '#4ADE80' },
+                    { date: 'Jun 2',      value: a.jun2,   color: '#86EFAC' },
+                  ];
+                  const valid = points.map((p, idx) => ({...p, idx})).filter(p => p.value !== null && p.value !== undefined);
+                  if (valid.length === 0) return null;
+                  const start = valid[0];
+                  const end = valid[valid.length - 1];
+                  const delta = valid.length >= 2 ? end.value - start.value : null;
+                  const trendIcon = delta === null ? '🆕' : delta < -3 ? '📉' : delta > 3 ? '📈' : '➡️';
+                  // 'mejoró' if delta < 0 (less frustration), 'empeoró' if positive
+                  const deltaColor = delta === null ? '#94A3B8' : delta < -3 ? '#22C55E' : delta > 3 ? '#E8505B' : '#94A3B8';
+                  // Convert frustration % to y-axis (inverted: 0 at top means 100% frustration)
+                  // 6 slots now (indices 0-5) — divide by 5 in xFor
+                  const W = 600, H = 80, PAD = 16;
+                  const xFor = (slot) => PAD + (slot / 5) * (W - PAD * 2);
+                  const yFor = (val) => PAD + ((100 - val) / 100) * (H - PAD * 2);
+
+                  // Build path
+                  const pathD = valid.map((p, idx) => `${idx === 0 ? 'M' : 'L'} ${xFor(p.idx)} ${yFor(p.value)}`).join(' ');
+
+                  return (
+                    <div key={i} className="grid items-center gap-3 hover:bg-navy-dark/30 rounded-lg p-2 -mx-2 transition-colors" style={{gridTemplateColumns: '180px 70px 1fr 80px 70px'}}>
+                      {/* Name */}
+                      <div className="text-sm text-white font-medium truncate">
+                        {a.name}
+                        {a.isBrandNew && <span className="ml-1.5 text-[9px] text-teal bg-teal/20 px-1 py-0.5 rounded">NUEVO</span>}
+                      </div>
+                      {/* Start value */}
+                      <div className="text-right">
+                        <span className="text-sm font-bold" style={{color: start.color}}>{start.value}%</span>
+                        <div className="text-[10px] text-gray-500">{start.date}</div>
+                      </div>
+                      {/* Sparkline SVG */}
+                      <div className="relative">
+                        <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="xMidYMid meet" className="w-full" style={{height: '60px'}}>
+                          {/* Reference grid: light dashed line at 30% (acceptable threshold) */}
+                          <line x1={PAD} y1={yFor(30)} x2={W - PAD} y2={yFor(30)} stroke="#475569" strokeWidth="1" strokeDasharray="4,4"/>
+                          {/* Connector line */}
+                          {valid.length >= 2 && (
+                            <path d={pathD} fill="none" stroke={deltaColor} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" opacity="0.85"/>
+                          )}
+                          {/* Dots at each measurement */}
+                          {valid.map((p, idx) => (
+                            <g key={idx}>
+                              <circle cx={xFor(p.idx)} cy={yFor(p.value)} r={idx === valid.length - 1 ? 6 : 4.5} fill={p.color}/>
+                              <text x={xFor(p.idx)} y={yFor(p.value) - 10} textAnchor="middle" fill="white" fontSize="11" fontWeight="700" style={{paintOrder: 'stroke', stroke: '#0F1A33', strokeWidth: '3px', strokeLinejoin: 'round'}}>{p.value}%</text>
+                            </g>
+                          ))}
+                        </svg>
+                      </div>
+                      {/* Current value */}
+                      <div className="text-right">
+                        <span className="text-sm font-bold" style={{color: end.color}}>{end.value}%</span>
+                        <div className="text-[10px] text-gray-500">{end.date}</div>
+                      </div>
+                      {/* Delta */}
+                      <div className="text-right">
+                        {delta !== null ? (
+                          <>
+                            <div className="text-sm font-bold" style={{color: deltaColor}}>
+                              {trendIcon} {delta > 0 ? '+' : ''}{delta}
+                            </div>
+                            <div className="text-[10px] text-gray-500">pts</div>
+                          </>
+                        ) : (
+                          <div className="text-xs text-gray-500">{trendIcon} sólo 1</div>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+            </div>
+
+            <div className="mt-5 pt-4 border-t border-navy-light/40 text-xs text-gray-400">
+              Cada punto es una medición · Línea conecta el cambio en el tiempo · Línea punteada gris = umbral aceptable (30%)
+            </div>
+          </div>
+          {/* Key findings */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-6">
+            <div className="bg-navy-card border border-teal/30 rounded-xl p-5">
+              <p className="text-teal text-sm font-bold mb-2">✅ Hallazgos Positivos</p>
+              <ul className="text-gray-300 text-xs space-y-1.5">
+                <li>• <strong>5 agentes nuevos</strong> conectados hoy: Carlos, Cesar, Jenifer, Eduardo, Iran</li>
+                <li>• <strong>Carlos y Cesar</strong> con solo 8% de frustración — los mejores nuevos</li>
+                <li>• <strong>Carlos</strong> ya opera como senior — empatía, escalación, conocimiento de producto</li>
+                <li>• <strong>Jenifer</strong> con 17% — buen baseline para una agente nueva</li>
+              </ul>
+            </div>
+            <div className="bg-navy-card border border-orange-500/30 rounded-xl p-5">
+              <p className="text-orange-400 text-sm font-bold mb-2">⚠️ Áreas de Atención</p>
+              <ul className="text-gray-300 text-xs space-y-1.5">
+                <li>• <strong>Iran</strong> con 42% — confunde nombres de brokers, no cumple SLAs prometidos</li>
+                <li>• <strong>Ana Guzmán y Lorena</strong> subieron a 45% y 50% (era 0% en mañana)</li>
+                <li>• <strong>9 cuentas senior cerradas</strong> de Evolution API — sin datos hoy</li>
+                <li>• Bug recurrente en 4 corridas: pagos no se reflejan en la app</li>
+              </ul>
+            </div>
+          </div>
+        </Section>
+      );
+    }
+
+    // High-level summary of the four pillar metrics for the Resumen tab.
+    // Frustración / response time / writing come from the static analysis snapshot;
+    // calls hits the live worker so the headline number stays current.
+    function KeyMetricsSummary({ onJump }) {
+      const [callStats, setCallStats] = React.useState(null);
+      React.useEffect(() => {
+        let cancelled = false;
+        fetch('https://delicate-poetry-a88a.ines-25d.workers.dev/whatsapp-calls', { cache: 'no-store' })
+          .then(r => r.json())
+          .then(d => {
+            if (cancelled || !Array.isArray(d)) return;
+            const total = d.length;
+            const missed = d.filter(c => c.missed).length;
+            setCallStats({ total, missed, missedRate: total ? (missed / total * 100) : 0 });
+          })
+          .catch(() => {});
+        return () => { cancelled = true; };
+      }, []);
+
+      // Frustración del equipo (último vs baseline)
+      const frustNow = 16;
+      const frustBase = 39.7;
+      const frustDelta = (frustBase - frustNow).toFixed(1);
+
+      // Tiempo de respuesta — promedio de medianas por agente
+      const medians = responseTimes.map(r => r.median);
+      const teamMedian = medians.length ? medians.reduce((s, x) => s + x, 0) / medians.length : 0;
+      const under5Avg = responseTimes.length ? responseTimes.reduce((s, r) => s + r.under5, 0) / responseTimes.length : 0;
+
+      // Calidad de escritura — usar la misma conversión a /100 que el tab de Escritura
+      // (100 - score*1.2, donde score interno es "puntos de error" — menor = mejor)
+      const toWritingGrade = (s) => Math.max(0, Math.min(100, Math.round(100 - s * 1.2)));
+      const writingGrades = writingQuality.map(w => toWritingGrade(w.score));
+      const writingAvgGrade = writingGrades.length ? Math.round(writingGrades.reduce((s, x) => s + x, 0) / writingGrades.length) : 0;
+      const writingBest = writingQuality.reduce((best, w) => w.score < best.score ? w : best, writingQuality[0]);
+      const writingBestGrade = toWritingGrade(writingBest.score);
+      const writingLabel = writingAvgGrade >= 85 ? 'Excelente' : writingAvgGrade >= 70 ? 'Bueno' : writingAvgGrade >= 55 ? 'Aceptable' : 'A mejorar';
+
+      const cards = [
+        {
+          key: 'agents',
+          icon: '😤',
+          accent: '#E8505B',
+          label: 'Frustración de los asesores',
+          value: `${frustNow}%`,
+          sub: `↓ ${frustDelta} pts desde Mar 11 (${frustBase}%)`,
+          detail: 'Conversaciones con señales de molestia detectadas',
+        },
+        {
+          key: 'response',
+          icon: '⏱️',
+          accent: '#2EC4B6',
+          label: 'Tiempo de respuesta',
+          value: `${teamMedian.toFixed(1)} min`,
+          sub: `Mediana del equipo · ${under5Avg.toFixed(0)}% bajo 5 min`,
+          detail: `${responseTimes.length} agentes · solo horario laboral`,
+        },
+        {
+          key: 'writing',
+          icon: '✍️',
+          accent: '#F97316',
+          label: 'Calidad de escritura',
+          value: `${writingAvgGrade}/100`,
+          sub: `${writingLabel} · mejor: ${writingBest.agent} (${writingBestGrade}/100)`,
+          detail: 'Promedio del equipo · gramática, tono, profesionalismo',
+        },
+        {
+          key: 'calls',
+          icon: '📞',
+          accent: '#1B2A4A',
+          label: 'Llamadas perdidas',
+          value: callStats ? String(callStats.missed) : '—',
+          sub: callStats ? `${callStats.missedRate.toFixed(0)}% de ${callStats.total} llamadas` : 'Cargando datos en vivo...',
+          detail: 'Webhook live · solo entrantes',
+          live: true,
+        },
+      ];
+
+      return (
+        <Section title="Métricas Clave" id="key-metrics">
+          <p className="text-sm text-gray-500 mb-6 max-w-3xl">
+            Resumen alto-nivel de los cuatro pilares que mide el dashboard. Haz clic en cualquier tarjeta para ir al detalle.
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {cards.map((c, i) => (
+              <button
+                key={c.key}
+                onClick={() => onJump && onJump(c.key)}
+                className="text-left bg-white rounded-2xl p-6 shadow-sm hover:shadow-xl transition-all duration-300 animate-fade hover:-translate-y-0.5 cursor-pointer focus:outline-none focus:ring-2 focus:ring-coral/40"
+                style={{borderLeft: `3px solid ${c.accent}`, animationDelay: `${i * 0.08}s`}}
+              >
+                <div className="flex items-start justify-between mb-3">
+                  <div className="text-2xl opacity-80">{c.icon}</div>
+                  {c.live && (
+                    <span className="inline-flex items-center gap-1 text-[10px] font-mono text-teal bg-teal/10 border border-teal/20 rounded-full px-2 py-0.5">
+                      <span className="w-1.5 h-1.5 rounded-full bg-teal animate-pulse"></span>
+                      LIVE
+                    </span>
+                  )}
+                </div>
+                <div className="text-4xl font-extrabold tracking-tight" style={{color: c.accent}}>{c.value}</div>
+                <div className="text-sm text-gray-700 mt-1 font-semibold">{c.label}</div>
+                <div className="text-xs text-gray-500 mt-1.5">{c.sub}</div>
+                <div className="text-[11px] text-gray-400 mt-3 pt-3 border-t border-gray-100">{c.detail} →</div>
+              </button>
+            ))}
+          </div>
+        </Section>
+      );
+    }
+
+    function TopRequestsChart() {
+      const maxPct = topRequests[0].pct;
+      const getColor = (i) => i < 2 ? '#E8505B' : i < 6 ? '#1B2A4A' : '#94A3B8';
+      return (
+        <Section title="Top 10 Solicitudes de Brokers" id="requests">
+          <div className="bg-white rounded-xl p-4 sm:p-8 shadow-sm">
+            <div className="space-y-3">
+              {topRequests.map((r, i) => (
+                <div key={i} className="flex items-center gap-3 group">
+                  <div className="w-48 sm:w-56 text-right text-xs sm:text-sm text-gray-600 font-medium shrink-0 truncate" title={r.label}>{r.label}</div>
+                  <div className="flex-1 bg-gray-100 rounded-full h-7 relative overflow-hidden">
+                    <div className="h-7 rounded-full animate-bar flex items-center justify-end pr-2" style={{width: `${(r.pct / maxPct) * 100}%`, backgroundColor: getColor(i), animationDelay: `${i * 0.05}s`}}>
+                      <span className="text-white text-xs font-bold">{r.pct}%</span>
+                    </div>
+                  </div>
+                  <div className="w-10 text-right text-xs text-gray-400 font-mono shrink-0">{r.count}</div>
+                </div>
+              ))}
+            </div>
+            <div className="mt-6 p-4 bg-coral/5 border border-coral/20 rounded-lg">
+              <p className="text-sm text-coral font-semibold text-center">
+                📌 El 40% de todas las interacciones son sobre cambios de contrato o logística de firma
+              </p>
+            </div>
+          </div>
+        </Section>
+      );
+    }
+
+    function DonutChart({ data, size = 200, thickness = 28 }) {
+      const radius = (size - thickness) / 2;
+      const circumference = 2 * Math.PI * radius;
+      const center = size / 2;
+      let cumOffset = 0;
+
+      return (
+        <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+          {data.map((d, i) => {
+            const dashLen = (d.pct / 100) * circumference;
+            const offset = cumOffset;
+            cumOffset += dashLen;
+            return (
+              <circle
+                key={i} cx={center} cy={center} r={radius}
+                fill="none" stroke={d.color} strokeWidth={thickness}
+                strokeDasharray={`${dashLen} ${circumference - dashLen}`}
+                strokeDashoffset={-offset}
+                transform={`rotate(-90 ${center} ${center})`}
+                className="donut-segment"
+                style={{'--circumference': circumference, animationDelay: `${i * 0.15}s`}}
+              />
+            );
+          })}
+          <text x={center} y={center - 8} textAnchor="middle" fontSize="36" fontWeight="800" fill="#E8505B" dominantBaseline="middle">41%</text>
+          <text x={center} y={center + 20} textAnchor="middle" fontSize="12" fill="#94A3B8">frustración</text>
+        </svg>
+      );
+    }
+
+    function FrustrationOverview() {
+      const donutData = frustrationSeverity.map(s => ({ pct: s.pct, color: s.color }));
+      return (
+        <Section title="Análisis de Frustración" dark id="frustration">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Left: Donut */}
+            <div className="bg-navy-card rounded-xl p-8 flex flex-col items-center">
+              <DonutChart data={donutData} size={220} thickness={30} />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full mt-6">
+                {frustrationSeverity.filter(s => s.desc).map((s, i) => (
+                  <div key={i} className="flex items-start gap-2 p-3 rounded-lg" style={{background: 'rgba(15,26,51,0.5)'}}>
+                    <div className="w-3 h-3 rounded-full mt-0.5 shrink-0" style={{backgroundColor: s.color}}></div>
+                    <div>
+                      <div className="text-white text-sm font-semibold">{s.level} — {s.count} ({s.pct}%)</div>
+                      <div className="text-gray-400 text-xs mt-0.5">{s.desc}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            {/* Right: Causes */}
+            <div className="bg-navy-card rounded-xl p-8">
+              <h3 className="text-white text-lg font-bold mb-6">¿Qué frustra a los brokers?</h3>
+              <div className="space-y-5">
+                {frustrationCauses.map((c, i) => (
+                  <div key={i}>
+                    <div className="flex justify-between mb-1.5">
+                      <span className="text-gray-300 text-sm">{c.cause}</span>
+                      <span className="text-coral font-bold text-sm">{c.pct}%</span>
+                    </div>
+                    <div className="w-full bg-navy-dark rounded-full h-3">
+                      <div className="h-3 rounded-full animate-bar" style={{width: `${c.pct}%`, background: 'linear-gradient(90deg, #E8505B, #F97316)', animationDelay: `${i * 0.08}s`}}></div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-8 p-4 border border-coral/20 rounded-lg">
+                <p className="text-gray-400 text-xs leading-relaxed">
+                  💡 La causa #1 de frustración es la falta de respuesta oportuna. El 31% de los brokers frustrados reportaron ser ignorados o no poder contactar a su agente CS.
+                </p>
+              </div>
+            </div>
+          </div>
+        </Section>
+      );
+    }
+
+    function ResolutionSection() {
+      const sorted = [...resolutionData].sort((a, b) => b.resolvedPct - a.resolvedPct);
+      const teamResolved = Math.round(sorted.reduce((s, r) => s + r.resolvedPct, 0) / sorted.length);
+      const teamMsgs = Math.round(sorted.reduce((s, r) => s + r.avgMsgs, 0) / sorted.length);
+      const teamEsc = Math.round(sorted.reduce((s, r) => s + r.escalationPct, 0) / sorted.length);
+      const colorRes = (p) => p >= 65 ? '#2EC4B6' : p >= 50 ? '#22C55E' : p >= 35 ? '#F97316' : '#E8505B';
+      const fmtHours = (h) => h < 24 ? `${h.toFixed(0)} h` : `${(h/24).toFixed(1)} d`;
+
+      return (
+        <Section title="Efectividad de Resolución" id="resolution">
+          <div className="bg-white rounded-xl p-4 mb-6 border border-navy/10">
+            <p className="text-xs text-gray-600">
+              🎯 Mide si el agente realmente resolvió el problema del broker · Detección automática por sentimiento de los últimos mensajes del broker ·
+              Las idas y vueltas y escalaciones a otros equipos también se contabilizan
+            </p>
+          </div>
+
+          {/* Top KPIs */}
+          <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-6">
+            <div className="bg-white rounded-xl p-5 shadow-sm" style={{borderLeft: '4px solid #2EC4B6'}}>
+              <div className="text-3xl mb-1">✅</div>
+              <div className="text-3xl font-extrabold text-teal">{teamResolved}%</div>
+              <div className="text-xs text-gray-500 mt-1">Resolución promedio del equipo</div>
+            </div>
+            <div className="bg-white rounded-xl p-5 shadow-sm" style={{borderLeft: '4px solid #1B2A4A'}}>
+              <div className="text-3xl mb-1">⭐</div>
+              <div className="text-2xl font-extrabold text-navy-dark">{sorted[0].agent}</div>
+              <div className="text-xs text-gray-500 mt-1">Mejor resolución · {sorted[0].resolvedPct}%</div>
+            </div>
+            <div className="bg-white rounded-xl p-5 shadow-sm" style={{borderLeft: '4px solid #F97316'}}>
+              <div className="text-3xl mb-1">💬</div>
+              <div className="text-3xl font-extrabold text-orange-500">{teamMsgs}</div>
+              <div className="text-xs text-gray-500 mt-1">Mensajes promedio por conversación</div>
+            </div>
+            <div className="bg-white rounded-xl p-5 shadow-sm" style={{borderLeft: '4px solid #E8505B'}}>
+              <div className="text-3xl mb-1">↗️</div>
+              <div className="text-3xl font-extrabold text-coral">{teamEsc}%</div>
+              <div className="text-xs text-gray-500 mt-1">Conversaciones que requirieron otro equipo</div>
+            </div>
+          </div>
+
+          {/* Per-agent resolution bars */}
+          <div className="bg-white rounded-xl p-6 shadow-sm mb-6">
+            <h3 className="font-bold text-navy-dark mb-1">Distribución de Resolución por Agente</h3>
+            <p className="text-xs text-gray-500 mb-5">Verde = resuelto · Amarillo = sin señal clara · Rojo = sin resolver al final de la conversación</p>
+            <div className="space-y-4">
+              {sorted.map((r, i) => (
+                <div key={i}>
+                  <div className="flex justify-between items-center mb-1">
+                    <span className="text-sm font-medium text-navy-dark">
+                      {r.agent}
+                      {r.isNew && <span className="ml-2 text-xs text-teal bg-teal/10 px-1.5 py-0.5 rounded">NUEVO</span>}
+                      <span className="ml-2 text-xs text-gray-400 font-normal">({r.total} convs)</span>
+                    </span>
+                    <span className="text-sm font-bold" style={{color: colorRes(r.resolvedPct)}}>{r.resolvedPct}% resueltas</span>
+                  </div>
+                  <div className="w-full bg-gray-100 rounded-full h-5 overflow-hidden flex">
+                    <div className="h-5 flex items-center justify-end pr-2" style={{width: `${r.resolvedPct}%`, backgroundColor: '#2EC4B6'}}>
+                      <span className="text-white text-xs font-bold">{r.resolvedPct}%</span>
+                    </div>
+                    <div className="h-5 flex items-center justify-center" style={{width: `${r.unclearPct}%`, backgroundColor: '#FACC15'}}>
+                      {r.unclearPct >= 10 && <span className="text-white text-xs font-bold">{r.unclearPct}%</span>}
+                    </div>
+                    {r.unresolvedPct > 0 && (
+                      <div className="h-5 flex items-center justify-center" style={{width: `${r.unresolvedPct}%`, backgroundColor: '#E8505B'}}>
+                        {r.unresolvedPct >= 10 && <span className="text-white text-xs font-bold">{r.unresolvedPct}%</span>}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="mt-4 flex gap-4 text-xs flex-wrap">
+              <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-sm bg-teal"></span><span className="text-gray-600">Resuelto (broker terminó con "gracias", "perfecto", "listo")</span></span>
+              <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-sm" style={{background: '#FACC15'}}></span><span className="text-gray-600">Sin señal clara</span></span>
+              <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-sm bg-coral"></span><span className="text-gray-600">Sin resolver ("sigue fallando", "todavía no")</span></span>
+            </div>
+          </div>
+
+          {/* Detail table */}
+          <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[640px]">
+                <thead>
+                  <tr className="bg-navy-dark text-white">
+                    <th className="py-3 px-4 text-left text-xs font-semibold">Agente</th>
+                    <th className="py-3 px-4 text-center text-xs font-semibold">Convs</th>
+                    <th className="py-3 px-4 text-center text-xs font-semibold">% Resueltas</th>
+                    <th className="py-3 px-4 text-center text-xs font-semibold">Mensajes prom.</th>
+                    <th className="py-3 px-4 text-center text-xs font-semibold">Duración prom.</th>
+                    <th className="py-3 px-4 text-center text-xs font-semibold">% Necesitó otro equipo</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {sorted.map((r, i) => (
+                    <tr key={i} className={`border-b border-gray-100 ${i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}>
+                      <td className="py-3 px-4 text-sm font-medium text-navy-dark">{r.agent}</td>
+                      <td className="py-3 px-4 text-center text-sm text-gray-500">{r.total}</td>
+                      <td className="py-3 px-4 text-center text-sm font-bold" style={{color: colorRes(r.resolvedPct)}}>{r.resolvedPct}%</td>
+                      <td className="py-3 px-4 text-center text-sm text-gray-700">{r.avgMsgs}</td>
+                      <td className="py-3 px-4 text-center text-sm text-gray-700">{fmtHours(r.avgHours)}</td>
+                      <td className="py-3 px-4 text-center text-sm" style={{color: r.escalationPct > 40 ? '#E8505B' : r.escalationPct > 20 ? '#F97316' : '#22C55E'}}>{r.escalationPct}%</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Methodology */}
+          <div className="mt-6 bg-navy-dark rounded-xl p-5">
+            <p className="text-teal text-sm font-bold mb-2">¿Cómo se mide la resolución?</p>
+            <div className="text-gray-300 text-xs leading-relaxed space-y-1.5">
+              <p><strong className="text-white">Resuelto:</strong> el broker termina la conversación con señales positivas claras ("gracias", "perfecto", "listo", "ya quedó").</p>
+              <p><strong className="text-white">Sin resolver:</strong> el broker termina con señales de frustración o problema persistente ("sigue fallando", "todavía no", "me sigue saliendo el error").</p>
+              <p><strong className="text-white">Sin señal clara:</strong> la conversación termina sin un cierre evidente — el broker dejó de responder o el último mensaje es neutral.</p>
+              <p><strong className="text-white">Necesitó otro equipo:</strong> el agente mencionó al área legal, tech, contratos, pagos o investigación durante la conversación. Alto % no es malo en sí — refleja casos complejos que requieren coordinación interna.</p>
+              <p className="pt-1 text-gray-400">Mensajes y duración promedio son señales adicionales: muchos mensajes + larga duración pueden indicar conversaciones difíciles, no necesariamente mal manejo.</p>
+            </div>
+          </div>
+        </Section>
+      );
+    }
+
+    function WritingQualitySection() {
+      // Convert internal "errors score" (lower is better) to "calificación 0-100" (higher is better)
+      const toGrade = (s) => Math.max(0, Math.min(100, Math.round(100 - s * 1.2)));
+      const sorted = [...writingQuality].map(r => ({...r, grade: toGrade(r.score)})).sort((a, b) => b.grade - a.grade);
+      const teamAvgTypos = (sorted.reduce((s, r) => s + r.typos, 0) / sorted.length).toFixed(1);
+      const teamAvgAccents = (sorted.reduce((s, r) => s + r.missingAccents, 0) / sorted.length).toFixed(1);
+      const teamAvgGrade = Math.round(sorted.reduce((s, r) => s + r.grade, 0) / sorted.length);
+      const colorForGrade = (g) => g >= 85 ? '#2EC4B6' : g >= 70 ? '#22C55E' : g >= 55 ? '#F97316' : '#E8505B';
+      const labelForGrade = (g) => g >= 85 ? 'Excelente' : g >= 70 ? 'Bueno' : g >= 55 ? 'Aceptable' : 'A mejorar';
+
+      return (
+        <Section title="Calidad de Escritura y Profesionalismo" id="writing">
+          <div className="bg-white rounded-xl p-4 mb-6 border border-navy/10">
+            <p className="text-xs text-gray-600">
+              ✍️ Calificación de 0 a 100 (mayor = mejor) basada en análisis automático de gramática, ortografía y tono ·
+              {sorted.reduce((s, r) => s + r.msgs, 0).toLocaleString()} mensajes analizados ·
+              Métricas: typos · acentos · ALL CAPS · emojis · capitalización
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-8">
+            <div className="bg-white rounded-xl p-5 shadow-sm" style={{borderLeft: '4px solid #2EC4B6'}}>
+              <div className="text-3xl mb-1">⭐</div>
+              <div className="text-2xl font-extrabold text-teal">{sorted[0].agent}</div>
+              <div className="text-xs text-gray-500 mt-1">Mejor escritura · <span className="font-bold">{sorted[0].grade}/100</span></div>
+            </div>
+            <div className="bg-white rounded-xl p-5 shadow-sm" style={{borderLeft: '4px solid #F97316'}}>
+              <div className="text-3xl mb-1">📊</div>
+              <div className="text-2xl font-extrabold text-orange-500">{teamAvgGrade}/100</div>
+              <div className="text-xs text-gray-500 mt-1">Calificación promedio del equipo</div>
+            </div>
+            <div className="bg-white rounded-xl p-5 shadow-sm" style={{borderLeft: '4px solid #E8505B'}}>
+              <div className="text-3xl mb-1">📝</div>
+              <div className="text-2xl font-extrabold text-coral">{teamAvgTypos}</div>
+              <div className="text-xs text-gray-500 mt-1">Typos por 100 mensajes (promedio)</div>
+            </div>
+          </div>
+
+          {/* Per-agent detail cards */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+            {sorted.map((r, i) => (
+              <div key={i} className="bg-white rounded-xl p-6 shadow-sm" style={{borderTop: `4px solid ${colorForGrade(r.grade)}`}}>
+                <div className="flex items-start justify-between mb-3">
+                  <div>
+                    <h3 className="text-lg font-bold text-navy-dark flex items-center gap-2">
+                      {r.agent}
+                      {r.isNew && <span className="text-xs text-teal bg-teal/10 px-2 py-0.5 rounded-full font-semibold">NUEVO</span>}
+                    </h3>
+                    <p className="text-xs text-gray-500">{r.msgs.toLocaleString()} mensajes · {r.avgLen} chars promedio</p>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-2xl font-extrabold leading-none" style={{color: colorForGrade(r.grade)}}>{r.grade}<span className="text-xs text-gray-400 font-normal">/100</span></div>
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full mt-1 inline-block" style={{color: colorForGrade(r.grade), backgroundColor: colorForGrade(r.grade) + '20'}}>{labelForGrade(r.grade)}</span>
+                  </div>
+                </div>
+                {/* Metrics grid */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">
+                  <div className="text-center p-2 bg-gray-50 rounded">
+                    <div className="text-lg font-bold" style={{color: r.typos > 2 ? '#E8505B' : r.typos > 0.5 ? '#F97316' : '#2EC4B6'}}>{r.typos}</div>
+                    <div className="text-[10px] text-gray-500 uppercase">Typos/100</div>
+                  </div>
+                  <div className="text-center p-2 bg-gray-50 rounded">
+                    <div className="text-lg font-bold" style={{color: r.missingAccents > 8 ? '#E8505B' : r.missingAccents > 4 ? '#F97316' : '#2EC4B6'}}>{r.missingAccents}%</div>
+                    <div className="text-[10px] text-gray-500 uppercase">Sin acento</div>
+                  </div>
+                  <div className="text-center p-2 bg-gray-50 rounded">
+                    <div className="text-lg font-bold" style={{color: r.lowerStart > 20 ? '#E8505B' : r.lowerStart > 10 ? '#F97316' : '#2EC4B6'}}>{r.lowerStart}%</div>
+                    <div className="text-[10px] text-gray-500 uppercase">Inicio min</div>
+                  </div>
+                  <div className="text-center p-2 bg-gray-50 rounded">
+                    <div className="text-lg font-bold" style={{color: r.emojiPerMsg > 0.5 ? '#E8505B' : '#2EC4B6'}}>{r.emojiPerMsg}</div>
+                    <div className="text-[10px] text-gray-500 uppercase">Emoji/msg</div>
+                  </div>
+                </div>
+                {/* Examples */}
+                {r.examples.bad.length > 0 && (
+                  <div className="bg-coral/5 border border-coral/20 rounded-lg p-3 mb-2">
+                    <p className="text-xs font-semibold text-coral mb-1.5">A mejorar:</p>
+                    <ul className="text-xs text-gray-700 space-y-1">
+                      {r.examples.bad.map((e, j) => <li key={j} className="leading-snug">• {e}</li>)}
+                    </ul>
+                  </div>
+                )}
+                {r.examples.good.length > 0 && (
+                  <div className="bg-teal/5 border border-teal/20 rounded-lg p-3">
+                    <p className="text-xs font-semibold text-teal mb-1.5">Bien hecho:</p>
+                    <ul className="text-xs text-gray-700 space-y-1">
+                      {r.examples.good.map((e, j) => <li key={j} className="leading-snug">• {e}</li>)}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+
+          {/* Methodology */}
+          <div className="mt-8 bg-navy-dark rounded-xl p-5">
+            <p className="text-teal text-sm font-bold mb-2">¿Cómo se calcula la calificación?</p>
+            <div className="text-gray-300 text-xs leading-relaxed space-y-1">
+              <p><strong className="text-white">Calificación = 100 − (errores ponderados × 1.2)</strong>, escala 0-100 donde 100 = perfecto.</p>
+              <p>Ponderaciones del cálculo de errores: typos (×3) + sin acentos (×1) + ALL CAPS (×0.5) + inicio con minúscula (×0.3) + emojis excesivos (×5 si {'>'} 0.5/msg).</p>
+              <p>Excluye nombres propios en mayúsculas (ej. "ISABEL GONZÁLEZ") y URLs. Solo considera mensajes del agente.</p>
+              <p className="pt-1 text-gray-400">Bandas: <span className="text-teal">85-100 Excelente</span> · <span className="text-green-400">70-84 Bueno</span> · <span className="text-orange-400">55-69 Aceptable</span> · <span className="text-coral">{'<'}55 A mejorar</span></p>
+            </div>
+          </div>
+        </Section>
+      );
+    }
+
+    function ResponseTimeSection() {
+      const fmt = (mins) => {
+        if (mins < 60) return `${mins.toFixed(1)} min`;
+        if (mins < 60 * 8) return `${(mins/60).toFixed(1)} h`;
+        return `${(mins/60/8).toFixed(1)} días háb.`;
+      };
+      const colorFor = (mins) => mins < 30 ? '#2EC4B6' : mins < 120 ? '#F97316' : '#E8505B';
+      const sorted = [...responseTimes].sort((a, b) => a.median - b.median);
+      const teamMedian = (sorted.reduce((s, r) => s + r.median, 0) / sorted.length).toFixed(1);
+      const teamUnder30 = (sorted.reduce((s, r) => s + r.under30, 0) / sorted.length).toFixed(0);
+      return (
+        <Section title="Tiempo de Respuesta a Mensajes" dark id="response-time">
+          {/* Top KPIs */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-8">
+            <div className="bg-navy-card rounded-xl p-6 text-center">
+              <div className="text-gray-400 text-xs uppercase tracking-wide mb-1">Mediana del equipo</div>
+              <div className="text-4xl font-extrabold text-teal">{teamMedian} min</div>
+              <div className="text-gray-500 text-xs mt-1">Tiempo en horario laboral</div>
+            </div>
+            <div className="bg-navy-card rounded-xl p-6 text-center">
+              <div className="text-gray-400 text-xs uppercase tracking-wide mb-1">Respuestas en menos de 30 min</div>
+              <div className="text-4xl font-extrabold text-orange-400">{teamUnder30}%</div>
+              <div className="text-gray-500 text-xs mt-1">Promedio del equipo</div>
+            </div>
+            <div className="bg-navy-card rounded-xl p-6 text-center">
+              <div className="text-gray-400 text-xs uppercase tracking-wide mb-1">Mejor agente</div>
+              <div className="text-4xl font-extrabold text-teal">{sorted[0].agent}</div>
+              <div className="text-gray-500 text-xs mt-1">Mediana: {fmt(sorted[0].median)}</div>
+            </div>
+          </div>
+
+          <div className="bg-navy-card rounded-xl p-6 sm:p-8">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-white text-lg font-bold">Por Agente</h3>
+              <p className="text-gray-400 text-xs">Solo se cuenta tiempo en horario laboral (L-V 9-19h, S 9-15h MX)</p>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[640px]">
+                <thead>
+                  <tr className="border-b border-navy-light">
+                    <th className="py-2 px-3 text-left text-xs text-gray-400 font-semibold">Agente</th>
+                    <th className="py-2 px-3 text-center text-xs text-gray-400 font-semibold">Mediana</th>
+                    <th className="py-2 px-3 text-center text-xs text-gray-400 font-semibold">Promedio</th>
+                    <th className="py-2 px-3 text-center text-xs text-gray-400 font-semibold">{'< 5 min'}</th>
+                    <th className="py-2 px-3 text-center text-xs text-gray-400 font-semibold">{'< 30 min'}</th>
+                    <th className="py-2 px-3 text-left text-xs text-gray-400 font-semibold w-44">Distribución</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {sorted.map((r, i) => (
+                    <tr key={i} className="border-b border-navy-light/40">
+                      <td className="py-3 px-3 text-sm text-white font-medium">
+                        {r.agent}
+                        {r.isNew && <span className="ml-2 text-xs text-teal bg-teal/10 px-1.5 py-0.5 rounded">NUEVO</span>}
+                      </td>
+                      <td className="py-3 px-3 text-center text-sm font-bold" style={{color: colorFor(r.median)}}>{fmt(r.median)}</td>
+                      <td className="py-3 px-3 text-center text-sm text-gray-300">{fmt(r.avg)}</td>
+                      <td className="py-3 px-3 text-center text-sm">
+                        <span className="text-teal font-semibold">{r.under5}%</span>
+                      </td>
+                      <td className="py-3 px-3 text-center text-sm">
+                        <span className="text-orange-400 font-semibold">{r.under30}%</span>
+                      </td>
+                      <td className="py-3 px-3">
+                        <div className="w-full bg-navy-dark rounded-full h-2 overflow-hidden flex">
+                          <div className="h-2" style={{width: `${r.under5}%`, backgroundColor: '#2EC4B6'}}></div>
+                          <div className="h-2" style={{width: `${r.under30 - r.under5}%`, backgroundColor: '#F97316', opacity: 0.7}}></div>
+                          <div className="h-2" style={{width: `${100 - r.under30}%`, backgroundColor: '#E8505B', opacity: 0.6}}></div>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div className="mt-4 flex gap-4 text-xs text-gray-500 flex-wrap">
+              <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-sm bg-teal"></span>Bajo 5 min</span>
+              <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-sm" style={{background: 'rgba(249,115,22,0.7)'}}></span>5-30 min</span>
+              <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-sm" style={{background: 'rgba(232,80,91,0.6)'}}></span>{'> 30 min'}</span>
+            </div>
+          </div>
+        </Section>
+      );
+    }
+
+    // Calls section — fetches live from Cloudflare Worker, auto-refreshes every 30s
+    function CallsSection() {
+      const [calls, setCalls] = React.useState(null);
+      const [error, setError] = React.useState(null);
+      const [lastUpdated, setLastUpdated] = React.useState(null);
+      const [refreshing, setRefreshing] = React.useState(false);
+      const [windowMode, setWindowMode] = React.useState('daily'); // 'daily' | 'weekly' | 'monthly'
+
+      const fetchCalls = React.useCallback(() => {
+        setRefreshing(true);
+        fetch('https://delicate-poetry-a88a.ines-25d.workers.dev/whatsapp-calls', { cache: 'no-store' })
+          .then(r => r.json())
+          .then(d => {
+            setCalls(d);
+            setLastUpdated(new Date());
+            setError(null);
+          })
+          .catch(e => setError(e.message))
+          .finally(() => setRefreshing(false));
+      }, []);
+
+      React.useEffect(() => {
+        fetchCalls();
+        const interval = setInterval(fetchCalls, 30000); // 30s auto-refresh
+        return () => clearInterval(interval);
+      }, [fetchCalls]);
+
+      if (error) {
+        return (
+          <Section title="Llamadas WhatsApp" id="calls">
+            <div className="bg-white rounded-xl p-8 text-center">
+              <p className="text-gray-500 text-sm">No se pudieron cargar las llamadas: {error}</p>
+            </div>
+          </Section>
+        );
+      }
+      if (calls === null) {
+        return (
+          <Section title="Llamadas WhatsApp" id="calls">
+            <div className="bg-white rounded-xl p-8 text-center">
+              <p className="text-gray-500 text-sm">Cargando datos de llamadas...</p>
+            </div>
+          </Section>
+        );
+      }
+
+      // Compute metrics
+      const cleanInstance = (n) => (n || '').replace(/^Whats App /, '').replace(/^WhatsApp /, '');
+
+      // Hora REAL de la llamada (no la del webhook). El webhook puede tardar
+      // horas o días en re-emitir el evento si la cuenta estaba "offline".
+      const callDate = (c) => new Date(c.raw?.data?.date || c.ts);
+
+      // Horario laboral MoradaUno (hora CDMX): L-V 9-19, Sáb 9-15, Dom cerrado.
+      // El navegador debe estar en TZ America/Mexico_City para que coincida.
+      const isBusinessHours = (date) => {
+        const day = date.getDay();
+        const hour = date.getHours();
+        if (day === 0) return false;
+        if (day === 6) return hour >= 9 && hour < 15;
+        return hour >= 9 && hour < 19;
+      };
+
+      // Decorate every call with parsed date + clean agent once
+      const allCalls = calls.map(c => ({ ...c, _dt: callDate(c), _agent: cleanInstance(c.instance) }));
+
+      const now = new Date();
+      const cutoff30d = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+      const calls30d = allCalls.filter(c => c._dt >= cutoff30d);
+
+      // ── KPIs últimos 30 días ─────────────────────────────────────────
+      const total30d = calls30d.length;
+      const missed30d = calls30d.filter(c => c.missed).length;
+      const missedRate30d = total30d ? (missed30d / total30d * 100).toFixed(1) : '0';
+      const bizHours30d = calls30d.filter(c => isBusinessHours(c._dt)).length;
+      const bizHoursRate30d = total30d ? (bizHours30d / total30d * 100).toFixed(0) : '0';
+
+      // ── Ventana del toggle (daily/weekly/monthly) ────────────────────
+      // daily   → últimos 30 días, 1 barra por día
+      // weekly  → últimas 12 semanas (lunes-domingo CDMX), 1 barra por semana
+      // monthly → últimos 6 meses, 1 barra por mes
+      const startOfDay = (d) => { const x = new Date(d); x.setHours(0,0,0,0); return x; };
+      const startOfWeek = (d) => {
+        const x = startOfDay(d);
+        const day = x.getDay(); // 0=Sun
+        const diff = (day === 0 ? -6 : 1 - day); // back to Monday
+        x.setDate(x.getDate() + diff);
+        return x;
+      };
+      const startOfMonth = (d) => { const x = new Date(d); x.setDate(1); x.setHours(0,0,0,0); return x; };
+      const addDays = (d, n) => { const x = new Date(d); x.setDate(x.getDate() + n); return x; };
+      const addMonths = (d, n) => { const x = new Date(d); x.setMonth(x.getMonth() + n); return x; };
+
+      let windowStart, buckets;
+      if (windowMode === 'daily') {
+        windowStart = addDays(startOfDay(now), -29);
+        buckets = Array.from({length: 30}, (_, i) => {
+          const s = addDays(windowStart, i);
+          const e = addDays(s, 1);
+          return { start: s, end: e, label: s.toLocaleDateString('es-MX', { day: '2-digit', month: 'short', timeZone: 'America/Mexico_City' }) };
+        });
+      } else if (windowMode === 'weekly') {
+        windowStart = addDays(startOfWeek(now), -7 * 11);
+        buckets = Array.from({length: 12}, (_, i) => {
+          const s = addDays(windowStart, i * 7);
+          const e = addDays(s, 7);
+          return { start: s, end: e, label: s.toLocaleDateString('es-MX', { day: '2-digit', month: 'short', timeZone: 'America/Mexico_City' }) };
+        });
+      } else {
+        windowStart = addMonths(startOfMonth(now), -5);
+        buckets = Array.from({length: 6}, (_, i) => {
+          const s = addMonths(windowStart, i);
+          const e = addMonths(s, 1);
+          return { start: s, end: e, label: s.toLocaleDateString('es-MX', { month: 'short', year: '2-digit', timeZone: 'America/Mexico_City' }) };
+        });
+      }
+      const callsWindow = allCalls.filter(c => c._dt >= windowStart && c._dt < buckets[buckets.length - 1].end);
+
+      // Series de tiempo: cada bucket con totales + perdidas
+      buckets.forEach(b => { b.total = 0; b.missed = 0; });
+      callsWindow.forEach(c => {
+        for (const b of buckets) {
+          if (c._dt >= b.start && c._dt < b.end) {
+            b.total++;
+            if (c.missed) b.missed++;
+            break;
+          }
+        }
+      });
+
+      // Por agente en la ventana seleccionada
+      const byAgentWin = {};
+      callsWindow.forEach(c => {
+        const a = c._agent;
+        if (!byAgentWin[a]) byAgentWin[a] = { total: 0, missed: 0 };
+        byAgentWin[a].total++;
+        if (c.missed) byAgentWin[a].missed++;
+      });
+      const agentRows = Object.entries(byAgentWin)
+        .map(([agent, s]) => ({
+          agent,
+          total: s.total,
+          missed: s.missed,
+          answered: s.total - s.missed,
+          missedRate: s.total ? (s.missed / s.total * 100) : 0,
+        }))
+        .sort((a, b) => b.total - a.total);
+      const maxAgentTotal = Math.max(1, ...agentRows.map(a => a.total));
+
+      // ── Datos que siguen usando TODAS las llamadas (no afectados por toggle) ─
+      const byHour = Array.from({length: 24}, () => ({total: 0, missed: 0}));
+      const byClient = {};
+      allCalls.forEach(c => {
+        const hour = c._dt.getHours();
+        if (hour >= 0 && hour < 24) {
+          byHour[hour].total++;
+          if (c.missed) byHour[hour].missed++;
+        }
+        if (c.remote) {
+          if (!byClient[c.remote]) byClient[c.remote] = { total: 0, missed: 0, agents: new Set(), lastCall: c._dt };
+          byClient[c.remote].total++;
+          if (c.missed) byClient[c.remote].missed++;
+          byClient[c.remote].agents.add(c._agent);
+          if (c._dt > byClient[c.remote].lastCall) byClient[c.remote].lastCall = c._dt;
+        }
+      });
+
+      const totalCalls = allCalls.length;
+
+      const recentCalls = [...allCalls]
+        .sort((a, b) => b._dt - a._dt)
+        .slice(0, 20);
+
+      const fmtMxTime = (d) => d.toLocaleString('es-MX', {
+        weekday: 'short', day: '2-digit', month: 'short',
+        hour: '2-digit', minute: '2-digit', hour12: false,
+        timeZone: 'America/Mexico_City',
+      });
+
+      const repeatCallers = Object.entries(byClient)
+        .filter(([_, v]) => v.total >= 3)
+        .sort((a, b) => b[1].total - a[1].total)
+        .slice(0, 10);
+
+      const empty = totalCalls === 0;
+      const maxBucketTotal = Math.max(1, ...buckets.map(b => b.total));
+      const windowMissed = callsWindow.filter(c => c.missed).length;
+      const windowMissedRate = callsWindow.length ? (windowMissed / callsWindow.length * 100) : 0;
+      const windowLabel = windowMode === 'daily' ? 'Últimos 30 días'
+                        : windowMode === 'weekly' ? 'Últimas 12 semanas'
+                        : 'Últimos 6 meses';
+
+      const lastUpdatedStr = lastUpdated ? lastUpdated.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : '—';
+      return (
+        <Section title="Llamadas WhatsApp" id="calls">
+          <div className="bg-white rounded-xl p-4 mb-6 border border-teal/20 flex items-center justify-between flex-wrap gap-3">
+            <p className="text-xs text-gray-600">
+              📡 Live data · {totalCalls} llamadas registradas
+              <span className="ml-3 text-gray-400">Actualizado: {lastUpdatedStr}</span>
+              <span className="ml-3 inline-flex items-center gap-1 text-teal">
+                <span className={`w-2 h-2 rounded-full bg-teal ${refreshing ? 'animate-pulse' : ''}`}></span>
+                Auto-refresh 30s
+              </span>
+            </p>
+            <button
+              onClick={fetchCalls}
+              disabled={refreshing}
+              className="text-xs bg-teal/10 hover:bg-teal/20 text-teal font-semibold px-3 py-1.5 rounded-md transition-colors disabled:opacity-50"
+            >
+              {refreshing ? 'Actualizando...' : '↻ Refrescar ahora'}
+            </button>
+          </div>
+
+          {empty && (
+            <div className="bg-white rounded-xl p-12 text-center">
+              <div className="text-5xl mb-3">📞</div>
+              <p className="text-gray-700 font-bold mb-1">Esperando datos de llamadas</p>
+              <p className="text-gray-500 text-sm max-w-md mx-auto">El webhook está activo. Los datos aparecerán aquí en cuanto entren las primeras llamadas a las cuentas conectadas.</p>
+            </div>
+          )}
+
+          {!empty && (
+            <>
+              {/* Banner de limitaciones del webhook */}
+              <div className="bg-orange-50 border border-orange-200 rounded-xl p-4 mb-6 text-xs text-orange-900 leading-relaxed">
+                <p className="font-bold mb-1.5">⚠️ Qué sabemos y qué no</p>
+                <p>
+                  <strong>Sí tenemos:</strong> quién llamó, a qué agente, hora real CDMX, si fue audio o video, y el resultado (perdida, rechazada, contestada).
+                  {' '}<strong>No tenemos:</strong> la duración exacta de la llamada ni si el agente devolvió la llamada.
+                </p>
+              </div>
+
+              {/* KPI cards — siempre últimos 30 días */}
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-500">Resumen · Últimos 30 días</h3>
+                <span className="text-xs text-gray-400">{total30d} llamadas registradas</span>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+                <div className="bg-white rounded-xl p-5 shadow-sm" style={{borderLeft: '4px solid #2EC4B6'}}>
+                  <div className="text-3xl mb-1">📞</div>
+                  <div className="text-3xl font-extrabold text-navy-dark">{total30d}</div>
+                  <div className="text-xs text-gray-500 mt-1">Total llamadas · 30d</div>
+                </div>
+                <div className="bg-white rounded-xl p-5 shadow-sm" style={{borderLeft: '4px solid #E8505B'}}>
+                  <div className="text-3xl mb-1">❌</div>
+                  <div className="text-3xl font-extrabold text-coral">{missedRate30d}%</div>
+                  <div className="text-xs text-gray-500 mt-1">Perdidas · {missed30d} de {total30d}</div>
+                </div>
+                <div className="bg-white rounded-xl p-5 shadow-sm" style={{borderLeft: '4px solid #F97316'}}>
+                  <div className="text-3xl mb-1">🕘</div>
+                  <div className="text-3xl font-extrabold text-orange-500">{bizHoursRate30d}%</div>
+                  <div className="text-xs text-gray-500 mt-1">En horario laboral · {bizHours30d} de {total30d}</div>
+                </div>
+              </div>
+
+              {/* Toggle D/W/M + bloques que dependen de él */}
+              <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
+                <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-500">Volumen y perdidas · {windowLabel}</h3>
+                <div className="inline-flex bg-gray-100 rounded-lg p-1 text-xs font-semibold">
+                  {[['daily','Diaria'],['weekly','Semanal'],['monthly','Mensual']].map(([k, label]) => (
+                    <button key={k} onClick={() => setWindowMode(k)}
+                      className={`px-3 py-1.5 rounded-md transition-colors ${windowMode === k ? 'bg-white text-navy-dark shadow-sm' : 'text-gray-500 hover:text-navy-dark'}`}>
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Time series — volumen total con perdidas en coral */}
+              <div className="bg-white rounded-xl p-6 shadow-sm mb-6">
+                <div className="flex items-baseline justify-between mb-1 flex-wrap gap-2">
+                  <h4 className="font-bold text-navy-dark">📊 Volumen de llamadas</h4>
+                  <div className="text-xs text-gray-500">
+                    <span className="font-bold text-navy-dark">{callsWindow.length}</span> totales ·
+                    <span className="font-bold text-coral ml-1">{windowMissedRate.toFixed(0)}%</span> perdidas
+                  </div>
+                </div>
+                <div className="flex items-center gap-4 text-xs text-gray-600 mb-4">
+                  <span className="inline-flex items-center gap-1.5"><span className="w-3 h-3 rounded-sm bg-coral"></span> Perdidas</span>
+                  <span className="inline-flex items-center gap-1.5"><span className="w-3 h-3 rounded-sm bg-teal"></span> Contestadas</span>
+                </div>
+                {(() => {
+                  const chartH = 200;
+                  return (
+                    <>
+                      <div className="relative" style={{height: `${chartH}px`}}>
+                        <div className="relative flex items-end gap-1 h-full">
+                          {buckets.map((b, i) => {
+                            const total = b.total;
+                            const missed = b.missed;
+                            const answered = total - missed;
+                            const totalH = total ? Math.max(6, (total / maxBucketTotal) * chartH) : 2;
+                            const missedH = total ? (missed / total) * totalH : 0;
+                            const answeredH = total ? (answered / total) * totalH : 0;
+                            const missedPct = total ? Math.round((missed / total) * 100) : 0;
+                            return (
+                              <div key={i} className="flex-1 flex flex-col items-center justify-end relative group">
+                                {total > 0 && (
+                                  <div className="absolute -top-5 text-[10px] font-bold text-navy-dark">{total}</div>
+                                )}
+                                <div className="w-full flex flex-col-reverse rounded-t overflow-hidden" style={{height: `${totalH}px`, opacity: total ? 1 : 0.15}}
+                                     title={`${b.label}: ${total} totales · ${missed} perdidas (${missedPct}%)`}>
+                                  {answered > 0 && (
+                                    <div style={{height: `${answeredH}px`, backgroundColor: '#2EC4B6'}}></div>
+                                  )}
+                                  {missed > 0 && (
+                                    <div className="flex items-center justify-center" style={{height: `${missedH}px`, backgroundColor: '#E8505B'}}>
+                                      {missedH >= 18 && (
+                                        <span className="text-[10px] font-bold text-white">{missedPct}%</span>
+                                      )}
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                      <div className="flex gap-1 mt-2 text-[10px] text-gray-500">
+                        {buckets.map((b, i) => {
+                          // Espaciar etiquetas si hay muchas barras
+                          const step = buckets.length > 15 ? Math.ceil(buckets.length / 8) : 1;
+                          const show = i % step === 0 || i === buckets.length - 1;
+                          return (
+                            <div key={i} className="flex-1 text-center whitespace-nowrap overflow-hidden">
+                              {show ? b.label : ''}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </>
+                  );
+                })()}
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Per-agent stacked horizontal bars: largo = volumen, color = perdidas vs contestadas */}
+                <div className="bg-white rounded-xl p-6 shadow-sm">
+                  <h3 className="font-bold text-navy-dark mb-1">📞 Llamadas por Agente</h3>
+                  <p className="text-xs text-gray-500 mb-4">Largo de la barra = volumen real · Coral = perdidas, Teal = contestadas</p>
+                  <div className="flex items-center gap-4 text-[11px] text-gray-600 mb-3">
+                    <span className="inline-flex items-center gap-1.5"><span className="w-3 h-3 rounded-sm bg-coral"></span> Perdidas</span>
+                    <span className="inline-flex items-center gap-1.5"><span className="w-3 h-3 rounded-sm bg-teal"></span> Contestadas</span>
+                  </div>
+                  {agentRows.length === 0 ? (
+                    <p className="text-gray-400 text-sm py-6 text-center">Sin llamadas en esta ventana.</p>
+                  ) : (
+                    <div className="space-y-3">
+                      {agentRows.map((a, i) => {
+                        const widthPct = (a.total / maxAgentTotal) * 100;
+                        const missedPct = a.total ? (a.missed / a.total) * 100 : 0;
+                        const answeredPct = 100 - missedPct;
+                        return (
+                          <div key={i}>
+                            <div className="flex justify-between items-baseline text-sm mb-1">
+                              <span className="font-medium truncate mr-2">{a.agent}</span>
+                              <span className="text-xs whitespace-nowrap">
+                                <span className="font-bold text-navy-dark">{a.total}</span>
+                                <span className="text-gray-400 mx-1">·</span>
+                                <span className="font-bold" style={{color: a.missedRate > 50 ? '#E8505B' : a.missedRate > 25 ? '#F97316' : '#2EC4B6'}}>{a.missedRate.toFixed(0)}% perdidas</span>
+                              </span>
+                            </div>
+                            <div className="w-full bg-gray-50 rounded h-6 overflow-hidden">
+                              <div className="flex h-6 rounded overflow-hidden" style={{width: `${widthPct}%`}}
+                                   title={`${a.agent}: ${a.total} totales · ${a.missed} perdidas (${a.missedRate.toFixed(0)}%)`}>
+                                {answeredPct > 0 && (
+                                  <div className="h-full" style={{width: `${answeredPct}%`, backgroundColor: '#2EC4B6'}}></div>
+                                )}
+                                {missedPct > 0 && (
+                                  <div className="h-full" style={{width: `${missedPct}%`, backgroundColor: '#E8505B'}}></div>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+
+                {/* Hours of day — stacked bars (missed vs answered) */}
+                <div className="bg-white rounded-xl p-6 shadow-sm">
+                  <h3 className="font-bold text-navy-dark mb-1">📊 Llamadas por Hora (CDMX)</h3>
+                  <p className="text-xs text-gray-500 mb-2">Volumen total acumulado · % adentro = perdidas sobre total</p>
+                  <div className="flex items-center gap-4 text-xs text-gray-600 mb-4">
+                    <span className="inline-flex items-center gap-1.5"><span className="w-3 h-3 rounded-sm bg-coral"></span> Perdidas</span>
+                    <span className="inline-flex items-center gap-1.5"><span className="w-3 h-3 rounded-sm bg-teal"></span> Contestadas</span>
+                    <span className="inline-flex items-center gap-1.5 ml-auto"><span className="w-3 h-3 rounded-sm bg-teal/10 border border-dashed border-teal/40"></span> Horario laboral</span>
+                  </div>
+                  {(() => {
+                    const maxTotal = Math.max(1, ...byHour.map(h => h.total));
+                    const chartH = 180;
+                    return (
+                      <>
+                        <div className="relative" style={{height: `${chartH}px`}}>
+                          {/* Banda visual de horario laboral 9h-19h */}
+                          <div className="absolute top-0 bottom-0 bg-teal/5 border-x border-dashed border-teal/30 pointer-events-none"
+                               style={{left: `${(9/24)*100}%`, width: `${(10/24)*100}%`}}></div>
+                          <div className="relative flex items-end gap-1 h-full">
+                            {byHour.map((h, hour) => {
+                              const total = h.total;
+                              const missed = h.missed;
+                              const answered = total - missed;
+                              const totalH = total ? Math.max(8, (total / maxTotal) * chartH) : 2;
+                              const missedH = total ? (missed / total) * totalH : 0;
+                              const answeredH = total ? (answered / total) * totalH : 0;
+                              const missedPct = total ? Math.round((missed / total) * 100) : 0;
+                              return (
+                                <div key={hour} className="flex-1 flex flex-col items-center justify-end relative">
+                                  {total > 0 && (
+                                    <div className="absolute -top-4 text-[10px] font-bold text-navy-dark">{total}</div>
+                                  )}
+                                  <div className="w-full flex flex-col-reverse rounded-t overflow-hidden relative" style={{height: `${totalH}px`, opacity: total ? 1 : 0.2}}
+                                       title={`${hour}h: ${missed} perdidas / ${total} totales`}>
+                                    {/* Contestadas (teal) abajo */}
+                                    {answered > 0 && (
+                                      <div style={{height: `${answeredH}px`, backgroundColor: '#2EC4B6'}}></div>
+                                    )}
+                                    {/* Perdidas (coral) arriba */}
+                                    {missed > 0 && (
+                                      <div className="flex items-center justify-center" style={{height: `${missedH}px`, backgroundColor: '#E8505B'}}>
+                                        {missedH >= 18 && (
+                                          <span className="text-[10px] font-bold text-white">{missedPct}%</span>
+                                        )}
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                        <div className="flex justify-between text-xs text-gray-400 px-1 mt-2">
+                          <span>0h</span><span>6h</span><span>9h</span><span>12h</span><span>19h</span><span>23h</span>
+                        </div>
+                      </>
+                    );
+                  })()}
+                </div>
+
+                {/* Repeat callers */}
+                <div className="bg-white rounded-xl p-6 shadow-sm lg:col-span-2">
+                  <h3 className="font-bold text-navy-dark mb-4">🔁 Clientes que llaman repetidamente (señal de frustración)</h3>
+                  {repeatCallers.length === 0 ? (
+                    <p className="text-gray-500 text-sm">Aún no hay clientes con 3+ llamadas registradas.</p>
+                  ) : (
+                    <table className="w-full">
+                      <thead>
+                        <tr className="border-b border-gray-100">
+                          <th className="py-2 px-3 text-left text-xs text-gray-500 font-semibold">Cliente</th>
+                          <th className="py-2 px-3 text-center text-xs text-gray-500 font-semibold">Total</th>
+                          <th className="py-2 px-3 text-center text-xs text-gray-500 font-semibold">Perdidas</th>
+                          <th className="py-2 px-3 text-left text-xs text-gray-500 font-semibold">Última llamada</th>
+                          <th className="py-2 px-3 text-left text-xs text-gray-500 font-semibold">Agente(s)</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {repeatCallers.map(([client, v], i) => (
+                          <tr key={i} className="border-b border-gray-50">
+                            <td className="py-2 px-3 text-sm font-mono">{(client || '').replace('@s.whatsapp.net', '').replace('@lid', '')}</td>
+                            <td className="py-2 px-3 text-center text-sm font-bold">{v.total}</td>
+                            <td className="py-2 px-3 text-center text-sm font-bold text-coral">{v.missed}</td>
+                            <td className="py-2 px-3 text-xs text-gray-600">{fmtMxTime(v.lastCall)}</td>
+                            <td className="py-2 px-3 text-sm text-gray-600">{Array.from(v.agents).join(', ')}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  )}
+                </div>
+
+                {/* Recent calls — full detail with real call time */}
+                <div className="bg-white rounded-xl p-6 shadow-sm lg:col-span-2">
+                  <h3 className="font-bold text-navy-dark mb-1">📋 Últimas llamadas (hora real CDMX)</h3>
+                  <p className="text-xs text-gray-500 mb-4">
+                    Cada fila muestra cuándo entró la llamada al teléfono del agente.
+                    {recentCalls.some(c => (c.remote || '').includes('@lid')) && (
+                      <span> Los IDs de cliente terminados en <code>@lid</code> son anonimizados por WhatsApp; no se puede recuperar el teléfono ni el nombre desde el webhook.</span>
+                    )}
+                  </p>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="border-b border-gray-100">
+                          <th className="py-2 px-3 text-left text-xs text-gray-500 font-semibold">Hora real (CDMX)</th>
+                          <th className="py-2 px-3 text-left text-xs text-gray-500 font-semibold">Agente</th>
+                          <th className="py-2 px-3 text-left text-xs text-gray-500 font-semibold">Cliente</th>
+                          <th className="py-2 px-3 text-center text-xs text-gray-500 font-semibold">Estado</th>
+                          <th className="py-2 px-3 text-center text-xs text-gray-500 font-semibold">Horario</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {recentCalls.map((c) => {
+                          const inBiz = isBusinessHours(c._dt);
+                          const remote = c.remote || '';
+                          // @s.whatsapp.net = teléfono real (raro). @lid = ID privado anónimo (lo común).
+                          let clientCell;
+                          if (remote.endsWith('@s.whatsapp.net')) {
+                            const num = remote.replace('@s.whatsapp.net', '');
+                            clientCell = <span className="font-mono">+{num}</span>;
+                          } else if (remote.endsWith('@lid')) {
+                            const id = remote.replace('@lid', '');
+                            const short = id.length > 10 ? `${id.slice(0, 6)}…${id.slice(-4)}` : id;
+                            clientCell = <span className="font-mono text-gray-400" title={`ID privado WhatsApp: ${id}`}>{short} <span className="text-[10px] text-gray-300">(privado)</span></span>;
+                          } else {
+                            clientCell = <span className="font-mono text-gray-400">{remote || '—'}</span>;
+                          }
+                          return (
+                            <tr key={c.id} className="border-b border-gray-50">
+                              <td className="py-2 px-3 text-xs font-mono text-gray-700 whitespace-nowrap">{fmtMxTime(c._dt)}</td>
+                              <td className="py-2 px-3 text-xs font-medium">{c._agent}</td>
+                              <td className="py-2 px-3 text-xs">{clientCell}</td>
+                              <td className="py-2 px-3 text-center text-xs">
+                                {c.missed
+                                  ? <span className="inline-block px-2 py-0.5 rounded-full bg-coral/10 text-coral font-bold">Perdida</span>
+                                  : <span className="inline-block px-2 py-0.5 rounded-full bg-teal/10 text-teal font-bold">Contestada</span>}
+                              </td>
+                              <td className="py-2 px-3 text-center text-xs">
+                                {inBiz
+                                  ? <span className="inline-block px-2 py-0.5 rounded-full bg-teal/10 text-teal font-semibold">Laboral</span>
+                                  : <span className="inline-block px-2 py-0.5 rounded-full bg-gray-100 text-gray-500 font-semibold">Fuera</span>}
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                  {totalCalls > recentCalls.length && (
+                    <p className="text-xs text-gray-400 mt-3">Mostrando las {recentCalls.length} más recientes de {totalCalls}.</p>
+                  )}
+                </div>
+              </div>
+            </>
+          )}
+        </Section>
+      );
+    }
+
+    function AgentRankingTable() {
+      const getRateColor = (rate) => rate === null ? '#94A3B8' : rate >= 50 ? '#E8505B' : rate >= 35 ? '#F97316' : rate >= 20 ? '#FACC15' : '#2EC4B6';
+      const getRateBg = (rate) => rate === null ? '#F1F5F9' : rate >= 50 ? '#FEE2E2' : rate >= 35 ? '#FEF3C7' : rate >= 20 ? '#FEF9C3' : '#D1FAE5';
+      // Sort by latest available rate
+      const sorted = [...agentRanking].sort((a, b) => {
+        const aRate = a.jun2 ?? a.may13 ?? a.may4pm ?? a.may4 ?? a.mar30 ?? a.rate ?? 0;
+        const bRate = b.jun2 ?? b.may13 ?? b.may4pm ?? b.may4 ?? b.mar30 ?? b.rate ?? 0;
+        return bRate - aRate;
+      });
+      const renderCell = (val) => {
+        if (val === null || val === undefined) return <span className="text-xs text-gray-300">—</span>;
+        return <span className="inline-block text-xs font-bold px-2 py-0.5 rounded-full" style={{color: getRateColor(val), backgroundColor: getRateBg(val)}}>{val}%</span>;
+      };
+      return (
+        <Section title="Ranking de Agentes CS — 6 Mediciones" id="agents">
+          {/* Methodology explanation */}
+          <div className="bg-white rounded-xl p-5 mb-5 shadow-sm border-l-4 border-coral">
+            <h3 className="text-base font-bold text-navy-dark mb-2">¿Cómo se mide la frustración?</h3>
+            <p className="text-sm text-gray-600 mb-3">
+              Cada conversación se clasifica como "frustrada" si el broker mostró señales claras de molestia.
+              La <strong>tasa de frustración</strong> de un agente = % de sus conversaciones con frustración detectada.
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+              <div className="bg-coral/5 border border-coral/20 rounded-lg p-3">
+                <p className="font-bold text-coral mb-1.5">🚨 Severa (3% de los casos)</p>
+                <ul className="text-gray-700 space-y-1">
+                  <li>• ALL CAPS sostenido (ej. "URGENTE", "ME LLAMAS")</li>
+                  <li>• Amenaza de cambiar de empresa o escalar</li>
+                  <li>• Mensajes en cadena sin respuesta del agente</li>
+                  <li>• Lenguaje tipo "esto es inaceptable"</li>
+                </ul>
+              </div>
+              <div className="bg-orange-50 border border-orange-200 rounded-lg p-3">
+                <p className="font-bold text-orange-600 mb-1.5">⚠️ Moderada (6% de los casos)</p>
+                <ul className="text-gray-700 space-y-1">
+                  <li>• Quejas explícitas ("no es la primera vez", "ya van 3 veces")</li>
+                  <li>• Seguimientos repetidos sin respuesta</li>
+                  <li>• Cambios solicitados varias veces</li>
+                  <li>• Pone a sus clientes/jefes como presión</li>
+                </ul>
+              </div>
+              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+                <p className="font-bold text-yellow-700 mb-1.5">😐 Leve (7% de los casos)</p>
+                <ul className="text-gray-700 space-y-1">
+                  <li>• Impaciencia ("me urge", "para hoy")</li>
+                  <li>• Emojis tristes o de exasperación (😔😩🙏)</li>
+                  <li>• Preguntas como "¿alguien me puede ayudar?"</li>
+                  <li>• Repetir un mismo mensaje 2-3 veces</li>
+                </ul>
+              </div>
+            </div>
+            <div className="mt-3 p-3 bg-gray-50 rounded-lg text-xs text-gray-600">
+              <strong className="text-gray-800">Cómo se ejecuta:</strong> En cada corrida, ~10-12 conversaciones representativas por agente
+              se envían a Claude (Anthropic API) que clasifica cada una como frustrada o no, basándose en estos criterios.
+              La tasa final es el % de conversaciones marcadas como frustradas (severa + moderada + leve cuentan como "frustrada").
+              No es 100% objetivo, pero es consistente entre corridas.
+            </div>
+          </div>
+
+          <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[820px]">
+                <thead>
+                  <tr className="bg-navy-dark text-white">
+                    <th className="py-3 px-3 text-left text-xs font-semibold w-12">#</th>
+                    <th className="py-3 px-3 text-left text-xs font-semibold">Agente CS</th>
+                    <th className="py-3 px-3 text-center text-xs font-semibold">Mar 11</th>
+                    <th className="py-3 px-3 text-center text-xs font-semibold">Mar 30</th>
+                    <th className="py-3 px-3 text-center text-xs font-semibold">May 4 AM</th>
+                    <th className="py-3 px-3 text-center text-xs font-semibold">May 4 PM</th>
+                    <th className="py-3 px-3 text-center text-xs font-semibold">May 13</th>
+                    <th className="py-3 px-3 text-center text-xs font-semibold bg-teal/20">Jun 2</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {sorted.map((a, i) => (
+                    <tr key={i} className={`border-b border-gray-100 ${i % 2 === 0 ? 'bg-white' : 'bg-gray-50'} hover:bg-gray-100 transition-colors`}>
+                      <td className="py-3 px-3 text-sm text-gray-400 font-mono">{i + 1}</td>
+                      <td className="py-3 px-3 text-sm font-medium text-navy-dark">
+                        {a.name}
+                        {a.isBrandNew && <span className="ml-2 text-xs text-teal bg-teal/10 px-2 py-0.5 rounded-full font-semibold">NUEVO</span>}
+                      </td>
+                      <td className="py-3 px-3 text-center">{renderCell(a.rate)}</td>
+                      <td className="py-3 px-3 text-center">{renderCell(a.mar30)}</td>
+                      <td className="py-3 px-3 text-center">{renderCell(a.may4)}</td>
+                      <td className="py-3 px-3 text-center">{renderCell(a.may4pm)}</td>
+                      <td className="py-3 px-3 text-center">{renderCell(a.may13)}</td>
+                      <td className="py-3 px-3 text-center bg-teal/5">{renderCell(a.jun2)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div className="px-4 py-3 bg-gray-50 border-t">
+              <p className="text-xs text-gray-400">* Tasa aprox. basada en muestra representativa por agente · "—" = cuenta no conectada a Evolution API en esa fecha · Total: 27 agentes detectados, 21 con datos en Jun 2</p>
+            </div>
+          </div>
+        </Section>
+      );
+    }
+
+    function EvolutionOfProblemsSection() {
+      const sevColor = (s) => s === 'alto' ? '#E8505B' : s === 'medio' ? '#F97316' : '#FACC15';
+      return (
+        <Section title="Evolución de Problemas en el Tiempo" id="evolution">
+          <div className="bg-white rounded-xl p-4 mb-8 border border-navy/10">
+            <p className="text-xs text-gray-600">
+              📅 Comparativa entre Mar 11 (baseline) y Jun 2 (corrida actual con 21 agentes · 200 conversaciones analizadas). Detecta qué se redujo, qué desapareció, y qué problemas nuevos surgieron.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* REDUCED */}
+            <div className="bg-gradient-to-br from-teal/5 to-white rounded-2xl p-6 border border-teal/20">
+              <div className="flex items-center gap-2 mb-5">
+                <span className="text-2xl">📉</span>
+                <div>
+                  <h3 className="text-lg font-bold text-navy-dark">Problemas que se redujeron</h3>
+                  <p className="text-xs text-gray-500">{problemEvolution.reduced.length} mejoras detectadas</p>
+                </div>
+              </div>
+              <div className="space-y-4">
+                {problemEvolution.reduced.map((p, i) => {
+                  const reduction = ((p.before - p.after) / p.before * 100).toFixed(0);
+                  return (
+                    <div key={i} className="p-4 rounded-xl bg-white border border-gray-100">
+                      <p className="text-sm font-semibold text-navy-dark mb-2">{p.problem}</p>
+                      <div className="flex items-center gap-2 mb-1.5 text-xs">
+                        <span className="text-coral font-mono font-bold">{p.before}</span>
+                        <div className="flex-1 h-1 bg-gradient-to-r from-coral to-teal rounded-full"></div>
+                        <span className="text-teal font-mono font-bold">{p.after}</span>
+                        <span className="text-gray-500">{p.unit}</span>
+                      </div>
+                      <div className="flex items-center justify-between mt-2">
+                        <span className="text-[10px] font-bold text-teal bg-teal/10 px-2 py-0.5 rounded-full">−{reduction}%</span>
+                        <p className="text-xs text-gray-500 italic flex-1 ml-3 text-right">{p.note}</p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* DISAPPEARED */}
+            <div className="bg-gradient-to-br from-green-50 to-white rounded-2xl p-6 border border-green-200">
+              <div className="flex items-center gap-2 mb-5">
+                <span className="text-2xl">✅</span>
+                <div>
+                  <h3 className="text-lg font-bold text-navy-dark">Problemas que desaparecieron</h3>
+                  <p className="text-xs text-gray-500">{problemEvolution.disappeared.length} resueltos completamente</p>
+                </div>
+              </div>
+              <div className="space-y-3">
+                {problemEvolution.disappeared.map((p, i) => (
+                  <div key={i} className="p-4 rounded-xl bg-white border border-gray-100 flex gap-3 items-start">
+                    <span className="text-green-500 text-lg shrink-0">✓</span>
+                    <div>
+                      <p className="text-sm font-semibold text-navy-dark line-through decoration-green-400/50">{p.problem}</p>
+                      <p className="text-xs text-gray-500 mt-1">{p.note}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* NEW PROBLEMS */}
+            <div className="bg-gradient-to-br from-coral/5 to-white rounded-2xl p-6 border border-coral/20 lg:col-span-2">
+              <div className="flex items-center gap-2 mb-5 justify-between flex-wrap">
+                <div className="flex items-center gap-2">
+                  <span className="text-2xl">🆕</span>
+                  <div>
+                    <h3 className="text-lg font-bold text-navy-dark">Problemas nuevos detectados</h3>
+                    <p className="text-xs text-gray-500">{problemEvolution.newProblems.length} surgieron en la corrida más reciente</p>
+                  </div>
+                </div>
+                <div className="flex gap-2 text-[11px]">
+                  <span className="inline-flex items-center gap-1 px-2 py-1 bg-coral/10 text-coral rounded-full font-semibold">
+                    <span className="w-1.5 h-1.5 rounded-full bg-coral"></span>
+                    Multi-agente
+                  </span>
+                  <span className="inline-flex items-center gap-1 px-2 py-1 bg-orange-100 text-orange-600 rounded-full font-semibold">
+                    <span className="w-1.5 h-1.5 rounded-full bg-orange-500"></span>
+                    Caso aislado, alta frustración
+                  </span>
+                </div>
+              </div>
+
+              {/* Multi-agente: aparecen en varias conversaciones */}
+              <div className="mb-5">
+                <p className="text-xs font-bold uppercase text-coral tracking-wider mb-3">↗ Reportados por varios agentes / brokers</p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {problemEvolution.newProblems.filter(p => p.reportType === 'multi').map((p, i) => (
+                    <div key={i} className="p-4 rounded-xl bg-white border border-gray-100" style={{borderLeft: `3px solid ${sevColor(p.severity)}`}}>
+                      <div className="flex items-start justify-between gap-2 mb-2">
+                        <p className="text-sm font-semibold text-navy-dark leading-snug">{p.problem}</p>
+                        <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded-full shrink-0" style={{color: sevColor(p.severity), backgroundColor: sevColor(p.severity) + '15'}}>{p.severity}</span>
+                      </div>
+                      <div className="flex items-center gap-2 mb-2 flex-wrap">
+                        <span className="text-[10px] font-bold text-coral bg-coral/10 px-2 py-0.5 rounded-full">{p.mentions} menciones</span>
+                        <div className="flex flex-wrap gap-1">
+                          {p.agents.map((a, j) => (
+                            <span key={j} className="text-[10px] text-gray-600 bg-gray-100 px-1.5 py-0.5 rounded">{a}</span>
+                          ))}
+                        </div>
+                      </div>
+                      <p className="text-xs text-gray-500 leading-snug">{p.note}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Edge cases pero con alta severidad */}
+              <div>
+                <p className="text-xs font-bold uppercase text-orange-600 tracking-wider mb-3">⚠ Casos aislados con muy alta frustración</p>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  {problemEvolution.newProblems.filter(p => p.reportType === 'edge-severe').map((p, i) => (
+                    <div key={i} className="p-4 rounded-xl bg-white border border-orange-200/60" style={{borderLeft: `3px solid ${sevColor(p.severity)}`}}>
+                      <div className="flex items-start justify-between gap-2 mb-2">
+                        <p className="text-sm font-semibold text-navy-dark leading-snug">{p.problem}</p>
+                        <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded-full shrink-0" style={{color: sevColor(p.severity), backgroundColor: sevColor(p.severity) + '15'}}>{p.severity}</span>
+                      </div>
+                      <div className="text-[10px] text-gray-600 mb-2">Reportado por: <span className="font-semibold">{p.agents[0]}</span></div>
+                      <p className="text-xs text-gray-500 leading-snug">{p.note}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <p className="text-[11px] text-gray-400 italic mt-4 pt-3 border-t border-gray-100">
+                Criterio: <strong>Multi-agente</strong> = reportado por 2+ agentes o con 4+ menciones. <strong>Caso aislado</strong> = 1 broker, pero con frustración severa, riesgo legal/fiscal o amenaza de churn.
+              </p>
+            </div>
+
+            {/* PERSISTENT */}
+            <div className="bg-gradient-to-br from-yellow-50 to-white rounded-2xl p-6 border border-yellow-200 lg:col-span-2">
+              <div className="flex items-center gap-2 mb-5">
+                <span className="text-2xl">⚠️</span>
+                <div>
+                  <h3 className="text-lg font-bold text-navy-dark">Problemas persistentes</h3>
+                  <p className="text-xs text-gray-500">{problemEvolution.persistent.length} llevan varias corridas sin resolverse</p>
+                </div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                {problemEvolution.persistent.map((p, i) => (
+                  <div key={i} className="p-4 rounded-xl bg-white border border-yellow-100">
+                    <p className="text-sm font-semibold text-navy-dark mb-1">{p.problem}</p>
+                    <p className="text-xs text-gray-500">{p.note}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </Section>
+      );
+    }
+
+    function ImprovementAreasSection() {
+      return (
+        <Section title="Áreas de Mejora" id="improvements">
+          <div className="space-y-10">
+            {improvementAreas.map((group, gi) => (
+              <div key={gi}>
+                <div className="flex items-center gap-3 mb-4">
+                  <span className="text-xs font-bold px-3 py-1 rounded-full text-white" style={{backgroundColor: group.color}}>PRIORIDAD {group.priority}</span>
+                </div>
+                <div className={`grid gap-4 ${group.items.length > 2 ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-4' : 'grid-cols-1 sm:grid-cols-2'}`}>
+                  {group.items.map((item, ii) => (
+                    <div key={ii} className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-all animate-fade" style={{borderTop: `4px solid ${group.color}`, animationDelay: `${ii * 0.1}s`}}>
+                      <h4 className="font-bold text-navy-dark text-base mb-2">{item.title}</h4>
+                      <p className="text-gray-500 text-sm leading-relaxed">{item.description}</p>
+                      {item.stat && (
+                        <div className="mt-3 text-xs font-semibold px-2 py-1 rounded inline-block" style={{color: group.color, backgroundColor: group.bgLight}}>{item.stat}</div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </Section>
+      );
+    }
+
+    function Footer() {
+      return (
+        <footer className="bg-navy-dark py-8 border-t border-navy-light">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 text-center">
+            <p className="text-gray-500 text-sm">Morada Uno — Análisis de Conversaciones WhatsApp — {PERIOD}</p>
+            <p className="text-gray-600 text-xs mt-1">6 mediciones: Mar 11 (140 convs) · Mar 30 (82 convs) · May 4 AM (75 convs) · May 4 PM (87 convs) · May 13 (200 convs · 23 agentes) · Jun 2 (200 convs · 21 agentes)</p>
+          </div>
+        </footer>
+      );
+    }
+
+    // ── Per-agent structured feedback (auto-generated from metrics) ─────────
+    // Returns an object with: grade, strengths[], improvements[], actions[], trend
+    // callStats: optional { [firstName]: { totalBiz, missedBiz, missedBizRate } }
+    function generateFeedback(agentName, callStats) {
+      // Find the agent's data across all sources
+      const ranking = agentRanking.find(a => a.name === agentName);
+      const responseT = responseTimes.find(r => r.agent === agentName || r.agent === agentName.replace(/^Whats App /, ''));
+      const writing = writingQuality.find(w => w.agent === agentName);
+      const resolution = resolutionData.find(r => r.agent === agentName);
+      const firstName = agentName.split(' ')[0].toLowerCase();
+      const callRow = callStats ? (callStats[firstName] || null) : null;
+
+      const strengths = [];
+      const improvements = [];
+      const actions = [];
+      let trend = 'sin-datos';
+      let trendNote = '';
+
+      // === Frustration analysis ===
+      const fAll = [ranking?.rate, ranking?.mar30, ranking?.may4, ranking?.may4pm, ranking?.may13, ranking?.jun2].filter(v => v !== null && v !== undefined);
+      const latest = fAll[fAll.length - 1];
+      const earliest = fAll[0];
+      const frustHistory = fAll;
+
+      if (latest !== undefined) {
+        if (latest <= 15) strengths.push(`Tasa de frustración muy baja (${latest}%) — top tier del equipo`);
+        else if (latest <= 25) strengths.push(`Tasa de frustración aceptable (${latest}%)`);
+        else if (latest <= 40) improvements.push(`Tasa de frustración elevada (${latest}%) — revisar interacciones difíciles`);
+        else improvements.push(`Tasa de frustración crítica (${latest}%) — atención inmediata`);
+
+        if (fAll.length >= 2) {
+          const delta = latest - earliest;
+          if (delta <= -10) {
+            trend = 'mejorando';
+            trendNote = `Mejoró ${Math.abs(delta)} pts vs primera medición (${earliest}% → ${latest}%)`;
+            strengths.push(`Tendencia positiva: ${trendNote}`);
+          } else if (delta >= 10) {
+            trend = 'empeorando';
+            trendNote = `Subió ${delta} pts vs primera medición (${earliest}% → ${latest}%)`;
+            improvements.push(`Tendencia negativa: ${trendNote}`);
+          } else {
+            trend = 'estable';
+            trendNote = `Estable en ${latest}% (rango ${Math.min(...fAll)}-${Math.max(...fAll)}%)`;
+          }
+        } else {
+          trend = 'inicial';
+          trendNote = `Primera medición disponible: ${latest}%`;
+        }
+      }
+
+      // === Response time analysis ===
+      if (responseT) {
+        if (responseT.median < 5) {
+          strengths.push(`Mediana de respuesta excelente (${responseT.median.toFixed(1)} min)`);
+        } else if (responseT.median < 15) {
+          strengths.push(`Mediana de respuesta buena (${responseT.median.toFixed(1)} min)`);
+        } else if (responseT.median < 30) {
+          improvements.push(`Mediana de respuesta lenta (${responseT.median.toFixed(1)} min)`);
+          actions.push('Apuntar a responder en menos de 15 min en horario laboral');
+        } else {
+          improvements.push(`Mediana de respuesta crítica (${responseT.median.toFixed(1)} min)`);
+          actions.push('Revisar carga de trabajo o escalación — la mediana debería estar bajo 15 min');
+        }
+
+        if (responseT.under5 >= 60) strengths.push(`${responseT.under5}% de respuestas en menos de 5 min`);
+        if (responseT.under30 < 70) improvements.push(`Solo ${responseT.under30}% responde en menos de 30 min`);
+        if (responseT.avg > responseT.median * 5) {
+          improvements.push(`Algunos brokers esperan mucho — promedio (${responseT.avg < 60 ? responseT.avg.toFixed(0) + ' min' : (responseT.avg/60).toFixed(1) + ' h'}) muy alto vs mediana`);
+          actions.push('Identificar conversaciones que se quedan sin respuesta más de 1 hora');
+        }
+      }
+
+      // === Writing quality analysis ===
+      if (writing) {
+        if (writing.score < 10) {
+          strengths.push(`Escritura impecable (score ${writing.score}, ${writing.typos} typos por 100 msg)`);
+        } else if (writing.score < 25) {
+          // neutral
+        } else {
+          improvements.push(`Calidad de escritura a mejorar (score ${writing.score})`);
+        }
+
+        if (writing.typos > 2) {
+          improvements.push(`${writing.typos} typos por cada 100 mensajes`);
+          actions.push('Activar autocorrector de WhatsApp y revisar antes de enviar');
+        }
+        if (writing.lowerStart > 25) {
+          improvements.push(`${writing.lowerStart}% de mensajes inician con minúscula`);
+          actions.push('Iniciar siempre con mayúscula — proyecta más profesionalismo');
+        }
+        if (writing.missingAccents > 8) {
+          improvements.push(`${writing.missingAccents}% de palabras sin acento`);
+          actions.push('Habilitar teclado en español con acentos automáticos');
+        }
+        if (writing.emojiPerMsg > 0.5) {
+          improvements.push(`Uso excesivo de emojis (${writing.emojiPerMsg}/mensaje)`);
+        }
+        if (writing.examples?.bad?.length > 0) {
+          writing.examples.bad.forEach(b => improvements.push(b));
+        }
+      }
+
+      // === Resolution effectiveness ===
+      if (resolution) {
+        if (resolution.resolvedPct >= 65) {
+          strengths.push(`Alta tasa de resolución (${resolution.resolvedPct}% de conversaciones cerradas exitosamente)`);
+        } else if (resolution.resolvedPct >= 50) {
+          // neutral
+        } else {
+          improvements.push(`Tasa de resolución baja (${resolution.resolvedPct}%) — muchas conversaciones quedan sin cierre claro`);
+          actions.push('Cerrar conversaciones con confirmación explícita ("¿queda algo más?", "te confirmo cuando quede listo")');
+        }
+        if (resolution.unresolvedPct >= 5) {
+          improvements.push(`${resolution.unresolvedPct}% conversaciones terminan con el broker frustrado o sin solución`);
+        }
+        if (resolution.escalationPct > 50) {
+          improvements.push(`${resolution.escalationPct}% de conversaciones requieren escalar a otro equipo — muchos cuellos de botella internos`);
+          actions.push('Documentar qué casos se pueden resolver internamente para no escalar tanto');
+        }
+      }
+
+      // === Calls (live webhook) — % perdidas en horario laboral ===
+      if (callRow && callRow.totalBiz > 0) {
+        const rate = Math.round(callRow.missedBiz / callRow.totalBiz * 100);
+        if (rate <= 10) {
+          strengths.push(`Disponibilidad telefónica alta (${rate}% perdidas en horario laboral · ${callRow.missedBiz}/${callRow.totalBiz})`);
+        } else if (rate <= 25) {
+          // neutral
+        } else if (rate <= 50) {
+          improvements.push(`${rate}% de llamadas perdidas en horario laboral (${callRow.missedBiz}/${callRow.totalBiz})`);
+          actions.push('Revisar disponibilidad o redirigir llamadas cuando esté ocupado');
+        } else {
+          improvements.push(`Tasa crítica de llamadas perdidas en horario laboral: ${rate}% (${callRow.missedBiz}/${callRow.totalBiz})`);
+          actions.push('Más de la mitad de las llamadas no se contestan en horario laboral — atención inmediata');
+        }
+      }
+
+      // === Coverage / data freshness ===
+      const today = new Date().toISOString().slice(0, 10);
+      if (ranking?.lastSeen) {
+        const daysSince = Math.floor((new Date(today) - new Date(ranking.lastSeen)) / (1000 * 60 * 60 * 24));
+        if (daysSince > 14) {
+          improvements.push(`Sin datos recientes desde ${ranking.lastSeen} (${daysSince} días)`);
+          actions.push('Reconectar la cuenta de WhatsApp en Evolution API');
+        }
+      }
+
+      return {
+        strengths, improvements, actions,
+        trend, trendNote,
+        frustHistory,
+        hasResponseData: !!responseT,
+        hasWritingData: !!writing,
+        responseT, writing, ranking, callRow,
+      };
+    }
+
+    // Helper: read a metric for an agent and return { value, displayValue, color, label, ok }
+    // callStats: optional { [firstName]: { totalBiz, missedBiz, missedBizRate } } from FeedbackSection
+    function getMetrics(agentName, callStats) {
+      const ranking = agentRanking.find(a => a.name === agentName);
+      const responseT = responseTimes.find(r => r.agent === agentName || r.agent === agentName.replace(/^Whats App /, ''));
+      const writing = writingQuality.find(w => w.agent === agentName);
+      const resolution = resolutionData.find(r => r.agent === agentName);
+
+      // Frustration: latest available
+      const fAll = ranking ? [ranking.rate, ranking.mar30, ranking.may4, ranking.may4pm, ranking.may13, ranking.jun2].filter(v => v !== null && v !== undefined) : [];
+      const frustration = fAll.length ? fAll[fAll.length - 1] : null;
+
+      // Calls: aggregate from live data, matching agent first name to instance
+      const firstName = agentName.split(' ')[0].toLowerCase();
+      const callRow = callStats ? (callStats[firstName] || null) : null;
+      const callsBizMissedRate = (callRow && callRow.totalBiz > 0) ? Math.round(callRow.missedBiz / callRow.totalBiz * 100) : null;
+
+      const colorByFrust = (v) => v === null ? '#94A3B8' : v <= 15 ? '#2EC4B6' : v <= 30 ? '#22C55E' : v <= 45 ? '#F97316' : '#E8505B';
+      const colorByResp  = (v) => v === null ? '#94A3B8' : v < 5 ? '#2EC4B6' : v < 15 ? '#22C55E' : v < 30 ? '#F97316' : '#E8505B';
+      const colorByGrade = (g) => g === null ? '#94A3B8' : g >= 85 ? '#2EC4B6' : g >= 70 ? '#22C55E' : g >= 55 ? '#F97316' : '#E8505B';
+      const colorByRes   = (v) => v === null ? '#94A3B8' : v >= 65 ? '#2EC4B6' : v >= 50 ? '#22C55E' : v >= 35 ? '#F97316' : '#E8505B';
+      const colorByMiss  = (v) => v === null ? '#94A3B8' : v <= 10 ? '#2EC4B6' : v <= 25 ? '#22C55E' : v <= 50 ? '#F97316' : '#E8505B';
+
+      const writingGrade = writing ? Math.max(0, Math.min(100, Math.round(100 - writing.score * 1.2))) : null;
+
+      return {
+        ranking, responseT, writing, resolution, callRow,
+        frustration: { value: frustration, color: colorByFrust(frustration), display: frustration !== null ? `${frustration}%` : '—' },
+        responseTime: { value: responseT?.median ?? null, color: colorByResp(responseT?.median ?? null),
+          display: responseT ? (responseT.median < 60 ? `${responseT.median.toFixed(1)} min` : `${(responseT.median/60).toFixed(1)} h`) : '—' },
+        writingGrade: { value: writingGrade, color: colorByGrade(writingGrade), display: writingGrade !== null ? `${writingGrade}/100` : '—' },
+        resolutionPct: { value: resolution?.resolvedPct ?? null, color: colorByRes(resolution?.resolvedPct ?? null),
+          display: resolution ? `${resolution.resolvedPct}%` : '—' },
+        callsBizMissed: {
+          value: callsBizMissedRate,
+          color: colorByMiss(callsBizMissedRate),
+          display: callsBizMissedRate !== null ? `${callsBizMissedRate}%` : '—',
+          sub: callRow ? `${callRow.missedBiz}/${callRow.totalBiz} en horario` : 'sin datos',
+        },
+      };
+    }
+
+    // Convierte cada métrica disponible a un score 0-100 y promedia para sacar la calificación
+    function gradeFromMetrics(m) {
+      const scores = [];
+      if (m.frustration.value !== null) scores.push({ key: 'frustración', s: Math.max(0, Math.min(100, 100 - m.frustration.value * 2)) });
+      if (m.resolutionPct.value !== null) scores.push({ key: 'resolución', s: m.resolutionPct.value });
+      if (m.responseTime.value !== null) {
+        const med = m.responseTime.value;
+        const s = med < 5 ? 100 : med < 15 ? 80 : med < 30 ? 60 : med < 60 ? 40 : 20;
+        scores.push({ key: 'respuesta', s });
+      }
+      if (m.writingGrade.value !== null) scores.push({ key: 'escritura', s: m.writingGrade.value });
+      if (m.callsBizMissed.value !== null) scores.push({ key: 'llamadas', s: 100 - m.callsBizMissed.value });
+
+      if (scores.length === 0) return { grade: '—', gradeColor: '#94A3B8', gradeLabel: 'Sin datos suficientes', score: null, scores };
+      const avg = Math.round(scores.reduce((s, x) => s + x.s, 0) / scores.length);
+      let grade, gradeColor, gradeLabel;
+      if (avg >= 85)      { grade = 'A'; gradeColor = '#2EC4B6'; gradeLabel = 'Excelente desempeño'; }
+      else if (avg >= 70) { grade = 'B'; gradeColor = '#22C55E'; gradeLabel = 'Buen desempeño'; }
+      else if (avg >= 55) { grade = 'C'; gradeColor = '#F97316'; gradeLabel = 'Aceptable, oportunidades claras'; }
+      else                { grade = 'D'; gradeColor = '#E8505B'; gradeLabel = 'Requiere atención y coaching'; }
+      return { grade, gradeColor, gradeLabel, score: avg, scores };
+    }
+
+    // Pill compacto para celdas de métrica
+    function MetricCell({ value, color, sub }) {
+      return (
+        <div className="flex flex-col items-center">
+          <div className="text-sm font-bold" style={{color}}>{value}</div>
+          {sub && <div className="text-[10px] text-gray-400 mt-0.5">{sub}</div>}
+        </div>
+      );
+    }
+
+    function FeedbackRow({ f, m, expanded, onToggle }) {
+      const dateStr = f.agent.lastSeen ? new Date(f.agent.lastSeen).toLocaleDateString('es-MX', { day: 'numeric', month: 'short' }) : '—';
+      return (
+        <>
+          <tr
+            onClick={onToggle}
+            className="border-b border-gray-100 cursor-pointer hover:bg-coral/5 transition-colors"
+          >
+            <td className="py-3 px-3 text-center">
+              <div className="inline-flex items-center justify-center w-9 h-9 rounded-full text-base font-extrabold text-white" style={{backgroundColor: f.grade.gradeColor}}>
+                {f.grade.grade}
+              </div>
+              {f.grade.score !== null && (
+                <div className="text-[10px] text-gray-400 mt-1">{f.grade.score}/100</div>
+              )}
+            </td>
+            <td className="py-3 px-3">
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-semibold text-navy-dark">{f.name}</span>
+                {f.agent.isBrandNew && <span className="text-[9px] text-teal bg-teal/10 px-1.5 py-0.5 rounded font-semibold">NUEVO</span>}
+              </div>
+              <div className="text-[11px] text-gray-500 mt-0.5">{f.grade.gradeLabel}</div>
+            </td>
+            <td className="py-3 px-3"><MetricCell value={m.frustration.display} color={m.frustration.color}/></td>
+            <td className="py-3 px-3"><MetricCell value={m.responseTime.display} color={m.responseTime.color}/></td>
+            <td className="py-3 px-3"><MetricCell value={m.writingGrade.display} color={m.writingGrade.color}/></td>
+            <td className="py-3 px-3"><MetricCell value={m.resolutionPct.display} color={m.resolutionPct.color}/></td>
+            <td className="py-3 px-3"><MetricCell value={m.callsBizMissed.display} color={m.callsBizMissed.color} sub={m.callsBizMissed.sub}/></td>
+            <td className="py-3 px-3 text-center text-[11px] text-gray-500">{dateStr}</td>
+            <td className="py-3 px-3 text-center text-coral font-bold text-base">{expanded ? '▲' : '▼'}</td>
+          </tr>
+          {expanded && (
+            <tr className="bg-gray-50 border-b border-gray-200">
+              <td colSpan={9} className="p-5">
+                {f.fb.trendNote && (
+                  <p className="text-xs text-gray-500 italic mb-4">{f.fb.trendNote}</p>
+                )}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <p className="text-xs font-bold text-teal mb-2 uppercase tracking-wide">✓ Fortalezas</p>
+                    {f.fb.strengths.length > 0 ? (
+                      <ul className="text-sm text-gray-700 space-y-1.5">
+                        {f.fb.strengths.map((s, j) => <li key={j} className="leading-snug pl-3 border-l-2 border-teal/40">{s}</li>)}
+                      </ul>
+                    ) : <p className="text-xs text-gray-400 italic">Sin fortalezas destacadas todavía</p>}
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold text-coral mb-2 uppercase tracking-wide">⚠ Áreas de mejora</p>
+                    {f.fb.improvements.length > 0 ? (
+                      <ul className="text-sm text-gray-700 space-y-1.5">
+                        {f.fb.improvements.map((s, j) => <li key={j} className="leading-snug pl-3 border-l-2 border-coral/40">{s}</li>)}
+                      </ul>
+                    ) : <p className="text-xs text-gray-400 italic">Sin áreas críticas detectadas</p>}
+                  </div>
+                  <div className="bg-orange-50 border border-orange-200 rounded-lg p-3">
+                    <p className="text-xs font-bold text-orange-700 mb-2 uppercase tracking-wide">🎯 Acciones sugeridas</p>
+                    {f.fb.actions.length > 0 ? (
+                      <ol className="text-sm text-gray-700 space-y-1.5 list-decimal list-inside">
+                        {f.fb.actions.map((s, j) => <li key={j} className="leading-snug">{s}</li>)}
+                      </ol>
+                    ) : <p className="text-xs text-gray-400 italic">Sin acciones pendientes</p>}
+                  </div>
+                </div>
+              </td>
+            </tr>
+          )}
+        </>
+      );
+    }
+
+    function FeedbackSection() {
+      const [expanded, setExpanded] = React.useState(null);
+      const [callStats, setCallStats] = React.useState(null);
+
+      // Trae llamadas live y agrega por agente (% perdidas en horario laboral)
+      React.useEffect(() => {
+        let cancelled = false;
+        fetch('https://delicate-poetry-a88a.ines-25d.workers.dev/whatsapp-calls', { cache: 'no-store' })
+          .then(r => r.json())
+          .then(d => {
+            if (cancelled || !Array.isArray(d)) return;
+            const isBiz = (date) => {
+              const day = date.getDay();
+              const hour = date.getHours();
+              if (day === 0) return false;
+              if (day === 6) return hour >= 9 && hour < 15;
+              return hour >= 9 && hour < 19;
+            };
+            const stats = {};
+            d.forEach(c => {
+              const inst = (c.instance || '').replace(/^Whats App /, '').replace(/^WhatsApp /, '').trim();
+              const key = inst.split(' ')[0].toLowerCase();
+              if (!key) return;
+              if (!stats[key]) stats[key] = { total: 0, missed: 0, totalBiz: 0, missedBiz: 0 };
+              const dt = new Date(c.raw?.data?.date || c.ts);
+              stats[key].total++;
+              if (c.missed) stats[key].missed++;
+              if (isBiz(dt)) {
+                stats[key].totalBiz++;
+                if (c.missed) stats[key].missedBiz++;
+              }
+            });
+            setCallStats(stats);
+          })
+          .catch(() => setCallStats({}));
+        return () => { cancelled = true; };
+      }, []);
+
+      // Solo generamos feedback para agentes con al menos 1 fuente de datos
+      const agentsWithData = agentRanking.filter(a =>
+        responseTimes.find(r => r.agent === a.name || r.agent === a.name.replace(/^Whats App /, ''))
+        || writingQuality.find(w => w.agent === a.name)
+        || resolutionData.find(r => r.agent === a.name)
+        || a.jun2 !== null
+        || a.may13 !== null
+        || a.may4pm !== null
+      );
+
+      const feedbackList = agentsWithData.map(a => {
+        const m = getMetrics(a.name, callStats);
+        return {
+          name: a.name,
+          agent: a,
+          fb: generateFeedback(a.name, callStats),
+          grade: gradeFromMetrics(m),
+          m,
+        };
+      });
+      // Ordenar por score numérico (más alto primero), nulls al final
+      feedbackList.sort((a, b) => {
+        const sa = a.grade.score ?? -1;
+        const sb = b.grade.score ?? -1;
+        return sb - sa;
+      });
+
+      return (
+        <Section title="Feedback Individual por Agente" id="feedback">
+          <div className="bg-white rounded-xl p-4 mb-6 border border-navy/10">
+            <p className="text-xs text-gray-600">
+              📋 Calificación auto-generada como promedio de 5 métricas (cada una a escala 0-100):
+              {' '}<strong>frustración</strong>, <strong>tiempo de respuesta</strong>, <strong>escritura</strong>, <strong>resolución</strong> y <strong>llamadas</strong> (% perdidas en horario laboral).
+              Haz clic en cualquier fila para ver fortalezas, áreas de mejora y acciones sugeridas.
+            </p>
+          </div>
+
+          <div className="bg-white rounded-xl shadow-sm overflow-x-auto">
+            <table className="w-full min-w-[900px]">
+              <thead>
+                <tr className="bg-navy-dark text-white">
+                  <th className="py-3 px-3 text-center text-xs font-semibold w-20">Calif.</th>
+                  <th className="py-3 px-3 text-left text-xs font-semibold">Agente MoradaUno</th>
+                  <th className="py-3 px-3 text-center text-xs font-semibold">Frustración</th>
+                  <th className="py-3 px-3 text-center text-xs font-semibold">Respuesta</th>
+                  <th className="py-3 px-3 text-center text-xs font-semibold">Escritura</th>
+                  <th className="py-3 px-3 text-center text-xs font-semibold">Resolución</th>
+                  <th className="py-3 px-3 text-center text-xs font-semibold">Llamadas (laboral)</th>
+                  <th className="py-3 px-3 text-center text-xs font-semibold">Datos al</th>
+                  <th className="py-3 px-3 w-12"></th>
+                </tr>
+              </thead>
+              <tbody>
+                {feedbackList.map((f) => (
+                  <FeedbackRow
+                    key={f.name}
+                    f={f}
+                    m={f.m}
+                    expanded={expanded === f.name}
+                    onToggle={() => setExpanded(prev => prev === f.name ? null : f.name)}
+                  />
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Methodology */}
+          <div className="mt-8 bg-navy-dark rounded-xl p-5">
+            <p className="text-teal text-sm font-bold mb-2">¿Cómo se calcula la calificación?</p>
+            <div className="text-gray-300 text-xs leading-relaxed space-y-1">
+              <p>Cada métrica disponible se convierte a un score 0-100 y se promedia. La letra final corresponde al promedio:</p>
+              <p><strong className="text-white">A — 85-100:</strong> Excelente desempeño · <strong className="text-white">B — 70-84:</strong> Bueno · <strong className="text-white">C — 55-69:</strong> Aceptable · <strong className="text-white">D — &lt;55:</strong> Requiere atención</p>
+              <p className="pt-2 text-gray-400">
+                <strong>Frustración:</strong> 100 − pct·2 (a más frustración menos puntos) ·{' '}
+                <strong>Respuesta:</strong> mediana &lt;5min=100, &lt;15=80, &lt;30=60, &lt;60=40, ≥60=20 ·{' '}
+                <strong>Escritura:</strong> 100 − score·1.2 ·{' '}
+                <strong>Resolución:</strong> % de conversaciones cerradas exitosamente ·{' '}
+                <strong>Llamadas:</strong> 100 − % perdidas en horario laboral.
+              </p>
+              <p className="text-gray-400">Si una métrica no tiene dato, no se cuenta en el promedio.</p>
+            </div>
+          </div>
+        </Section>
+      );
+    }
+
+    // ── Correlaciones: frustración vs cada métrica ─────────────────────────
+    // Pearson r y scatter por agente. Pensado para crecer con más data.
+    function pearsonR(xs, ys) {
+      const n = xs.length;
+      if (n < 2) return null;
+      const mx = xs.reduce((s, x) => s + x, 0) / n;
+      const my = ys.reduce((s, y) => s + y, 0) / n;
+      let cov = 0, sx = 0, sy = 0;
+      for (let i = 0; i < n; i++) {
+        const dx = xs[i] - mx, dy = ys[i] - my;
+        cov += dx * dy; sx += dx * dx; sy += dy * dy;
+      }
+      const denom = Math.sqrt(sx * sy);
+      return denom > 0 ? cov / denom : null;
+    }
+
+    function linearRegression(xs, ys) {
+      const n = xs.length;
+      if (n < 2) return null;
+      const mx = xs.reduce((s, x) => s + x, 0) / n;
+      const my = ys.reduce((s, y) => s + y, 0) / n;
+      let num = 0, den = 0;
+      for (let i = 0; i < n; i++) { num += (xs[i] - mx) * (ys[i] - my); den += (xs[i] - mx) ** 2; }
+      if (den === 0) return null;
+      const slope = num / den;
+      const intercept = my - slope * mx;
+      return { slope, intercept };
+    }
+
+    function ScatterChart({ title, xLabel, points, xMin, xMax, invertX }) {
+      // points: [{ name, x, y }]
+      const valid = points.filter(p => p.x !== null && p.x !== undefined && p.y !== null && p.y !== undefined);
+      const xs = valid.map(p => p.x);
+      const ys = valid.map(p => p.y);
+      const r = pearsonR(xs, ys);
+      const reg = linearRegression(xs, ys);
+      const rSign = invertX && r !== null ? -r : r;  // dirección "esperada"
+      const rColor = rSign === null ? '#94A3B8' : Math.abs(rSign) >= 0.5 ? '#1B2A4A' : Math.abs(rSign) >= 0.3 ? '#F97316' : '#94A3B8';
+      const significant = rSign !== null && Math.abs(rSign) >= 0.75;
+
+      const W = 320, H = 220, PAD_L = 40, PAD_R = 18, PAD_T = 14, PAD_B = 38;
+      const innerW = W - PAD_L - PAD_R;
+      const innerH = H - PAD_T - PAD_B;
+      const yMin = 0, yMax = 60;
+      const xLo = xMin, xHi = xMax;
+      const xFor = (v) => PAD_L + ((v - xLo) / (xHi - xLo)) * innerW;
+      const yFor = (v) => PAD_T + (1 - (v - yMin) / (yMax - yMin)) * innerH;
+
+      // Trend line endpoints
+      let trendPath = null;
+      if (reg) {
+        const x1 = xLo, x2 = xHi;
+        const y1 = Math.max(yMin, Math.min(yMax, reg.intercept + reg.slope * x1));
+        const y2 = Math.max(yMin, Math.min(yMax, reg.intercept + reg.slope * x2));
+        trendPath = `M ${xFor(x1)} ${yFor(y1)} L ${xFor(x2)} ${yFor(y2)}`;
+      }
+
+      const xTicks = 4, yTicks = 4;
+      return (
+        <div className="bg-white rounded-xl p-4 shadow-sm">
+          <div className="flex items-baseline justify-between mb-1">
+            <h3 className="font-bold text-sm text-navy-dark">{title}</h3>
+            <div className="text-right">
+              <div className="text-lg font-extrabold leading-none" style={{color: rColor}}>{r === null ? '—' : `r = ${r >= 0 ? '+' : ''}${r.toFixed(2)}`}</div>
+              <div className="text-[10px] text-gray-400">n = {valid.length}{significant ? ' · sig.' : ''}</div>
+            </div>
+          </div>
+          <p className="text-[11px] text-gray-500 mb-2">Cada punto es un asesor</p>
+          <svg viewBox={`0 0 ${W} ${H}`} className="w-full" style={{height: 'auto'}}>
+            {/* Grid lines + Y axis */}
+            {Array.from({length: yTicks + 1}, (_, i) => {
+              const v = yMin + (i * (yMax - yMin)) / yTicks;
+              const y = yFor(v);
+              return (
+                <g key={'y'+i}>
+                  <line x1={PAD_L} y1={y} x2={W - PAD_R} y2={y} stroke="#E5E7EB" strokeWidth="0.5"/>
+                  <text x={PAD_L - 6} y={y + 3} textAnchor="end" fontSize="9" fill="#94A3B8">{Math.round(v)}%</text>
+                </g>
+              );
+            })}
+            {/* X axis ticks */}
+            {Array.from({length: xTicks + 1}, (_, i) => {
+              const v = xLo + (i * (xHi - xLo)) / xTicks;
+              const x = xFor(v);
+              return (
+                <g key={'x'+i}>
+                  <line x1={x} y1={H - PAD_B} x2={x} y2={H - PAD_B + 4} stroke="#94A3B8" strokeWidth="0.6"/>
+                  <text x={x} y={H - PAD_B + 14} textAnchor="middle" fontSize="9" fill="#94A3B8">
+                    {(xHi - xLo) <= 5 ? v.toFixed(1) : Math.round(v)}
+                  </text>
+                </g>
+              );
+            })}
+            {/* Axis labels */}
+            <text x={PAD_L + innerW/2} y={H - 4} textAnchor="middle" fontSize="10" fill="#6B7280" fontWeight="600">{xLabel}</text>
+            <text transform={`rotate(-90, 12, ${PAD_T + innerH/2})`} x={12} y={PAD_T + innerH/2} textAnchor="middle" fontSize="10" fill="#6B7280" fontWeight="600">Frustración %</text>
+            {/* Trend line */}
+            {trendPath && <path d={trendPath} stroke="#94A3B8" strokeWidth="1.5" strokeDasharray="4,3" fill="none"/>}
+            {/* Points */}
+            {valid.map((p, i) => (
+              <g key={i}>
+                <circle cx={xFor(p.x)} cy={yFor(p.y)} r="5" fill="#E8505B" stroke="#fff" strokeWidth="1.5"/>
+                <text x={xFor(p.x) + 7} y={yFor(p.y) + 3} fontSize="9" fill="#374151" fontWeight="600">{p.name.split(' ')[0]}</text>
+              </g>
+            ))}
+          </svg>
+        </div>
+      );
+    }
+
+    function CorrelationsSection() {
+      const [callStats, setCallStats] = React.useState(null);
+      React.useEffect(() => {
+        let cancelled = false;
+        fetch('https://delicate-poetry-a88a.ines-25d.workers.dev/whatsapp-calls', { cache: 'no-store' })
+          .then(r => r.json())
+          .then(d => {
+            if (cancelled || !Array.isArray(d)) return;
+            const isBiz = (date) => {
+              const day = date.getDay(), hour = date.getHours();
+              if (day === 0) return false;
+              if (day === 6) return hour >= 9 && hour < 15;
+              return hour >= 9 && hour < 19;
+            };
+            const stats = {};
+            d.forEach(c => {
+              const inst = (c.instance || '').replace(/^Whats App /, '').replace(/^WhatsApp /, '').trim();
+              const key = inst.split(' ')[0].toLowerCase();
+              if (!key) return;
+              if (!stats[key]) stats[key] = { totalBiz: 0, missedBiz: 0 };
+              const dt = new Date(c.raw?.data?.date || c.ts);
+              if (isBiz(dt)) {
+                stats[key].totalBiz++;
+                if (c.missed) stats[key].missedBiz++;
+              }
+            });
+            setCallStats(stats);
+          })
+          .catch(() => setCallStats({}));
+        return () => { cancelled = true; };
+      }, []);
+
+      // Build per-agent points: only agents with frustration data
+      const data = agentRanking.map(a => {
+        const fAll = [a.rate, a.mar30, a.may4, a.may4pm, a.may13, a.jun2].filter(v => v !== null && v !== undefined);
+        const frust = fAll.length ? fAll[fAll.length - 1] : null;
+        const resp = responseTimes.find(r => r.agent === a.name)?.median ?? null;
+        const writingObj = writingQuality.find(w => w.agent === a.name);
+        const writingScore = writingObj?.score ?? null;
+        const writingGrade = writingScore !== null ? Math.max(0, Math.min(100, Math.round(100 - writingScore * 1.2))) : null;
+        const resolution = resolutionData.find(r => r.agent === a.name)?.resolvedPct ?? null;
+        const firstName = a.name.split(' ')[0].toLowerCase();
+        const cs = callStats?.[firstName];
+        const callsBiz = (cs && cs.totalBiz > 0) ? Math.round(cs.missedBiz / cs.totalBiz * 100) : null;
+        return { name: a.name, frust, resp, writingGrade, writingScore, resolution, callsBiz };
+      }).filter(d => d.frust !== null);
+
+      const respPoints   = data.map(d => ({ name: d.name, x: d.resp, y: d.frust }));
+      const writPoints   = data.map(d => ({ name: d.name, x: d.writingGrade, y: d.frust }));
+      const resPoints    = data.map(d => ({ name: d.name, x: d.resolution, y: d.frust }));
+      const callsPoints  = data.map(d => ({ name: d.name, x: d.callsBiz, y: d.frust }));
+
+      // Compute headline insights from r values
+      const rResp  = pearsonR(respPoints.filter(p => p.x !== null).map(p => p.x), respPoints.filter(p => p.x !== null).map(p => p.y));
+      const rWrit  = pearsonR(writPoints.filter(p => p.x !== null).map(p => p.x), writPoints.filter(p => p.x !== null).map(p => p.y));
+      const rRes   = pearsonR(resPoints.filter(p => p.x !== null).map(p => p.x), resPoints.filter(p => p.x !== null).map(p => p.y));
+      const rCalls = pearsonR(callsPoints.filter(p => p.x !== null).map(p => p.x), callsPoints.filter(p => p.x !== null).map(p => p.y));
+
+      const nResp = respPoints.filter(p => p.x !== null).length;
+      const nWrit = writPoints.filter(p => p.x !== null).length;
+      const nRes  = resPoints.filter(p => p.x !== null).length;
+      const nCalls = callsPoints.filter(p => p.x !== null).length;
+
+      const fmtR = (r) => r === null ? '—' : `${r >= 0 ? '+' : ''}${r.toFixed(2)}`;
+
+      return (
+        <Section title="Correlaciones con Frustración" id="correlations">
+          {/* Caveat banner */}
+          <div className="bg-orange-50 border border-orange-200 rounded-xl p-4 mb-6 text-xs text-orange-900 leading-relaxed">
+            <p className="font-bold mb-1">⚠️ Lectura con cautela</p>
+            <p>
+              Solo tenemos {data.length} agentes con datos. Para que un coeficiente sea estadísticamente significativo
+              al 5% con ese n, |r| tendría que ser mayor a <strong>0.75</strong>. Esta vista está pensada para detectar tendencias direccionales,
+              no para concluir causalidad. Se enriquecerá con cada nueva corrida.
+            </p>
+          </div>
+
+          {/* Correlation summary table */}
+          <div className="bg-white rounded-xl shadow-sm overflow-hidden mb-6">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="bg-navy-dark text-white">
+                  <th className="py-3 px-4 text-left text-xs font-semibold">Variable</th>
+                  <th className="py-3 px-4 text-center text-xs font-semibold">Coef. Pearson r</th>
+                  <th className="py-3 px-4 text-center text-xs font-semibold">n</th>
+                  <th className="py-3 px-4 text-left text-xs font-semibold">Lectura direccional</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr className="border-b border-gray-100">
+                  <td className="py-3 px-4 font-semibold">Tiempo de respuesta (mediana)</td>
+                  <td className="py-3 px-4 text-center font-mono font-bold">{fmtR(rResp)}</td>
+                  <td className="py-3 px-4 text-center text-gray-500">{nResp}</td>
+                  <td className="py-3 px-4 text-gray-600 text-xs">{rResp !== null && rResp > 0.2 ? 'Más lento → más frustración (esperado)' : rResp !== null && rResp < -0.2 ? 'Más lento → menos frustración (inesperado)' : 'Sin patrón claro'}</td>
+                </tr>
+                <tr className="border-b border-gray-100">
+                  <td className="py-3 px-4 font-semibold">Calidad de escritura (/100)</td>
+                  <td className="py-3 px-4 text-center font-mono font-bold">{fmtR(rWrit)}</td>
+                  <td className="py-3 px-4 text-center text-gray-500">{nWrit}</td>
+                  <td className="py-3 px-4 text-gray-600 text-xs">{rWrit !== null && rWrit < -0.2 ? 'Mejor escritura → menos frustración' : rWrit !== null && rWrit > 0.2 ? 'Mejor escritura → MÁS frustración (probable confounding por antigüedad)' : 'Sin patrón claro'}</td>
+                </tr>
+                <tr className="border-b border-gray-100">
+                  <td className="py-3 px-4 font-semibold">% Resolución</td>
+                  <td className="py-3 px-4 text-center font-mono font-bold">{fmtR(rRes)}</td>
+                  <td className="py-3 px-4 text-center text-gray-500">{nRes}</td>
+                  <td className="py-3 px-4 text-gray-600 text-xs">{rRes !== null && rRes < -0.2 ? 'Más resolución → menos frustración (esperado)' : rRes !== null && rRes > 0.2 ? 'Más resolución → más frustración (inesperado)' : 'Sin patrón claro'}</td>
+                </tr>
+                <tr>
+                  <td className="py-3 px-4 font-semibold">% Llamadas perdidas (laboral)</td>
+                  <td className="py-3 px-4 text-center font-mono font-bold">{fmtR(rCalls)}</td>
+                  <td className="py-3 px-4 text-center text-gray-500">{nCalls}</td>
+                  <td className="py-3 px-4 text-gray-600 text-xs">{nCalls < 3 ? 'Datos insuficientes (webhook live, se acumula)' : rCalls !== null && rCalls > 0.2 ? 'Más perdidas → más frustración (esperado)' : rCalls !== null && rCalls < -0.2 ? 'Más perdidas → menos frustración (inesperado)' : 'Sin patrón claro'}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          {/* Scatter plots grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+            <ScatterChart title="Frustración vs Tiempo de Respuesta" xLabel="Mediana de respuesta (min)" points={respPoints} xMin={0} xMax={35}/>
+            <ScatterChart title="Frustración vs Calidad de Escritura" xLabel="Calificación de escritura (/100)" points={writPoints} xMin={0} xMax={100}/>
+            <ScatterChart title="Frustración vs % Resolución" xLabel="% conversaciones resueltas" points={resPoints} xMin={0} xMax={100}/>
+            <ScatterChart title="Frustración vs Llamadas Perdidas" xLabel="% perdidas en horario laboral" points={callsPoints} xMin={0} xMax={100}/>
+          </div>
+
+          {/* Methodology */}
+          <div className="mt-8 bg-navy-dark rounded-xl p-5 text-xs text-gray-300 leading-relaxed">
+            <p className="text-teal text-sm font-bold mb-2">Notas metodológicas</p>
+            <ul className="space-y-1.5 list-disc list-inside">
+              <li>Cada punto del scatter es un asesor. Eje Y = % frustración (última medición disponible). Eje X = la variable indicada.</li>
+              <li>La línea punteada gris es la recta de regresión simple (mínimos cuadrados).</li>
+              <li>El coeficiente r de Pearson va de −1 a +1. Cerca de 0 = sin relación; +1 = relación lineal positiva perfecta; −1 = perfectamente negativa.</li>
+              <li><strong className="text-white">Limitación principal:</strong> son correlaciones agregadas por agente — no comparan conversación contra conversación. Para detectar causalidad real habría que cruzar mensajes con frustración a nivel de hilo individual.</li>
+              <li>Conforme se acumulen más corridas, los coeficientes se estabilizan y se vuelven interpretables. Hoy son sugerencias direccionales.</li>
+            </ul>
+          </div>
+        </Section>
+      );
+    }
+
+    // Coverage section — when do we have data up to per agent?
+    function DataCoverageSection() {
+      const today = new Date().toISOString().slice(0, 10);
+      const daysSince = (date) => {
+        const d1 = new Date(date);
+        const d2 = new Date(today);
+        return Math.floor((d2 - d1) / (1000 * 60 * 60 * 24));
+      };
+      const sorted = [...agentRanking].sort((a, b) => (b.lastSeen || '').localeCompare(a.lastSeen || ''));
+      const fresh = sorted.filter(a => daysSince(a.lastSeen) <= 3).length;
+      const stale = sorted.filter(a => daysSince(a.lastSeen) > 14).length;
+      return (
+        <Section title="Cobertura de Datos por Agente" id="coverage">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-6">
+            <div className="bg-white rounded-xl p-5 shadow-sm" style={{borderLeft: '4px solid #2EC4B6'}}>
+              <div className="text-3xl font-extrabold text-teal">{fresh}</div>
+              <div className="text-xs text-gray-500 mt-1">Agentes con datos recientes (≤3 días)</div>
+            </div>
+            <div className="bg-white rounded-xl p-5 shadow-sm" style={{borderLeft: '4px solid #F97316'}}>
+              <div className="text-3xl font-extrabold text-orange-500">{sorted.length - fresh - stale}</div>
+              <div className="text-xs text-gray-500 mt-1">Datos parciales (4-14 días)</div>
+            </div>
+            <div className="bg-white rounded-xl p-5 shadow-sm" style={{borderLeft: '4px solid #E8505B'}}>
+              <div className="text-3xl font-extrabold text-coral">{stale}</div>
+              <div className="text-xs text-gray-500 mt-1">Sin datos recientes ({'>'} 14 días)</div>
+            </div>
+          </div>
+          <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+            <table className="w-full">
+              <thead>
+                <tr className="bg-navy-dark text-white">
+                  <th className="py-3 px-4 text-left text-xs font-semibold">Agente</th>
+                  <th className="py-3 px-4 text-center text-xs font-semibold">Última información</th>
+                  <th className="py-3 px-4 text-center text-xs font-semibold">Días sin datos</th>
+                  <th className="py-3 px-4 text-center text-xs font-semibold">Estado</th>
+                </tr>
+              </thead>
+              <tbody>
+                {sorted.map((a, i) => {
+                  const days = daysSince(a.lastSeen);
+                  const status = days <= 3 ? 'Fresco' : days <= 14 ? 'Parcial' : 'Desconectado';
+                  const color = days <= 3 ? '#2EC4B6' : days <= 14 ? '#F97316' : '#E8505B';
+                  const bg = days <= 3 ? '#D1FAE5' : days <= 14 ? '#FEF3C7' : '#FEE2E2';
+                  const fmtDate = new Date(a.lastSeen).toLocaleDateString('es-MX', { day: 'numeric', month: 'short', year: 'numeric' });
+                  return (
+                    <tr key={i} className={`border-b border-gray-100 ${i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}>
+                      <td className="py-3 px-4 text-sm font-medium text-navy-dark">
+                        {a.name}
+                        {a.isBrandNew && <span className="ml-2 text-xs text-teal bg-teal/10 px-1.5 py-0.5 rounded">NUEVO</span>}
+                      </td>
+                      <td className="py-3 px-4 text-center text-sm text-gray-700">{fmtDate}</td>
+                      <td className="py-3 px-4 text-center text-sm text-gray-500">{days} {days === 1 ? 'día' : 'días'}</td>
+                      <td className="py-3 px-4 text-center">
+                        <span className="inline-block text-xs font-bold px-2 py-0.5 rounded-full" style={{color, backgroundColor: bg}}>{status}</span>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+            <div className="px-4 py-3 bg-gray-50 border-t">
+              <p className="text-xs text-gray-400">Fecha del último mensaje registrado en Evolution API · Si está desconectado, debe reconectarse en el manager para volver a recibir datos</p>
+            </div>
+          </div>
+        </Section>
+      );
+    }
+
+    // Tab navigation
+    const TABS = [
+      { id: 'overview',    label: 'Resumen',          icon: '📊' },
+      { id: 'agents',      label: 'Tasa de Frustración', icon: '😤' },
+      { id: 'resolution',  label: 'Resolución',       icon: '🎯' },
+      { id: 'response',    label: 'Tiempo de Respuesta', icon: '⏱️' },
+      { id: 'writing',     label: 'Escritura',        icon: '✍️' },
+      { id: 'calls',       label: 'Llamadas',         icon: '📞' },
+      { id: 'feedback',    label: 'Feedback',         icon: '📋' },
+      { id: 'correlations',label: 'Correlaciones',    icon: '🔗' },
+      { id: 'insights',    label: 'Insights y Mejoras', icon: '🔍' },
+      { id: 'coverage',    label: 'Cobertura',        icon: '📡' },
+    ];
+
+    function TabBar({ active, onChange }) {
+      return (
+        <div className="sticky top-[73px] z-40" style={{background: 'rgba(250, 250, 247, 0.85)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', borderBottom: '1px solid rgba(15,26,51,0.06)'}}>
+          <div className="max-w-7xl mx-auto px-3 sm:px-6 overflow-x-auto">
+            <div className="flex gap-0.5 py-2.5">
+              {TABS.map(t => {
+                const isActive = active === t.id;
+                return (
+                  <button
+                    key={t.id}
+                    onClick={() => onChange(t.id)}
+                    className={`group relative px-3.5 py-2 text-sm font-medium whitespace-nowrap rounded-lg transition-all duration-200 ${
+                      isActive
+                        ? 'text-navy-dark'
+                        : 'text-gray-500 hover:text-navy-dark'
+                    }`}
+                    style={isActive ? {
+                      background: 'rgba(15,26,51,0.06)',
+                    } : undefined}
+                  >
+                    <span className="mr-1.5 opacity-90">{t.icon}</span>
+                    <span className={isActive ? 'font-semibold' : ''}>{t.label}</span>
+                    {isActive && (
+                      <span className="absolute -bottom-0.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-coral"></span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    function App() {
+      const [tab, setTab] = React.useState('overview');
+      // Restore tab from URL hash on load
+      React.useEffect(() => {
+        const hash = window.location.hash.replace('#', '');
+        if (hash && TABS.find(t => t.id === hash)) setTab(hash);
+        const handler = () => {
+          const h = window.location.hash.replace('#', '');
+          if (h && TABS.find(t => t.id === h)) setTab(h);
+        };
+        window.addEventListener('hashchange', handler);
+        return () => window.removeEventListener('hashchange', handler);
+      }, []);
+      const setTabAndHash = (id) => {
+        setTab(id);
+        window.location.hash = id;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      };
+      return (
+        <div className="app-bg">
+          <Header />
+          <TabBar active={tab} onChange={setTabAndHash} />
+          {tab === 'overview' && (
+            <>
+              <Hero />
+              <KeyMetricsSummary onJump={setTabAndHash} />
+              <StatsCards />
+            </>
+          )}
+          {tab === 'agents' && <ComparisonSection />}
+          {tab === 'resolution' && <ResolutionSection />}
+          {tab === 'response' && <ResponseTimeSection />}
+          {tab === 'writing' && <WritingQualitySection />}
+          {tab === 'calls' && <CallsSection />}
+          {tab === 'feedback' && <FeedbackSection />}
+          {tab === 'correlations' && <CorrelationsSection />}
+          {tab === 'insights' && (
+            <>
+              <EvolutionOfProblemsSection />
+              <TopRequestsChart />
+              <FrustrationOverview />
+              <ImprovementAreasSection />
+            </>
+          )}
+          {tab === 'coverage' && <DataCoverageSection />}
+          <Footer />
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>

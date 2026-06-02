@@ -1,0 +1,5 @@
+# Static single-file dashboard — no build step.
+# Netlify serves index.html from the repo root.
+[build]
+  publish = "."
+  command = ""
