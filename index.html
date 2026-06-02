@@ -169,29 +169,30 @@
     // Jun 2 run: sample of 200 conversations across 21 agents.
     // resolvedPct / unresolvedPct / unclearPct computed from end-of-conversation signals;
     // escalationPct = cross-team escalation (legal/tech/pagos) detected.
+    // Resolution effectiveness — Jun 2026 run, 18 conversations per agent (LLM-classified).
+    // resolvedPct / unresolvedPct / unclearPct from end-of-conversation signals; escalationPct = cross-team handoff.
     const resolutionData = [
-      { agent: "Lorena Domínguez",  total: 11, resolvedPct: 82, unresolvedPct: 18, unclearPct: 0,  avgMsgs: 59, escalationPct: 27 },
-      { agent: "Xel Xanat",         total: 8,  resolvedPct: 75, unresolvedPct: 25, unclearPct: 0,  avgMsgs: 44, escalationPct: 12 },
-      { agent: "Fernanda Figueroa", total: 11, resolvedPct: 73, unresolvedPct: 18, unclearPct: 9,  avgMsgs: 53, escalationPct: 36 },
-      { agent: "Dana Lugo",         total: 7,  resolvedPct: 71, unresolvedPct: 14, unclearPct: 14, avgMsgs: 31, escalationPct: 0  },
-      { agent: "Hugo",              total: 10, resolvedPct: 70, unresolvedPct: 20, unclearPct: 10, avgMsgs: 57, escalationPct: 40 },
-      { agent: "Daniel Luna",       total: 9,  resolvedPct: 67, unresolvedPct: 33, unclearPct: 0,  avgMsgs: 41, escalationPct: 11 },
-      { agent: "Dylan Arellano",    total: 9,  resolvedPct: 67, unresolvedPct: 22, unclearPct: 11, avgMsgs: 67, escalationPct: 22 },
-      { agent: "Elizabeth Bustos",  total: 9,  resolvedPct: 67, unresolvedPct: 22, unclearPct: 11, avgMsgs: 50, escalationPct: 0  },
-      { agent: "Karen Pérez",       total: 9,  resolvedPct: 67, unresolvedPct: 11, unclearPct: 22, avgMsgs: 49, escalationPct: 33 },
-      { agent: "Paola Viveros",     total: 8,  resolvedPct: 62, unresolvedPct: 38, unclearPct: 0,  avgMsgs: 39, escalationPct: 38 },
-      { agent: "Eduardo",           total: 10, resolvedPct: 60, unresolvedPct: 40, unclearPct: 0,  avgMsgs: 40, escalationPct: 40 },
-      { agent: "Elvia",             total: 12, resolvedPct: 58, unresolvedPct: 33, unclearPct: 8,  avgMsgs: 64, escalationPct: 25 },
-      { agent: "Gabriel García",    total: 12, resolvedPct: 58, unresolvedPct: 42, unclearPct: 0,  avgMsgs: 63, escalationPct: 33 },
-      { agent: "Cesar",             total: 9,  resolvedPct: 56, unresolvedPct: 44, unclearPct: 0,  avgMsgs: 71, escalationPct: 22 },
-      { agent: "Iran",              total: 11, resolvedPct: 55, unresolvedPct: 45, unclearPct: 0,  avgMsgs: 62, escalationPct: 18 },
-      { agent: "Elizabeth Castro",  total: 6,  resolvedPct: 50, unresolvedPct: 33, unclearPct: 17, avgMsgs: 53, escalationPct: 50 },
-      { agent: "Jenifer",           total: 12, resolvedPct: 50, unresolvedPct: 50, unclearPct: 0,  avgMsgs: 63, escalationPct: 58 },
-      { agent: "Kate González",     total: 13, resolvedPct: 46, unresolvedPct: 31, unclearPct: 23, avgMsgs: 61, escalationPct: 46 },
-      { agent: "Carlos",            total: 9,  resolvedPct: 44, unresolvedPct: 44, unclearPct: 11, avgMsgs: 68, escalationPct: 44 },
-      { agent: "Horacio Gómez",     total: 5,  resolvedPct: 40, unresolvedPct: 40, unclearPct: 20, avgMsgs: 38, escalationPct: 60 },
-      { agent: "Itzel Alarcón",     total: 10, resolvedPct: 40, unresolvedPct: 60, unclearPct: 0,  avgMsgs: 57, escalationPct: 40 },
-    ];
+      { agent: "Kate González", total: 18, resolvedPct: 78, unresolvedPct: 17, unclearPct: 6, avgMsgs: 60, escalationPct: 33 },
+      { agent: "Lorena Domínguez", total: 18, resolvedPct: 72, unresolvedPct: 28, unclearPct: 0, avgMsgs: 59, escalationPct: 67 },
+      { agent: "Dylan Arellano", total: 18, resolvedPct: 67, unresolvedPct: 28, unclearPct: 6, avgMsgs: 66, escalationPct: 22 },
+      { agent: "Iran", total: 18, resolvedPct: 67, unresolvedPct: 28, unclearPct: 6, avgMsgs: 61, escalationPct: 28 },
+      { agent: "Paola Viveros", total: 18, resolvedPct: 61, unresolvedPct: 39, unclearPct: 0, avgMsgs: 38, escalationPct: 17 },
+      { agent: "Daniel Luna", total: 18, resolvedPct: 56, unresolvedPct: 44, unclearPct: 0, avgMsgs: 41, escalationPct: 28 },
+      { agent: "Hugo", total: 18, resolvedPct: 56, unresolvedPct: 39, unclearPct: 6, avgMsgs: 57, escalationPct: 28 },
+      { agent: "Cesar", total: 18, resolvedPct: 50, unresolvedPct: 50, unclearPct: 0, avgMsgs: 71, escalationPct: 17 },
+      { agent: "Jenifer", total: 18, resolvedPct: 50, unresolvedPct: 39, unclearPct: 11, avgMsgs: 63, escalationPct: 78 },
+      { agent: "Karen Pérez", total: 18, resolvedPct: 50, unresolvedPct: 44, unclearPct: 6, avgMsgs: 48, escalationPct: 22 },
+      { agent: "Elizabeth Bustos", total: 18, resolvedPct: 44, unresolvedPct: 44, unclearPct: 11, avgMsgs: 50, escalationPct: 22 },
+      { agent: "Elizabeth Castro", total: 18, resolvedPct: 44, unresolvedPct: 50, unclearPct: 6, avgMsgs: 52, escalationPct: 50 },
+      { agent: "Elvia", total: 18, resolvedPct: 44, unresolvedPct: 44, unclearPct: 11, avgMsgs: 64, escalationPct: 28 },
+      { agent: "Fernanda Figueroa", total: 18, resolvedPct: 44, unresolvedPct: 50, unclearPct: 6, avgMsgs: 52, escalationPct: 44 },
+      { agent: "Gabriel García", total: 18, resolvedPct: 44, unresolvedPct: 39, unclearPct: 17, avgMsgs: 62, escalationPct: 22 },
+      { agent: "Carlos", total: 18, resolvedPct: 39, unresolvedPct: 50, unclearPct: 11, avgMsgs: 68, escalationPct: 39 },
+      { agent: "Itzel Alarcón", total: 18, resolvedPct: 22, unresolvedPct: 78, unclearPct: 0, avgMsgs: 57, escalationPct: 28 },
+      { agent: "Eduardo", total: 5, resolvedPct: 20, unresolvedPct: 80, unclearPct: 0, avgMsgs: 40, escalationPct: 60 },
+    ]
+    // Resolution by month (for the month filter). 'all' = both months combined.
+    const resolutionMonthly = {"generated_at": "2026-06-02T13:41:11.081415", "months": ["2026-05", "2026-06"], "by_month": {"2026-05": {"team": {"total": 100, "resolvedPct": 55, "unresolvedPct": 34, "unclearPct": 11, "escalationPct": 21}, "agents": [{"total": 1, "resolvedPct": 100, "unresolvedPct": 0, "unclearPct": 0, "escalationPct": 0, "agent": "Elizabeth Bustos", "avgMsgs": 50}, {"total": 1, "resolvedPct": 100, "unresolvedPct": 0, "unclearPct": 0, "escalationPct": 0, "agent": "Fernanda Figueroa", "avgMsgs": 52}, {"total": 26, "resolvedPct": 77, "unresolvedPct": 4, "unclearPct": 19, "escalationPct": 15, "agent": "Dana Lugo", "avgMsgs": 31}, {"total": 27, "resolvedPct": 59, "unresolvedPct": 37, "unclearPct": 4, "escalationPct": 11, "agent": "Xel Xanat", "avgMsgs": 44}, {"total": 2, "resolvedPct": 50, "unresolvedPct": 50, "unclearPct": 0, "escalationPct": 50, "agent": "Elvia", "avgMsgs": 64}, {"total": 19, "resolvedPct": 47, "unresolvedPct": 47, "unclearPct": 5, "escalationPct": 26, "agent": "Horacio Gómez", "avgMsgs": 37}, {"total": 15, "resolvedPct": 40, "unresolvedPct": 53, "unclearPct": 7, "escalationPct": 33, "agent": "Eduardo", "avgMsgs": 40}, {"total": 6, "resolvedPct": 17, "unresolvedPct": 67, "unclearPct": 17, "escalationPct": 50, "agent": "Carlos", "avgMsgs": 68}, {"total": 1, "resolvedPct": 0, "unresolvedPct": 100, "unclearPct": 0, "escalationPct": 0, "agent": "Elizabeth Castro", "avgMsgs": 52}, {"total": 1, "resolvedPct": 0, "unresolvedPct": 0, "unclearPct": 100, "escalationPct": 0, "agent": "Gabriel García", "avgMsgs": 62}, {"total": 1, "resolvedPct": 0, "unresolvedPct": 0, "unclearPct": 100, "escalationPct": 0, "agent": "Lorena Domínguez", "avgMsgs": 59}]}, "2026-06": {"team": {"total": 311, "resolvedPct": 52, "unresolvedPct": 42, "unclearPct": 6, "escalationPct": 34}, "agents": [{"total": 18, "resolvedPct": 78, "unresolvedPct": 17, "unclearPct": 6, "escalationPct": 33, "agent": "Kate González", "avgMsgs": 60}, {"total": 18, "resolvedPct": 72, "unresolvedPct": 28, "unclearPct": 0, "escalationPct": 67, "agent": "Lorena Domínguez", "avgMsgs": 59}, {"total": 18, "resolvedPct": 67, "unresolvedPct": 28, "unclearPct": 6, "escalationPct": 22, "agent": "Dylan Arellano", "avgMsgs": 66}, {"total": 18, "resolvedPct": 67, "unresolvedPct": 28, "unclearPct": 6, "escalationPct": 28, "agent": "Iran", "avgMsgs": 61}, {"total": 18, "resolvedPct": 61, "unresolvedPct": 39, "unclearPct": 0, "escalationPct": 17, "agent": "Paola Viveros", "avgMsgs": 38}, {"total": 18, "resolvedPct": 56, "unresolvedPct": 44, "unclearPct": 0, "escalationPct": 28, "agent": "Daniel Luna", "avgMsgs": 41}, {"total": 18, "resolvedPct": 56, "unresolvedPct": 39, "unclearPct": 6, "escalationPct": 28, "agent": "Hugo", "avgMsgs": 57}, {"total": 18, "resolvedPct": 50, "unresolvedPct": 50, "unclearPct": 0, "escalationPct": 17, "agent": "Cesar", "avgMsgs": 71}, {"total": 18, "resolvedPct": 50, "unresolvedPct": 39, "unclearPct": 11, "escalationPct": 78, "agent": "Jenifer", "avgMsgs": 63}, {"total": 18, "resolvedPct": 50, "unresolvedPct": 44, "unclearPct": 6, "escalationPct": 22, "agent": "Karen Pérez", "avgMsgs": 48}, {"total": 18, "resolvedPct": 44, "unresolvedPct": 44, "unclearPct": 11, "escalationPct": 22, "agent": "Elizabeth Bustos", "avgMsgs": 50}, {"total": 18, "resolvedPct": 44, "unresolvedPct": 50, "unclearPct": 6, "escalationPct": 50, "agent": "Elizabeth Castro", "avgMsgs": 52}, {"total": 18, "resolvedPct": 44, "unresolvedPct": 44, "unclearPct": 11, "escalationPct": 28, "agent": "Elvia", "avgMsgs": 64}, {"total": 18, "resolvedPct": 44, "unresolvedPct": 50, "unclearPct": 6, "escalationPct": 44, "agent": "Fernanda Figueroa", "avgMsgs": 52}, {"total": 18, "resolvedPct": 44, "unresolvedPct": 39, "unclearPct": 17, "escalationPct": 22, "agent": "Gabriel García", "avgMsgs": 62}, {"total": 18, "resolvedPct": 39, "unresolvedPct": 50, "unclearPct": 11, "escalationPct": 39, "agent": "Carlos", "avgMsgs": 68}, {"total": 18, "resolvedPct": 22, "unresolvedPct": 78, "unclearPct": 0, "escalationPct": 28, "agent": "Itzel Alarcón", "avgMsgs": 57}, {"total": 5, "resolvedPct": 20, "unresolvedPct": 80, "unclearPct": 0, "escalationPct": 60, "agent": "Eduardo", "avgMsgs": 40}]}}, "all": {"team": {"total": 411, "resolvedPct": 53, "unresolvedPct": 40, "unclearPct": 7, "escalationPct": 31}, "agents": [{"total": 18, "resolvedPct": 78, "unresolvedPct": 17, "unclearPct": 6, "escalationPct": 33, "agent": "Kate González", "avgMsgs": 60}, {"total": 26, "resolvedPct": 77, "unresolvedPct": 4, "unclearPct": 19, "escalationPct": 15, "agent": "Dana Lugo", "avgMsgs": 31}, {"total": 19, "resolvedPct": 68, "unresolvedPct": 26, "unclearPct": 5, "escalationPct": 63, "agent": "Lorena Domínguez", "avgMsgs": 59}, {"total": 18, "resolvedPct": 67, "unresolvedPct": 28, "unclearPct": 6, "escalationPct": 22, "agent": "Dylan Arellano", "avgMsgs": 66}, {"total": 18, "resolvedPct": 67, "unresolvedPct": 28, "unclearPct": 6, "escalationPct": 28, "agent": "Iran", "avgMsgs": 61}, {"total": 18, "resolvedPct": 61, "unresolvedPct": 39, "unclearPct": 0, "escalationPct": 17, "agent": "Paola Viveros", "avgMsgs": 38}, {"total": 27, "resolvedPct": 59, "unresolvedPct": 37, "unclearPct": 4, "escalationPct": 11, "agent": "Xel Xanat", "avgMsgs": 44}, {"total": 18, "resolvedPct": 56, "unresolvedPct": 44, "unclearPct": 0, "escalationPct": 28, "agent": "Daniel Luna", "avgMsgs": 41}, {"total": 18, "resolvedPct": 56, "unresolvedPct": 39, "unclearPct": 6, "escalationPct": 28, "agent": "Hugo", "avgMsgs": 57}, {"total": 18, "resolvedPct": 50, "unresolvedPct": 50, "unclearPct": 0, "escalationPct": 17, "agent": "Cesar", "avgMsgs": 71}, {"total": 18, "resolvedPct": 50, "unresolvedPct": 39, "unclearPct": 11, "escalationPct": 78, "agent": "Jenifer", "avgMsgs": 63}, {"total": 18, "resolvedPct": 50, "unresolvedPct": 44, "unclearPct": 6, "escalationPct": 22, "agent": "Karen Pérez", "avgMsgs": 48}, {"total": 19, "resolvedPct": 47, "unresolvedPct": 42, "unclearPct": 11, "escalationPct": 21, "agent": "Elizabeth Bustos", "avgMsgs": 50}, {"total": 19, "resolvedPct": 47, "unresolvedPct": 47, "unclearPct": 5, "escalationPct": 42, "agent": "Fernanda Figueroa", "avgMsgs": 52}, {"total": 19, "resolvedPct": 47, "unresolvedPct": 47, "unclearPct": 5, "escalationPct": 26, "agent": "Horacio Gómez", "avgMsgs": 37}, {"total": 20, "resolvedPct": 45, "unresolvedPct": 45, "unclearPct": 10, "escalationPct": 30, "agent": "Elvia", "avgMsgs": 64}, {"total": 19, "resolvedPct": 42, "unresolvedPct": 53, "unclearPct": 5, "escalationPct": 47, "agent": "Elizabeth Castro", "avgMsgs": 52}, {"total": 19, "resolvedPct": 42, "unresolvedPct": 37, "unclearPct": 21, "escalationPct": 21, "agent": "Gabriel García", "avgMsgs": 62}, {"total": 20, "resolvedPct": 35, "unresolvedPct": 60, "unclearPct": 5, "escalationPct": 40, "agent": "Eduardo", "avgMsgs": 40}, {"total": 24, "resolvedPct": 33, "unresolvedPct": 54, "unclearPct": 12, "escalationPct": 42, "agent": "Carlos", "avgMsgs": 68}, {"total": 18, "resolvedPct": 22, "unresolvedPct": 78, "unclearPct": 0, "escalationPct": 28, "agent": "Itzel Alarcón", "avgMsgs": 57}]}};;
 
     // Writing quality per agent (gramática, profesionalismo, tono)
     // Lower score = better. Computed from heuristics on real broker-side messages.
@@ -7787,20 +7788,40 @@
     }
 
     function ResolutionSection() {
-      const sorted = [...resolutionData].sort((a, b) => b.resolvedPct - a.resolvedPct);
-      const teamResolved = Math.round(sorted.reduce((s, r) => s + r.resolvedPct, 0) / sorted.length);
-      const teamMsgs = Math.round(sorted.reduce((s, r) => s + r.avgMsgs, 0) / sorted.length);
-      const teamEsc = Math.round(sorted.reduce((s, r) => s + r.escalationPct, 0) / sorted.length);
+      const [scope, setScope] = React.useState('2026-06');
+      const monthName = (k) => { const [y, m] = k.split('-'); return new Date(y, m - 1, 1).toLocaleDateString('es-MX', { month: 'short', year: 'numeric' }); };
+      const scopeOpts = [{ k: 'all', l: 'Todos' }, ...resolutionMonthly.months.slice().reverse().map(k => ({ k, l: monthName(k) }))];
+      const scopeData = scope === 'all' ? resolutionMonthly.all : resolutionMonthly.by_month[scope];
+      const sorted = [...scopeData.agents].sort((a, b) => b.resolvedPct - a.resolvedPct);
+      const team = scopeData.team;
+      const teamResolved = team.resolvedPct;
+      const teamEsc = team.escalationPct;
       const colorRes = (p) => p >= 65 ? '#2EC4B6' : p >= 50 ? '#22C55E' : p >= 35 ? '#F97316' : '#E8505B';
-      const fmtHours = (h) => h < 24 ? `${h.toFixed(0)} h` : `${(h/24).toFixed(1)} d`;
+      // May per-agent volume is thin (the pull is recency-biased); flag it.
+      const thinPerAgent = scope === '2026-05';
 
       return (
         <Section title="Efectividad de Resolución" id="resolution">
+          {/* Month filter */}
+          <div className="flex flex-wrap items-center gap-3 mb-4">
+            <span className="text-xs text-gray-500 uppercase tracking-wide">Periodo:</span>
+            <div className="inline-flex bg-white border border-gray-200 rounded-lg p-1 gap-1 shadow-sm">
+              {scopeOpts.map(o => (
+                <button key={o.k} onClick={() => setScope(o.k)}
+                  className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-colors ${scope === o.k ? 'bg-navy-dark text-white' : 'text-gray-500 hover:text-navy-dark'}`}>
+                  {o.l}
+                </button>
+              ))}
+            </div>
+            <span className="text-xs text-gray-400">{team.total} conversaciones · {sorted.length} agentes</span>
+          </div>
           <div className="bg-white rounded-xl p-4 mb-6 border border-navy/10">
             <p className="text-xs text-gray-600">
-              🎯 Mide si el agente realmente resolvió el problema del broker · Detección automática por sentimiento de los últimos mensajes del broker ·
-              Las idas y vueltas y escalaciones a otros equipos también se contabilizan
+              🎯 Mide si el agente realmente resolvió el problema del broker. Cada conversación la clasifica Claude leyéndola (no son todas las conversaciones, es una muestra: <strong>~18 por agente en junio</strong>). El filtro mensual se irá llenando corrida con corrida.
             </p>
+            {thinPerAgent && (
+              <p className="text-xs text-orange-600 mt-2">⚠️ Mayo es confiable a nivel equipo, pero por-agente la muestra es chica (la descarga prioriza conversaciones recientes). Junio es el mes sólido por agente.</p>
+            )}
           </div>
 
           {/* Top KPIs */}
@@ -7817,8 +7838,8 @@
             </div>
             <div className="bg-white rounded-xl p-5 shadow-sm" style={{borderLeft: '4px solid #F97316'}}>
               <div className="text-3xl mb-1">💬</div>
-              <div className="text-3xl font-extrabold text-orange-500">{teamMsgs}</div>
-              <div className="text-xs text-gray-500 mt-1">Mensajes promedio por conversación</div>
+              <div className="text-3xl font-extrabold text-orange-500">{team.total}</div>
+              <div className="text-xs text-gray-500 mt-1">Conversaciones analizadas ({scope === 'all' ? 'todos los meses' : monthName(scope)})</div>
             </div>
             <div className="bg-white rounded-xl p-5 shadow-sm" style={{borderLeft: '4px solid #E8505B'}}>
               <div className="text-3xl mb-1">↗️</div>
@@ -7875,7 +7896,6 @@
                     <th className="py-3 px-4 text-center text-xs font-semibold">Convs</th>
                     <th className="py-3 px-4 text-center text-xs font-semibold">% Resueltas</th>
                     <th className="py-3 px-4 text-center text-xs font-semibold">Mensajes prom.</th>
-                    <th className="py-3 px-4 text-center text-xs font-semibold">Duración prom.</th>
                     <th className="py-3 px-4 text-center text-xs font-semibold">% Necesitó otro equipo</th>
                   </tr>
                 </thead>
@@ -7886,7 +7906,6 @@
                       <td className="py-3 px-4 text-center text-sm text-gray-500">{r.total}</td>
                       <td className="py-3 px-4 text-center text-sm font-bold" style={{color: colorRes(r.resolvedPct)}}>{r.resolvedPct}%</td>
                       <td className="py-3 px-4 text-center text-sm text-gray-700">{r.avgMsgs}</td>
-                      <td className="py-3 px-4 text-center text-sm text-gray-700">{fmtHours(r.avgHours)}</td>
                       <td className="py-3 px-4 text-center text-sm" style={{color: r.escalationPct > 40 ? '#E8505B' : r.escalationPct > 20 ? '#F97316' : '#22C55E'}}>{r.escalationPct}%</td>
                     </tr>
                   ))}
