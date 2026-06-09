@@ -6310,6 +6310,241 @@
   }
 };
 
+    // Manejo de Contratos — per-agent contract-change handling (deeper pull)
+    const contractHandling = {
+  "generated_at": "2026-06-02",
+  "window": "deeper pull (≤70 chats/agente)",
+  "note": "Denominador = conversaciones donde el cliente pidió un cambio al contrato. Causa raíz suele ser el paso legal/contratos, no el asesor.",
+  "team": {
+    "contractConvs": 403,
+    "problems": 117,
+    "problemRate": 29,
+    "recoveryPct": 56
+  },
+  "agents": [
+    {
+      "agent": "Eduardo",
+      "inRoster": true,
+      "convsTotal": 35,
+      "contractConvs": 22,
+      "problems": 12,
+      "problemRate": 55,
+      "problemsUnresolved": 5,
+      "recoveryPct": 58,
+      "resolvedPct": 68
+    },
+    {
+      "agent": "Iran",
+      "inRoster": true,
+      "convsTotal": 35,
+      "contractConvs": 17,
+      "problems": 9,
+      "problemRate": 53,
+      "problemsUnresolved": 6,
+      "recoveryPct": 33,
+      "resolvedPct": 59
+    },
+    {
+      "agent": "Jenifer",
+      "inRoster": true,
+      "convsTotal": 35,
+      "contractConvs": 22,
+      "problems": 10,
+      "problemRate": 45,
+      "problemsUnresolved": 6,
+      "recoveryPct": 40,
+      "resolvedPct": 50
+    },
+    {
+      "agent": "Carlos",
+      "inRoster": true,
+      "convsTotal": 35,
+      "contractConvs": 23,
+      "problems": 8,
+      "problemRate": 35,
+      "problemsUnresolved": 5,
+      "recoveryPct": 38,
+      "resolvedPct": 39
+    },
+    {
+      "agent": "Cesar",
+      "inRoster": true,
+      "convsTotal": 35,
+      "contractConvs": 21,
+      "problems": 7,
+      "problemRate": 33,
+      "problemsUnresolved": 3,
+      "recoveryPct": 57,
+      "resolvedPct": 81
+    },
+    {
+      "agent": "Horacio Gómez",
+      "inRoster": true,
+      "convsTotal": 35,
+      "contractConvs": 21,
+      "problems": 7,
+      "problemRate": 33,
+      "problemsUnresolved": 2,
+      "recoveryPct": 71,
+      "resolvedPct": 71
+    },
+    {
+      "agent": "Xel Xanat",
+      "inRoster": true,
+      "convsTotal": 35,
+      "contractConvs": 29,
+      "problems": 9,
+      "problemRate": 31,
+      "problemsUnresolved": 2,
+      "recoveryPct": 78,
+      "resolvedPct": 79
+    },
+    {
+      "agent": "Hugo",
+      "inRoster": true,
+      "convsTotal": 35,
+      "contractConvs": 20,
+      "problems": 6,
+      "problemRate": 30,
+      "problemsUnresolved": 3,
+      "recoveryPct": 50,
+      "resolvedPct": 70
+    },
+    {
+      "agent": "Fernanda Figueroa",
+      "inRoster": true,
+      "convsTotal": 35,
+      "contractConvs": 22,
+      "problems": 6,
+      "problemRate": 27,
+      "problemsUnresolved": 6,
+      "recoveryPct": 0,
+      "resolvedPct": 36
+    },
+    {
+      "agent": "Gabriel García",
+      "inRoster": true,
+      "convsTotal": 35,
+      "contractConvs": 22,
+      "problems": 6,
+      "problemRate": 27,
+      "problemsUnresolved": 1,
+      "recoveryPct": 83,
+      "resolvedPct": 86
+    },
+    {
+      "agent": "Karen Pérez",
+      "inRoster": true,
+      "convsTotal": 35,
+      "contractConvs": 23,
+      "problems": 6,
+      "problemRate": 26,
+      "problemsUnresolved": 1,
+      "recoveryPct": 83,
+      "resolvedPct": 70
+    },
+    {
+      "agent": "Dylan Arellano",
+      "inRoster": true,
+      "convsTotal": 35,
+      "contractConvs": 24,
+      "problems": 6,
+      "problemRate": 25,
+      "problemsUnresolved": 1,
+      "recoveryPct": 83,
+      "resolvedPct": 88
+    },
+    {
+      "agent": "Kate González",
+      "inRoster": true,
+      "convsTotal": 35,
+      "contractConvs": 21,
+      "problems": 5,
+      "problemRate": 24,
+      "problemsUnresolved": 4,
+      "recoveryPct": 20,
+      "resolvedPct": 38
+    },
+    {
+      "agent": "Paola Viveros",
+      "inRoster": true,
+      "convsTotal": 35,
+      "contractConvs": 21,
+      "problems": 5,
+      "problemRate": 24,
+      "problemsUnresolved": 4,
+      "recoveryPct": 20,
+      "resolvedPct": 57
+    },
+    {
+      "agent": "Lorena Domínguez",
+      "inRoster": true,
+      "convsTotal": 35,
+      "contractConvs": 26,
+      "problems": 6,
+      "problemRate": 23,
+      "problemsUnresolved": 1,
+      "recoveryPct": 83,
+      "resolvedPct": 81
+    },
+    {
+      "agent": "Cesar Iram Enriquez",
+      "inRoster": false,
+      "convsTotal": 34,
+      "contractConvs": 16,
+      "problems": 3,
+      "problemRate": 19,
+      "problemsUnresolved": 2,
+      "recoveryPct": 33,
+      "resolvedPct": 56
+    },
+    {
+      "agent": "Elvia",
+      "inRoster": true,
+      "convsTotal": 35,
+      "contractConvs": 21,
+      "problems": 4,
+      "problemRate": 19,
+      "problemsUnresolved": 1,
+      "recoveryPct": 75,
+      "resolvedPct": 71
+    },
+    {
+      "agent": "Daniel Luna",
+      "inRoster": true,
+      "convsTotal": 35,
+      "contractConvs": 23,
+      "problems": 3,
+      "problemRate": 13,
+      "problemsUnresolved": 1,
+      "recoveryPct": 67,
+      "resolvedPct": 78
+    },
+    {
+      "agent": "Dana Lugo",
+      "inRoster": true,
+      "convsTotal": 35,
+      "contractConvs": 25,
+      "problems": 2,
+      "problemRate": 8,
+      "problemsUnresolved": 0,
+      "recoveryPct": 100,
+      "resolvedPct": 72
+    },
+    {
+      "agent": "Alfonso",
+      "inRoster": false,
+      "convsTotal": 34,
+      "contractConvs": 20,
+      "problems": 1,
+      "problemRate": 5,
+      "problemsUnresolved": 1,
+      "recoveryPct": 0,
+      "resolvedPct": 70
+    }
+  ]
+};
+
     // ─── COMPONENTS ───
     function Header({ onToggleNav, activeLabel }) {
       return (
@@ -9033,10 +9268,123 @@
       );
     }
 
+    // ─── Manejo de Contratos ───
+    function ContractHandlingSection() {
+      const d = contractHandling;
+      const [sortKey, setSortKey] = React.useState('problemRate'); // problemRate | recoveryPct
+      const agents = [...d.agents].sort((a, b) =>
+        sortKey === 'problemRate'
+          ? b.problemRate - a.problemRate
+          : (a.recoveryPct == null ? 101 : a.recoveryPct) - (b.recoveryPct == null ? 101 : b.recoveryPct));
+      const colRate = (p) => p >= 45 ? '#E8505B' : p >= 30 ? '#F97316' : p >= 20 ? '#FACC15' : '#2EC4B6';
+      const colRec = (p) => p == null ? '#94A3B8' : p >= 70 ? '#2EC4B6' : p >= 50 ? '#22C55E' : p >= 33 ? '#F97316' : '#E8505B';
+      const Seg = ({ value, set, opts }) => (
+        <div className="inline-flex bg-white border border-gray-200 rounded-lg p-1 gap-1 shadow-sm">
+          {opts.map(o => (
+            <button key={o.v} onClick={() => set(o.v)}
+              className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-colors ${value === o.v ? 'bg-navy-dark text-white' : 'text-gray-500 hover:text-navy-dark'}`}>{o.l}</button>
+          ))}
+        </div>
+      );
+      return (
+        <Section title="Manejo de Contratos" id="contracts">
+          <div className="bg-white rounded-xl p-4 mb-6 border-l-4 border-coral shadow-sm">
+            <p className="text-sm text-gray-700 mb-1.5">
+              Mide qué tan bien maneja cada asesor los <strong>cambios al contrato</strong> que pide el cliente. Sobre una muestra grande: <strong>{d.team.contractConvs} conversaciones de contrato</strong> (~20 por agente).
+            </p>
+            <p className="text-xs text-gray-500">
+              ⚠️ La causa raíz de que un cambio no se aplique suele estar <strong>aguas arriba (Legal/contratos)</strong>, no en el asesor. Esta vista muestra dónde se concentra y, sobre todo, <strong>quién logra recuperarlo</strong> (recuperación) — la señal más atribuible al asesor.
+            </p>
+          </div>
+
+          {/* Team KPIs */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            <div className="bg-white rounded-xl p-5 shadow-sm" style={{ borderLeft: '4px solid #F97316' }}>
+              <div className="text-3xl font-extrabold text-orange-500">{d.team.problemRate}%</div>
+              <div className="text-xs text-gray-500 mt-1">Conversaciones de contrato con problema (equipo)</div>
+            </div>
+            <div className="bg-white rounded-xl p-5 shadow-sm" style={{ borderLeft: '4px solid #2EC4B6' }}>
+              <div className="text-3xl font-extrabold text-teal">{d.team.recoveryPct}%</div>
+              <div className="text-xs text-gray-500 mt-1">Recuperación: problemas que sí se resolvieron</div>
+            </div>
+            <div className="bg-white rounded-xl p-5 shadow-sm" style={{ borderLeft: '4px solid #1B2A4A' }}>
+              <div className="text-3xl font-extrabold text-navy-dark">{d.team.contractConvs}</div>
+              <div className="text-xs text-gray-500 mt-1">Conversaciones de contrato analizadas</div>
+            </div>
+            <div className="bg-white rounded-xl p-5 shadow-sm" style={{ borderLeft: '4px solid #E8505B' }}>
+              <div className="text-3xl font-extrabold text-coral">{d.team.problems}</div>
+              <div className="text-xs text-gray-500 mt-1">Cambios mal aplicados / no aplicados / demorados</div>
+            </div>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-3 mb-4">
+            <span className="text-xs text-gray-500 uppercase tracking-wide">Ordenar por:</span>
+            <Seg value={sortKey} set={setSortKey} opts={[{ v: 'problemRate', l: '% con problema (peor arriba)' }, { v: 'recoveryPct', l: 'Recuperación (peor arriba)' }]} />
+          </div>
+
+          <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[720px]">
+                <thead>
+                  <tr className="bg-navy-dark text-white">
+                    <th className="py-3 px-3 text-left text-xs font-semibold w-12">#</th>
+                    <th className="py-3 px-3 text-left text-xs font-semibold">Agente CS</th>
+                    <th className="py-3 px-3 text-center text-xs font-semibold">Convs de contrato</th>
+                    <th className="py-3 px-3 text-center text-xs font-semibold bg-orange-500/20">% con problema</th>
+                    <th className="py-3 px-3 text-center text-xs font-semibold">Sin resolver</th>
+                    <th className="py-3 px-3 text-center text-xs font-semibold bg-teal/20">% recuperación</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {agents.map((a, i) => (
+                    <tr key={a.agent} className={`border-b border-gray-100 ${i % 2 === 0 ? 'bg-white' : 'bg-gray-50'} hover:bg-gray-100 transition-colors`}>
+                      <td className="py-3 px-3 text-sm text-gray-400 font-mono">{i + 1}</td>
+                      <td className="py-3 px-3 text-sm font-medium text-navy-dark">
+                        {a.agent}
+                        {!a.inRoster && <span className="ml-2 text-[10px] text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded">nuevo</span>}
+                      </td>
+                      <td className="py-3 px-3 text-center text-sm text-gray-600">{a.contractConvs}</td>
+                      <td className="py-3 px-3 bg-orange-500/5">
+                        <div className="flex items-center gap-2">
+                          <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
+                            <div className="h-full rounded-full" style={{ width: `${a.problemRate}%`, background: colRate(a.problemRate) }}></div>
+                          </div>
+                          <span className="text-sm font-bold w-10 text-right" style={{ color: colRate(a.problemRate) }}>{a.problemRate}%</span>
+                        </div>
+                      </td>
+                      <td className="py-3 px-3 text-center text-sm text-gray-700">{a.problemsUnresolved} <span className="text-gray-400">/ {a.problems}</span></td>
+                      <td className="py-3 px-3 text-center bg-teal/5">
+                        <span className="text-sm font-bold" style={{ color: colRec(a.recoveryPct) }}>{a.recoveryPct == null ? '—' : a.recoveryPct + '%'}</span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div className="px-4 py-3 bg-gray-50 border-t">
+              <p className="text-xs text-gray-400">
+                <strong>% con problema</strong> = de sus conversaciones de contrato, cuántas tuvieron un cambio no aplicado / parcial / mal / demorado. <strong>% recuperación</strong> = de esos problemas, cuántos sí se resolvieron al final (alto = bueno). · 3 asesores no estaban conectados en este pull (Elizabeth Bustos, Elizabeth Castro, Itzel Alarcón); 2 instancias nuevas aparecen marcadas "nuevo".
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-6 bg-navy-dark rounded-xl p-5">
+            <p className="text-teal text-sm font-bold mb-2">Cómo leerlo</p>
+            <div className="text-gray-300 text-xs leading-relaxed space-y-1.5">
+              <p><strong className="text-white">Alto % con problema + baja recuperación</strong> = peor manejo (los cambios fallan y no los rescata). Empezar por ahí.</p>
+              <p><strong className="text-white">Alto % con problema + alta recuperación</strong> = recibe muchos casos difíciles pero los resuelve — buen manejo pese al volumen.</p>
+              <p className="text-gray-400">El problema de fondo (cambios que no se aplican) se ataca en el paso de edición/legal; esta vista ayuda a priorizar coaching y a ver quién protege al cliente.</p>
+            </div>
+          </div>
+        </Section>
+      );
+    }
+
     const TABS = [
       { id: 'overview',    label: 'Resumen',          icon: '📊' },
       { id: 'agents',      label: 'Tasa de Frustración', icon: '😤' },
       { id: 'resolution',  label: 'Resolución',       icon: '🎯' },
+      { id: 'contracts',   label: 'Manejo de Contratos', icon: '📑' },
       { id: 'response',    label: 'Tiempo de Respuesta', icon: '⏱️' },
       { id: 'schedule',    label: 'Horarios de Atención', icon: '🕐' },
       { id: 'writing',     label: 'Escritura',        icon: '✍️' },
@@ -9114,6 +9462,7 @@
           )}
           {tab === 'agents' && <ComparisonSection />}
           {tab === 'resolution' && <ResolutionSection />}
+          {tab === 'contracts' && <ContractHandlingSection />}
           {tab === 'response' && <ResponseTimeSection />}
           {tab === 'schedule' && <ScheduleSection />}
           {tab === 'writing' && <WritingQualitySection />}
