@@ -94,14 +94,14 @@
     const PERIOD_NEW = "Actualizado Jun 2, 2026";
     // Metadata about runs for dashboard summary
     const runsMeta = {
-      totalRuns: 6,
-      lastRunDate: "2026-06-02",
-      lastRunLabel: "2 jun 2026",
+      totalRuns: 7,
+      lastRunDate: "2026-06-23",
+      lastRunLabel: "23 jun 2026",
       agentsLastRun: 21,
       totalAgentsAnalyzed: 27,
     };
     const overviewStats = [
-      { label: "Corridas Realizadas", value: String(runsMeta.totalRuns), sub: "Mar 11 → Mar 30 → May 4 AM/PM → May 13 → Jun 2", icon: "🔁", accent: "#2EC4B6" },
+      { label: "Corridas Realizadas", value: String(runsMeta.totalRuns), sub: "Mar 11 → … → May 13 → Jun 2 → Jun 23", icon: "🔁", accent: "#2EC4B6" },
       { label: "Última Corrida", value: runsMeta.lastRunLabel, sub: "623 conversaciones · 34k mensajes", icon: "📅", accent: "#1B2A4A" },
       { label: "Agentes en Última Corrida", value: String(runsMeta.agentsLastRun), sub: "Cuentas conectadas a Evolution API", icon: "👥", accent: "#F97316" },
       { label: "Total Agentes Analizados", value: String(runsMeta.totalAgentsAnalyzed), sub: "Histórico desde Mar 11", icon: "📊", accent: "#E8505B" },
@@ -138,32 +138,34 @@
     // rate = Mar 11 baseline, jun2 = current run (Jun 2, 21 agents connected)
     const agentRanking = [
       // Historical-only agents (no longer connected — kept for trend continuity)
-      { name: "Zayret Cornejo",     rate: 40, mar30: 33,   may4: null, may4pm: null, may13: null, jun2: null, hasNew: false, lastSeen: "2026-03-22" },
+      { name: "Zayret Cornejo",     rate: 40, mar30: 33,   may4: null, may4pm: null, may13: null, jun2: null, jun23: null, hasNew: false, lastSeen: "2026-03-22" },
       // Active agents (in Jun 2 run) — sorted by current frustration desc
-      { name: "Cesar",              rate: null, mar30: null, may4: null, may4pm: 8,   may13: 25, jun2: 33, hasNew: true, lastSeen: "2026-06-02" },
-      { name: "Elizabeth Castro",   rate: 50,   mar30: null, may4: null, may4pm: null, may13: 22, jun2: 33, hasNew: true, lastSeen: "2026-06-02" },
-      { name: "Eduardo",            rate: null, mar30: null, may4: null, may4pm: 25,  may13: 0,  jun2: 30, hasNew: true, lastSeen: "2026-06-02" },
-      { name: "Itzel Alarcón",      rate: 40,   mar30: null, may4: null, may4pm: null, may13: 11, jun2: 30, hasNew: true, lastSeen: "2026-06-02" },
-      { name: "Iran",               rate: null, mar30: null, may4: null, may4pm: 42,  may13: 9,  jun2: 27, hasNew: true, lastSeen: "2026-06-02" },
-      { name: "Elvia",              rate: null, mar30: null, may4: null, may4pm: null, may13: 11, jun2: 25, hasNew: true, lastSeen: "2026-06-02" },
-      { name: "Paola Viveros",      rate: null, mar30: null, may4: null, may4pm: null, may13: 25, jun2: 25, hasNew: true, lastSeen: "2026-06-02" },
-      { name: "Daniel Luna",        rate: null, mar30: null, may4: null, may4pm: null, may13: 8,  jun2: 22, hasNew: true, lastSeen: "2026-06-02" },
-      { name: "Horacio Gómez",      rate: 30,   mar30: 8,    may4: null, may4pm: null, may13: 10, jun2: 20, hasNew: true, lastSeen: "2026-06-02" },
-      { name: "Gabriel García",     rate: 58,   mar30: 17,   may4: 31,   may4pm: null, may13: 22, jun2: 17, hasNew: true, lastSeen: "2026-06-02" },
-      { name: "Carlos",             rate: null, mar30: null, may4: null, may4pm: 8,   may13: 22, jun2: 11, hasNew: true, lastSeen: "2026-06-02" },
-      { name: "Dylan Arellano",     rate: 20,   mar30: 20,   may4: null, may4pm: null, may13: 11, jun2: 11, hasNew: true, lastSeen: "2026-06-02" },
-      { name: "Elizabeth Bustos",   rate: null, mar30: null, may4: null, may4pm: null, may13: 14, jun2: 11, hasNew: true, lastSeen: "2026-06-02" },
-      { name: "Hugo",               rate: null, mar30: null, may4: null, may4pm: null, may13: 14, jun2: 10, hasNew: true, lastSeen: "2026-06-02" },
-      { name: "Fernanda Figueroa",  rate: 40,   mar30: null, may4: null, may4pm: null, may13: 20, jun2: 9,  hasNew: true, lastSeen: "2026-06-02" },
-      { name: "Jenifer",            rate: null, mar30: null, may4: null, may4pm: 17,  may13: 25, jun2: 8,  hasNew: true, lastSeen: "2026-06-02" },
-      { name: "Kate González",      rate: 30,   mar30: 17,   may4: 25,   may4pm: null, may13: 10, jun2: 8,  hasNew: true, lastSeen: "2026-06-02" },
-      { name: "Dana Lugo",          rate: 58,   mar30: 25,   may4: 33,   may4pm: null, may13: 13, jun2: 0,  hasNew: true, lastSeen: "2026-06-02" },
-      { name: "Karen Pérez",        rate: null, mar30: null, may4: null, may4pm: null, may13: 17, jun2: 0,  hasNew: true, lastSeen: "2026-06-02" },
-      { name: "Lorena Domínguez",   rate: null, mar30: null, may4: 0,    may4pm: 50,  may13: 8,  jun2: 0,  hasNew: true, lastSeen: "2026-06-02" },
-      { name: "Xel Xanat",          rate: 42,   mar30: 17,   may4: 50,   may4pm: null, may13: 22, jun2: 0,  hasNew: true, lastSeen: "2026-06-02" },
+      { name: "Cesar",              rate: null, mar30: null, may4: null, may4pm: 8,   may13: 25, jun2: 33, jun23: 11, hasNew: true, lastSeen: "2026-06-23" },
+      { name: "Elizabeth Castro",   rate: 50,   mar30: null, may4: null, may4pm: null, may13: 22, jun2: 33, jun23: null, hasNew: true, lastSeen: "2026-06-02" },
+      { name: "Eduardo",            rate: null, mar30: null, may4: null, may4pm: 25,  may13: 0,  jun2: 30, jun23: null, hasNew: true, lastSeen: "2026-06-02" },
+      { name: "Itzel Alarcón",      rate: 40,   mar30: null, may4: null, may4pm: null, may13: 11, jun2: 30, jun23: 20, hasNew: true, lastSeen: "2026-06-23" },
+      { name: "Iran",               rate: null, mar30: null, may4: null, may4pm: 42,  may13: 9,  jun2: 27, jun23: null, hasNew: true, lastSeen: "2026-06-02" },
+      { name: "Elvia",              rate: null, mar30: null, may4: null, may4pm: null, may13: 11, jun2: 25, jun23: 7, hasNew: true, lastSeen: "2026-06-23" },
+      { name: "Paola Viveros",      rate: null, mar30: null, may4: null, may4pm: null, may13: 25, jun2: 25, jun23: 11, hasNew: true, lastSeen: "2026-06-23" },
+      { name: "Daniel Luna",        rate: null, mar30: null, may4: null, may4pm: null, may13: 8,  jun2: 22, jun23: 0, hasNew: true, lastSeen: "2026-06-23" },
+      { name: "Horacio Gómez",      rate: 30,   mar30: 8,    may4: null, may4pm: null, may13: 10, jun2: 20, jun23: 29, hasNew: true, lastSeen: "2026-06-23" },
+      { name: "Gabriel García",     rate: 58,   mar30: 17,   may4: 31,   may4pm: null, may13: 22, jun2: 17, jun23: 25, hasNew: true, lastSeen: "2026-06-23" },
+      { name: "Carlos",             rate: null, mar30: null, may4: null, may4pm: 8,   may13: 22, jun2: 11, jun23: 50, hasNew: true, lastSeen: "2026-06-23" },
+      { name: "Dylan Arellano",     rate: 20,   mar30: 20,   may4: null, may4pm: null, may13: 11, jun2: 11, jun23: 18, hasNew: true, lastSeen: "2026-06-23" },
+      { name: "Elizabeth Bustos",   rate: null, mar30: null, may4: null, may4pm: null, may13: 14, jun2: 11, jun23: null, hasNew: true, lastSeen: "2026-06-02" },
+      { name: "Hugo",               rate: null, mar30: null, may4: null, may4pm: null, may13: 14, jun2: 10, jun23: 17, hasNew: true, lastSeen: "2026-06-23" },
+      { name: "Fernanda Figueroa",  rate: 40,   mar30: null, may4: null, may4pm: null, may13: 20, jun2: 9, jun23: 17,  hasNew: true, lastSeen: "2026-06-23" },
+      { name: "Jenifer",            rate: null, mar30: null, may4: null, may4pm: 17,  may13: 25, jun2: 8, jun23: 8,  hasNew: true, lastSeen: "2026-06-23" },
+      { name: "Kate González",      rate: 30,   mar30: 17,   may4: 25,   may4pm: null, may13: 10, jun2: 8, jun23: 8,  hasNew: true, lastSeen: "2026-06-23" },
+      { name: "Dana Lugo",          rate: 58,   mar30: 25,   may4: 33,   may4pm: null, may13: 13, jun2: 0, jun23: 8,  hasNew: true, lastSeen: "2026-06-23" },
+      { name: "Karen Pérez",        rate: null, mar30: null, may4: null, may4pm: null, may13: 17, jun2: 0, jun23: 14,  hasNew: true, lastSeen: "2026-06-23" },
+      { name: "Lorena Domínguez",   rate: null, mar30: null, may4: 0,    may4pm: 50,  may13: 8,  jun2: 0, jun23: 29,  hasNew: true, lastSeen: "2026-06-23" },
+      { name: "Xel Xanat",          rate: 42,   mar30: 17,   may4: 50,   may4pm: null, may13: 22, jun2: 0, jun23: 25,  hasNew: true, lastSeen: "2026-06-23" },
       // Connected in May 13 but not in the Jun 2 run
-      { name: "Diego Cedillo",      rate: 0,    mar30: null, may4: null, may4pm: null, may13: 14, jun2: null, hasNew: false, lastSeen: "2026-05-13" },
-      { name: "Elsa Hernández",     rate: null, mar30: null, may4: null, may4pm: null, may13: 13, jun2: null, hasNew: false, lastSeen: "2026-05-13" },
+      { name: "Diego Cedillo",      rate: 0,    mar30: null, may4: null, may4pm: null, may13: 14, jun2: null, jun23: 10, hasNew: true, lastSeen: "2026-06-23" },
+      { name: "Elsa Hernández",     rate: null, mar30: null, may4: null, may4pm: null, may13: 13, jun2: null, jun23: 29, hasNew: true, lastSeen: "2026-06-23" },
+      { name: "Alfonso",             rate: null, mar30: null, may4: null, may4pm: null, may13: null, jun2: null, jun23: 9, hasNew: true, lastSeen: "2026-06-23" },
+      { name: "Cesar Iram Enriquez",  rate: null, mar30: null, may4: null, may4pm: null, may13: null, jun2: null, jun23: 0, hasNew: true, lastSeen: "2026-06-23" },
     ];
     // Resolution effectiveness — did the agent actually solve the broker's problem?
     // Jun 2 run: sample of 200 conversations across 21 agents.
@@ -172,80 +174,80 @@
     // Resolution effectiveness — Jun 2026 run, 18 conversations per agent (LLM-classified).
     // resolvedPct / unresolvedPct / unclearPct from end-of-conversation signals; escalationPct = cross-team handoff.
     const resolutionData = [
-      { agent: "Kate González", total: 18, resolvedPct: 78, unresolvedPct: 17, unclearPct: 6, avgMsgs: 60, escalationPct: 33 },
-      { agent: "Lorena Domínguez", total: 18, resolvedPct: 72, unresolvedPct: 28, unclearPct: 0, avgMsgs: 59, escalationPct: 67 },
-      { agent: "Dylan Arellano", total: 18, resolvedPct: 67, unresolvedPct: 28, unclearPct: 6, avgMsgs: 66, escalationPct: 22 },
-      { agent: "Iran", total: 18, resolvedPct: 67, unresolvedPct: 28, unclearPct: 6, avgMsgs: 61, escalationPct: 28 },
-      { agent: "Paola Viveros", total: 18, resolvedPct: 61, unresolvedPct: 39, unclearPct: 0, avgMsgs: 38, escalationPct: 17 },
-      { agent: "Daniel Luna", total: 18, resolvedPct: 56, unresolvedPct: 44, unclearPct: 0, avgMsgs: 41, escalationPct: 28 },
-      { agent: "Hugo", total: 18, resolvedPct: 56, unresolvedPct: 39, unclearPct: 6, avgMsgs: 57, escalationPct: 28 },
-      { agent: "Cesar", total: 18, resolvedPct: 50, unresolvedPct: 50, unclearPct: 0, avgMsgs: 71, escalationPct: 17 },
-      { agent: "Jenifer", total: 18, resolvedPct: 50, unresolvedPct: 39, unclearPct: 11, avgMsgs: 63, escalationPct: 78 },
-      { agent: "Karen Pérez", total: 18, resolvedPct: 50, unresolvedPct: 44, unclearPct: 6, avgMsgs: 48, escalationPct: 22 },
-      { agent: "Elizabeth Bustos", total: 18, resolvedPct: 44, unresolvedPct: 44, unclearPct: 11, avgMsgs: 50, escalationPct: 22 },
-      { agent: "Elizabeth Castro", total: 18, resolvedPct: 44, unresolvedPct: 50, unclearPct: 6, avgMsgs: 52, escalationPct: 50 },
-      { agent: "Elvia", total: 18, resolvedPct: 44, unresolvedPct: 44, unclearPct: 11, avgMsgs: 64, escalationPct: 28 },
-      { agent: "Fernanda Figueroa", total: 18, resolvedPct: 44, unresolvedPct: 50, unclearPct: 6, avgMsgs: 52, escalationPct: 44 },
-      { agent: "Gabriel García", total: 18, resolvedPct: 44, unresolvedPct: 39, unclearPct: 17, avgMsgs: 62, escalationPct: 22 },
-      { agent: "Carlos", total: 18, resolvedPct: 39, unresolvedPct: 50, unclearPct: 11, avgMsgs: 68, escalationPct: 39 },
-      { agent: "Itzel Alarcón", total: 18, resolvedPct: 22, unresolvedPct: 78, unclearPct: 0, avgMsgs: 57, escalationPct: 28 },
-      { agent: "Eduardo", total: 5, resolvedPct: 20, unresolvedPct: 80, unclearPct: 0, avgMsgs: 40, escalationPct: 60 },
+      { agent: "Diego Cedillo", total: 18, resolvedPct: 100, unresolvedPct: 0, unclearPct: 0, avgMsgs: 20, escalationPct: 6 },
+      { agent: "Elvia", total: 18, resolvedPct: 94, unresolvedPct: 6, unclearPct: 0, avgMsgs: 76, escalationPct: 22 },
+      { agent: "Karen Pérez", total: 18, resolvedPct: 89, unresolvedPct: 6, unclearPct: 6, avgMsgs: 56, escalationPct: 44 },
+      { agent: "Elsa Hernández", total: 18, resolvedPct: 83, unresolvedPct: 11, unclearPct: 6, avgMsgs: 55, escalationPct: 44 },
+      { agent: "Dylan Arellano", total: 18, resolvedPct: 78, unresolvedPct: 11, unclearPct: 11, avgMsgs: 68, escalationPct: 39 },
+      { agent: "Gabriel García", total: 18, resolvedPct: 78, unresolvedPct: 6, unclearPct: 17, avgMsgs: 52, escalationPct: 78 },
+      { agent: "Paola Viveros", total: 18, resolvedPct: 78, unresolvedPct: 6, unclearPct: 17, avgMsgs: 49, escalationPct: 22 },
+      { agent: "Cesar", total: 18, resolvedPct: 72, unresolvedPct: 17, unclearPct: 11, avgMsgs: 58, escalationPct: 50 },
+      { agent: "Fernanda Figueroa", total: 18, resolvedPct: 72, unresolvedPct: 0, unclearPct: 28, avgMsgs: 59, escalationPct: 89 },
+      { agent: "Alfonso", total: 18, resolvedPct: 67, unresolvedPct: 11, unclearPct: 22, avgMsgs: 46, escalationPct: 22 },
+      { agent: "Cesar Iram Enriquez", total: 18, resolvedPct: 67, unresolvedPct: 11, unclearPct: 22, avgMsgs: 51, escalationPct: 56 },
+      { agent: "Lorena Domínguez", total: 18, resolvedPct: 67, unresolvedPct: 6, unclearPct: 28, avgMsgs: 51, escalationPct: 39 },
+      { agent: "Hugo", total: 18, resolvedPct: 61, unresolvedPct: 22, unclearPct: 17, avgMsgs: 58, escalationPct: 50 },
+      { agent: "Itzel Alarcón", total: 18, resolvedPct: 61, unresolvedPct: 22, unclearPct: 17, avgMsgs: 64, escalationPct: 56 },
+      { agent: "Daniel Luna", total: 18, resolvedPct: 56, unresolvedPct: 28, unclearPct: 17, avgMsgs: 53, escalationPct: 17 },
+      { agent: "Kate González", total: 18, resolvedPct: 56, unresolvedPct: 17, unclearPct: 28, avgMsgs: 55, escalationPct: 17 },
+      { agent: "Carlos", total: 18, resolvedPct: 50, unresolvedPct: 22, unclearPct: 28, avgMsgs: 66, escalationPct: 78 },
+      { agent: "Jenifer", total: 18, resolvedPct: 50, unresolvedPct: 17, unclearPct: 33, avgMsgs: 43, escalationPct: 33 },
     ]
     // Resolution by month (for the month filter). 'all' = both months combined.
-    const resolutionMonthly = {"generated_at": "2026-06-02T13:41:11.081415", "months": ["2026-05", "2026-06"], "by_month": {"2026-05": {"team": {"total": 100, "resolvedPct": 55, "unresolvedPct": 34, "unclearPct": 11, "escalationPct": 21}, "agents": [{"total": 1, "resolvedPct": 100, "unresolvedPct": 0, "unclearPct": 0, "escalationPct": 0, "agent": "Elizabeth Bustos", "avgMsgs": 50}, {"total": 1, "resolvedPct": 100, "unresolvedPct": 0, "unclearPct": 0, "escalationPct": 0, "agent": "Fernanda Figueroa", "avgMsgs": 52}, {"total": 26, "resolvedPct": 77, "unresolvedPct": 4, "unclearPct": 19, "escalationPct": 15, "agent": "Dana Lugo", "avgMsgs": 31}, {"total": 27, "resolvedPct": 59, "unresolvedPct": 37, "unclearPct": 4, "escalationPct": 11, "agent": "Xel Xanat", "avgMsgs": 44}, {"total": 2, "resolvedPct": 50, "unresolvedPct": 50, "unclearPct": 0, "escalationPct": 50, "agent": "Elvia", "avgMsgs": 64}, {"total": 19, "resolvedPct": 47, "unresolvedPct": 47, "unclearPct": 5, "escalationPct": 26, "agent": "Horacio Gómez", "avgMsgs": 37}, {"total": 15, "resolvedPct": 40, "unresolvedPct": 53, "unclearPct": 7, "escalationPct": 33, "agent": "Eduardo", "avgMsgs": 40}, {"total": 6, "resolvedPct": 17, "unresolvedPct": 67, "unclearPct": 17, "escalationPct": 50, "agent": "Carlos", "avgMsgs": 68}, {"total": 1, "resolvedPct": 0, "unresolvedPct": 100, "unclearPct": 0, "escalationPct": 0, "agent": "Elizabeth Castro", "avgMsgs": 52}, {"total": 1, "resolvedPct": 0, "unresolvedPct": 0, "unclearPct": 100, "escalationPct": 0, "agent": "Gabriel García", "avgMsgs": 62}, {"total": 1, "resolvedPct": 0, "unresolvedPct": 0, "unclearPct": 100, "escalationPct": 0, "agent": "Lorena Domínguez", "avgMsgs": 59}]}, "2026-06": {"team": {"total": 311, "resolvedPct": 52, "unresolvedPct": 42, "unclearPct": 6, "escalationPct": 34}, "agents": [{"total": 18, "resolvedPct": 78, "unresolvedPct": 17, "unclearPct": 6, "escalationPct": 33, "agent": "Kate González", "avgMsgs": 60}, {"total": 18, "resolvedPct": 72, "unresolvedPct": 28, "unclearPct": 0, "escalationPct": 67, "agent": "Lorena Domínguez", "avgMsgs": 59}, {"total": 18, "resolvedPct": 67, "unresolvedPct": 28, "unclearPct": 6, "escalationPct": 22, "agent": "Dylan Arellano", "avgMsgs": 66}, {"total": 18, "resolvedPct": 67, "unresolvedPct": 28, "unclearPct": 6, "escalationPct": 28, "agent": "Iran", "avgMsgs": 61}, {"total": 18, "resolvedPct": 61, "unresolvedPct": 39, "unclearPct": 0, "escalationPct": 17, "agent": "Paola Viveros", "avgMsgs": 38}, {"total": 18, "resolvedPct": 56, "unresolvedPct": 44, "unclearPct": 0, "escalationPct": 28, "agent": "Daniel Luna", "avgMsgs": 41}, {"total": 18, "resolvedPct": 56, "unresolvedPct": 39, "unclearPct": 6, "escalationPct": 28, "agent": "Hugo", "avgMsgs": 57}, {"total": 18, "resolvedPct": 50, "unresolvedPct": 50, "unclearPct": 0, "escalationPct": 17, "agent": "Cesar", "avgMsgs": 71}, {"total": 18, "resolvedPct": 50, "unresolvedPct": 39, "unclearPct": 11, "escalationPct": 78, "agent": "Jenifer", "avgMsgs": 63}, {"total": 18, "resolvedPct": 50, "unresolvedPct": 44, "unclearPct": 6, "escalationPct": 22, "agent": "Karen Pérez", "avgMsgs": 48}, {"total": 18, "resolvedPct": 44, "unresolvedPct": 44, "unclearPct": 11, "escalationPct": 22, "agent": "Elizabeth Bustos", "avgMsgs": 50}, {"total": 18, "resolvedPct": 44, "unresolvedPct": 50, "unclearPct": 6, "escalationPct": 50, "agent": "Elizabeth Castro", "avgMsgs": 52}, {"total": 18, "resolvedPct": 44, "unresolvedPct": 44, "unclearPct": 11, "escalationPct": 28, "agent": "Elvia", "avgMsgs": 64}, {"total": 18, "resolvedPct": 44, "unresolvedPct": 50, "unclearPct": 6, "escalationPct": 44, "agent": "Fernanda Figueroa", "avgMsgs": 52}, {"total": 18, "resolvedPct": 44, "unresolvedPct": 39, "unclearPct": 17, "escalationPct": 22, "agent": "Gabriel García", "avgMsgs": 62}, {"total": 18, "resolvedPct": 39, "unresolvedPct": 50, "unclearPct": 11, "escalationPct": 39, "agent": "Carlos", "avgMsgs": 68}, {"total": 18, "resolvedPct": 22, "unresolvedPct": 78, "unclearPct": 0, "escalationPct": 28, "agent": "Itzel Alarcón", "avgMsgs": 57}, {"total": 5, "resolvedPct": 20, "unresolvedPct": 80, "unclearPct": 0, "escalationPct": 60, "agent": "Eduardo", "avgMsgs": 40}]}}, "all": {"team": {"total": 411, "resolvedPct": 53, "unresolvedPct": 40, "unclearPct": 7, "escalationPct": 31}, "agents": [{"total": 18, "resolvedPct": 78, "unresolvedPct": 17, "unclearPct": 6, "escalationPct": 33, "agent": "Kate González", "avgMsgs": 60}, {"total": 26, "resolvedPct": 77, "unresolvedPct": 4, "unclearPct": 19, "escalationPct": 15, "agent": "Dana Lugo", "avgMsgs": 31}, {"total": 19, "resolvedPct": 68, "unresolvedPct": 26, "unclearPct": 5, "escalationPct": 63, "agent": "Lorena Domínguez", "avgMsgs": 59}, {"total": 18, "resolvedPct": 67, "unresolvedPct": 28, "unclearPct": 6, "escalationPct": 22, "agent": "Dylan Arellano", "avgMsgs": 66}, {"total": 18, "resolvedPct": 67, "unresolvedPct": 28, "unclearPct": 6, "escalationPct": 28, "agent": "Iran", "avgMsgs": 61}, {"total": 18, "resolvedPct": 61, "unresolvedPct": 39, "unclearPct": 0, "escalationPct": 17, "agent": "Paola Viveros", "avgMsgs": 38}, {"total": 27, "resolvedPct": 59, "unresolvedPct": 37, "unclearPct": 4, "escalationPct": 11, "agent": "Xel Xanat", "avgMsgs": 44}, {"total": 18, "resolvedPct": 56, "unresolvedPct": 44, "unclearPct": 0, "escalationPct": 28, "agent": "Daniel Luna", "avgMsgs": 41}, {"total": 18, "resolvedPct": 56, "unresolvedPct": 39, "unclearPct": 6, "escalationPct": 28, "agent": "Hugo", "avgMsgs": 57}, {"total": 18, "resolvedPct": 50, "unresolvedPct": 50, "unclearPct": 0, "escalationPct": 17, "agent": "Cesar", "avgMsgs": 71}, {"total": 18, "resolvedPct": 50, "unresolvedPct": 39, "unclearPct": 11, "escalationPct": 78, "agent": "Jenifer", "avgMsgs": 63}, {"total": 18, "resolvedPct": 50, "unresolvedPct": 44, "unclearPct": 6, "escalationPct": 22, "agent": "Karen Pérez", "avgMsgs": 48}, {"total": 19, "resolvedPct": 47, "unresolvedPct": 42, "unclearPct": 11, "escalationPct": 21, "agent": "Elizabeth Bustos", "avgMsgs": 50}, {"total": 19, "resolvedPct": 47, "unresolvedPct": 47, "unclearPct": 5, "escalationPct": 42, "agent": "Fernanda Figueroa", "avgMsgs": 52}, {"total": 19, "resolvedPct": 47, "unresolvedPct": 47, "unclearPct": 5, "escalationPct": 26, "agent": "Horacio Gómez", "avgMsgs": 37}, {"total": 20, "resolvedPct": 45, "unresolvedPct": 45, "unclearPct": 10, "escalationPct": 30, "agent": "Elvia", "avgMsgs": 64}, {"total": 19, "resolvedPct": 42, "unresolvedPct": 53, "unclearPct": 5, "escalationPct": 47, "agent": "Elizabeth Castro", "avgMsgs": 52}, {"total": 19, "resolvedPct": 42, "unresolvedPct": 37, "unclearPct": 21, "escalationPct": 21, "agent": "Gabriel García", "avgMsgs": 62}, {"total": 20, "resolvedPct": 35, "unresolvedPct": 60, "unclearPct": 5, "escalationPct": 40, "agent": "Eduardo", "avgMsgs": 40}, {"total": 24, "resolvedPct": 33, "unresolvedPct": 54, "unclearPct": 12, "escalationPct": 42, "agent": "Carlos", "avgMsgs": 68}, {"total": 18, "resolvedPct": 22, "unresolvedPct": 78, "unclearPct": 0, "escalationPct": 28, "agent": "Itzel Alarcón", "avgMsgs": 57}]}};;
+    const resolutionMonthly = {"generated_at": "2026-06-23T11:27:24.224503", "months": ["2026-05", "2026-06"], "by_month": {"2026-05": {"team": {"total": 80, "resolvedPct": 79, "unresolvedPct": 6, "unclearPct": 15, "escalationPct": 18}, "agents": [{"total": 1, "resolvedPct": 100, "unresolvedPct": 0, "unclearPct": 0, "escalationPct": 100, "agent": "Dylan Arellano", "avgMsgs": 68}, {"total": 26, "resolvedPct": 85, "unresolvedPct": 4, "unclearPct": 12, "escalationPct": 19, "agent": "Dana Lugo", "avgMsgs": 31}, {"total": 27, "resolvedPct": 78, "unresolvedPct": 11, "unclearPct": 11, "escalationPct": 19, "agent": "Xel Xanat", "avgMsgs": 44}, {"total": 26, "resolvedPct": 73, "unresolvedPct": 4, "unclearPct": 23, "escalationPct": 12, "agent": "Horacio Gómez", "avgMsgs": 37}]}, "2026-06": {"team": {"total": 324, "resolvedPct": 71, "unresolvedPct": 12, "unclearPct": 17, "escalationPct": 42}, "agents": [{"total": 18, "resolvedPct": 100, "unresolvedPct": 0, "unclearPct": 0, "escalationPct": 6, "agent": "Diego Cedillo", "avgMsgs": 20}, {"total": 18, "resolvedPct": 94, "unresolvedPct": 6, "unclearPct": 0, "escalationPct": 22, "agent": "Elvia", "avgMsgs": 76}, {"total": 18, "resolvedPct": 89, "unresolvedPct": 6, "unclearPct": 6, "escalationPct": 44, "agent": "Karen Pérez", "avgMsgs": 56}, {"total": 18, "resolvedPct": 83, "unresolvedPct": 11, "unclearPct": 6, "escalationPct": 44, "agent": "Elsa Hernández", "avgMsgs": 55}, {"total": 18, "resolvedPct": 78, "unresolvedPct": 11, "unclearPct": 11, "escalationPct": 39, "agent": "Dylan Arellano", "avgMsgs": 68}, {"total": 18, "resolvedPct": 78, "unresolvedPct": 6, "unclearPct": 17, "escalationPct": 78, "agent": "Gabriel García", "avgMsgs": 52}, {"total": 18, "resolvedPct": 78, "unresolvedPct": 6, "unclearPct": 17, "escalationPct": 22, "agent": "Paola Viveros", "avgMsgs": 49}, {"total": 18, "resolvedPct": 72, "unresolvedPct": 17, "unclearPct": 11, "escalationPct": 50, "agent": "Cesar", "avgMsgs": 58}, {"total": 18, "resolvedPct": 72, "unresolvedPct": 0, "unclearPct": 28, "escalationPct": 89, "agent": "Fernanda Figueroa", "avgMsgs": 59}, {"total": 18, "resolvedPct": 67, "unresolvedPct": 11, "unclearPct": 22, "escalationPct": 22, "agent": "Alfonso", "avgMsgs": 46}, {"total": 18, "resolvedPct": 67, "unresolvedPct": 11, "unclearPct": 22, "escalationPct": 56, "agent": "Cesar Iram Enriquez", "avgMsgs": 51}, {"total": 18, "resolvedPct": 67, "unresolvedPct": 6, "unclearPct": 28, "escalationPct": 39, "agent": "Lorena Domínguez", "avgMsgs": 51}, {"total": 18, "resolvedPct": 61, "unresolvedPct": 22, "unclearPct": 17, "escalationPct": 50, "agent": "Hugo", "avgMsgs": 58}, {"total": 18, "resolvedPct": 61, "unresolvedPct": 22, "unclearPct": 17, "escalationPct": 56, "agent": "Itzel Alarcón", "avgMsgs": 64}, {"total": 18, "resolvedPct": 56, "unresolvedPct": 28, "unclearPct": 17, "escalationPct": 17, "agent": "Daniel Luna", "avgMsgs": 53}, {"total": 18, "resolvedPct": 56, "unresolvedPct": 17, "unclearPct": 28, "escalationPct": 17, "agent": "Kate González", "avgMsgs": 55}, {"total": 18, "resolvedPct": 50, "unresolvedPct": 22, "unclearPct": 28, "escalationPct": 78, "agent": "Carlos", "avgMsgs": 66}, {"total": 18, "resolvedPct": 50, "unresolvedPct": 17, "unclearPct": 33, "escalationPct": 33, "agent": "Jenifer", "avgMsgs": 43}]}}, "all": {"team": {"total": 404, "resolvedPct": 73, "unresolvedPct": 11, "unclearPct": 17, "escalationPct": 37}, "agents": [{"total": 18, "resolvedPct": 100, "unresolvedPct": 0, "unclearPct": 0, "escalationPct": 6, "agent": "Diego Cedillo", "avgMsgs": 20}, {"total": 18, "resolvedPct": 94, "unresolvedPct": 6, "unclearPct": 0, "escalationPct": 22, "agent": "Elvia", "avgMsgs": 76}, {"total": 18, "resolvedPct": 89, "unresolvedPct": 6, "unclearPct": 6, "escalationPct": 44, "agent": "Karen Pérez", "avgMsgs": 56}, {"total": 26, "resolvedPct": 85, "unresolvedPct": 4, "unclearPct": 12, "escalationPct": 19, "agent": "Dana Lugo", "avgMsgs": 31}, {"total": 18, "resolvedPct": 83, "unresolvedPct": 11, "unclearPct": 6, "escalationPct": 44, "agent": "Elsa Hernández", "avgMsgs": 55}, {"total": 19, "resolvedPct": 79, "unresolvedPct": 11, "unclearPct": 11, "escalationPct": 42, "agent": "Dylan Arellano", "avgMsgs": 68}, {"total": 18, "resolvedPct": 78, "unresolvedPct": 6, "unclearPct": 17, "escalationPct": 78, "agent": "Gabriel García", "avgMsgs": 52}, {"total": 18, "resolvedPct": 78, "unresolvedPct": 6, "unclearPct": 17, "escalationPct": 22, "agent": "Paola Viveros", "avgMsgs": 49}, {"total": 27, "resolvedPct": 78, "unresolvedPct": 11, "unclearPct": 11, "escalationPct": 19, "agent": "Xel Xanat", "avgMsgs": 44}, {"total": 26, "resolvedPct": 73, "unresolvedPct": 4, "unclearPct": 23, "escalationPct": 12, "agent": "Horacio Gómez", "avgMsgs": 37}, {"total": 18, "resolvedPct": 72, "unresolvedPct": 17, "unclearPct": 11, "escalationPct": 50, "agent": "Cesar", "avgMsgs": 58}, {"total": 18, "resolvedPct": 72, "unresolvedPct": 0, "unclearPct": 28, "escalationPct": 89, "agent": "Fernanda Figueroa", "avgMsgs": 59}, {"total": 18, "resolvedPct": 67, "unresolvedPct": 11, "unclearPct": 22, "escalationPct": 22, "agent": "Alfonso", "avgMsgs": 46}, {"total": 18, "resolvedPct": 67, "unresolvedPct": 11, "unclearPct": 22, "escalationPct": 56, "agent": "Cesar Iram Enriquez", "avgMsgs": 51}, {"total": 18, "resolvedPct": 67, "unresolvedPct": 6, "unclearPct": 28, "escalationPct": 39, "agent": "Lorena Domínguez", "avgMsgs": 51}, {"total": 18, "resolvedPct": 61, "unresolvedPct": 22, "unclearPct": 17, "escalationPct": 50, "agent": "Hugo", "avgMsgs": 58}, {"total": 18, "resolvedPct": 61, "unresolvedPct": 22, "unclearPct": 17, "escalationPct": 56, "agent": "Itzel Alarcón", "avgMsgs": 64}, {"total": 18, "resolvedPct": 56, "unresolvedPct": 28, "unclearPct": 17, "escalationPct": 17, "agent": "Daniel Luna", "avgMsgs": 53}, {"total": 18, "resolvedPct": 56, "unresolvedPct": 17, "unclearPct": 28, "escalationPct": 17, "agent": "Kate González", "avgMsgs": 55}, {"total": 18, "resolvedPct": 50, "unresolvedPct": 22, "unclearPct": 28, "escalationPct": 78, "agent": "Carlos", "avgMsgs": 66}, {"total": 18, "resolvedPct": 50, "unresolvedPct": 17, "unclearPct": 33, "escalationPct": 33, "agent": "Jenifer", "avgMsgs": 43}]}};;
 
     // Writing quality per agent (gramática, profesionalismo, tono)
     // Lower score = better. Computed from heuristics on real broker-side messages.
     // Formula: typos*1.5 + missingAccents*0.8 + capsAbuse*0.5 + lowerStart*0.3
     // Jun 2 run — full 21-agent dataset, 623 conversations.
     const writingQuality = [
-      { agent: "Carlos", msgs: 804, avgLen: 115, typos: 0.2, missingAccents: 9.1, capsAbuse: 0.5, emojiPerMsg: 0.11, lowerStart: 4, score: 9.0, examples: { good: [], bad: [] } },
-      { agent: "Elvia", msgs: 891, avgLen: 87, typos: 0.9, missingAccents: 9.4, capsAbuse: 1.1, emojiPerMsg: 0.64, lowerStart: 2, score: 10.0, examples: { good: [], bad: [] } },
-      { agent: "Iran", msgs: 791, avgLen: 60, typos: 0.1, missingAccents: 10.0, capsAbuse: 0.4, emojiPerMsg: 0.1, lowerStart: 8, score: 10.8, examples: { good: [], bad: [] } },
-      { agent: "Kate González", msgs: 943, avgLen: 57, typos: 0.0, missingAccents: 8.4, capsAbuse: 1.5, emojiPerMsg: 0.12, lowerStart: 13, score: 11.4, examples: { good: [], bad: [] } },
-      { agent: "Paola Viveros", msgs: 528, avgLen: 67, typos: 1.9, missingAccents: 8.5, capsAbuse: 1.1, emojiPerMsg: 0.03, lowerStart: 4, score: 11.4, examples: { good: [], bad: [] } },
-      { agent: "Hugo", msgs: 784, avgLen: 87, typos: 1.0, missingAccents: 10.7, capsAbuse: 2.0, emojiPerMsg: 0.23, lowerStart: 3, score: 12.0, examples: { good: [], bad: [] } },
-      { agent: "Karen Pérez", msgs: 709, avgLen: 73, typos: 0.4, missingAccents: 9.6, capsAbuse: 6.7, emojiPerMsg: 0.11, lowerStart: 7, score: 13.7, examples: { good: [], bad: [] } },
-      { agent: "Eduardo", msgs: 470, avgLen: 133, typos: 2.8, missingAccents: 10.9, capsAbuse: 1.3, emojiPerMsg: 0.23, lowerStart: 4, score: 14.8, examples: { good: [], bad: ["Mensajes muy largos (133 chars promedio)"] } },
+      { agent: "Carlos", msgs: 822, avgLen: 130, typos: 0.0, missingAccents: 10.6, capsAbuse: 0.1, emojiPerMsg: 0.11, lowerStart: 2, score: 9.1, examples: { good: [], bad: [] } },
+      { agent: "Kate González", msgs: 842, avgLen: 54, typos: 0.6, missingAccents: 8.1, capsAbuse: 2.2, emojiPerMsg: 0.07, lowerStart: 3, score: 9.4, examples: { good: [], bad: [] } },
+      { agent: "Elvia", msgs: 1030, avgLen: 100, typos: 0.9, missingAccents: 9.2, capsAbuse: 1.6, emojiPerMsg: 0.68, lowerStart: 2, score: 10.1, examples: { good: [], bad: [] } },
+      { agent: "Diego Cedillo", msgs: 286, avgLen: 74, typos: 0.7, missingAccents: 8.2, capsAbuse: 2.1, emojiPerMsg: 0.04, lowerStart: 5, score: 10.2, examples: { good: [], bad: [] } },
+      { agent: "Hugo", msgs: 825, avgLen: 90, typos: 0.6, missingAccents: 11.8, capsAbuse: 0.4, emojiPerMsg: 0.2, lowerStart: 3, score: 11.4, examples: { good: [], bad: [] } },
+      { agent: "Cesar Iram Enriquez", msgs: 670, avgLen: 77, typos: 1.5, missingAccents: 11.0, capsAbuse: 0.8, emojiPerMsg: 0.1, lowerStart: 5, score: 13.0, examples: { good: [], bad: [] } },
+      { agent: "Karen Pérez", msgs: 783, avgLen: 67, typos: 0.9, missingAccents: 10.1, capsAbuse: 4.5, emojiPerMsg: 0.17, lowerStart: 5, score: 13.2, examples: { good: [], bad: [] } },
+      { agent: "Paola Viveros", msgs: 673, avgLen: 59, typos: 2.4, missingAccents: 9.5, capsAbuse: 2.2, emojiPerMsg: 0.03, lowerStart: 7, score: 14.4, examples: { good: [], bad: [] } },
+      { agent: "Alfonso", msgs: 613, avgLen: 63, typos: 0.7, missingAccents: 11.7, capsAbuse: 0.8, emojiPerMsg: 0.15, lowerStart: 14, score: 15.0, examples: { good: [], bad: [] } },
       { agent: "Dana Lugo", msgs: 336, avgLen: 51, typos: 1.8, missingAccents: 9.2, capsAbuse: 0.2, emojiPerMsg: 0.24, lowerStart: 20, score: 16.2, examples: { good: [], bad: [] } },
-      { agent: "Daniel Luna", msgs: 552, avgLen: 79, typos: 1.4, missingAccents: 10.2, capsAbuse: 2.4, emojiPerMsg: 0.01, lowerStart: 21, score: 17.8, examples: { good: [], bad: [] } },
-      { agent: "Lorena Domínguez", msgs: 813, avgLen: 61, typos: 1.0, missingAccents: 11.8, capsAbuse: 0.9, emojiPerMsg: 0.06, lowerStart: 31, score: 20.7, examples: { good: [], bad: ["Inicia con minúscula 31% del tiempo"] } },
-      { agent: "Elizabeth Bustos", msgs: 581, avgLen: 84, typos: 6.0, missingAccents: 11.2, capsAbuse: 2.5, emojiPerMsg: 0.05, lowerStart: 6, score: 21.0, examples: { good: [], bad: ["Tasa de typos alta (6.0%)"] } },
-      { agent: "Gabriel García", msgs: 894, avgLen: 51, typos: 0.6, missingAccents: 12.1, capsAbuse: 1.0, emojiPerMsg: 0.05, lowerStart: 34, score: 21.3, examples: { good: [], bad: ["34% mensajes inician con minúscula"] } },
-      { agent: "Itzel Alarcón", msgs: 756, avgLen: 72, typos: 1.1, missingAccents: 10.1, capsAbuse: 2.3, emojiPerMsg: 0.32, lowerStart: 35, score: 21.4, examples: { good: [], bad: [] } },
-      { agent: "Xel Xanat", msgs: 441, avgLen: 92, typos: 7.9, missingAccents: 12.6, capsAbuse: 0.8, emojiPerMsg: 0.07, lowerStart: 1, score: 22.6, examples: { good: [], bad: ["Tasa de typos alta (7.9%)"] } },
-      { agent: "Cesar", msgs: 926, avgLen: 94, typos: 1.7, missingAccents: 12.2, capsAbuse: 1.7, emojiPerMsg: 0.0, lowerStart: 32, score: 22.8, examples: { good: [], bad: ["32% mensajes inician con minúscula"] } },
-      { agent: "Jenifer", msgs: 818, avgLen: 93, typos: 5.0, missingAccents: 10.3, capsAbuse: 0.3, emojiPerMsg: 0.19, lowerStart: 48, score: 30.3, examples: { good: [], bad: ["48% mensajes inician con minúscula", "Tasa de typos 5.0%"] } },
-      { agent: "Fernanda Figueroa", msgs: 569, avgLen: 80, typos: 1.8, missingAccents: 12.8, capsAbuse: 1.6, emojiPerMsg: 0.02, lowerStart: 58, score: 31.1, examples: { good: [], bad: ["58% mensajes inician con minúscula"] } },
-      { agent: "Elizabeth Castro", msgs: 746, avgLen: 63, typos: 0.3, missingAccents: 10.5, capsAbuse: 0.8, emojiPerMsg: 0.05, lowerStart: 75, score: 31.8, examples: { good: [], bad: ["75% mensajes inician con minúscula"] } },
-      { agent: "Dylan Arellano", msgs: 929, avgLen: 49, typos: 2.0, missingAccents: 15.4, capsAbuse: 1.3, emojiPerMsg: 0.01, lowerStart: 73, score: 37.9, examples: { good: [], bad: ["73% mensajes inician con minúscula", "Acentos faltantes 15.4%"] } },
-      { agent: "Horacio Gómez", msgs: 387, avgLen: 52, typos: 14.0, missingAccents: 10.2, capsAbuse: 0.3, emojiPerMsg: 0.13, lowerStart: 47, score: 43.4, examples: { good: [], bad: ["Tasa de typos muy alta (14.0%)", "47% mensajes inician con minúscula"] } },
+      { agent: "Gabriel García", msgs: 737, avgLen: 65, typos: 0.8, missingAccents: 11.2, capsAbuse: 1.9, emojiPerMsg: 0.11, lowerStart: 19, score: 16.8, examples: { good: [], bad: [] } },
+      { agent: "Daniel Luna", msgs: 623, avgLen: 71, typos: 2.1, missingAccents: 9.6, capsAbuse: 2.5, emojiPerMsg: 0.01, lowerStart: 16, score: 16.9, examples: { good: [], bad: [] } },
+      { agent: "Itzel Alarcón", msgs: 786, avgLen: 67, typos: 1.9, missingAccents: 10.4, capsAbuse: 1.5, emojiPerMsg: 0.25, lowerStart: 22, score: 18.5, examples: { good: [], bad: [] } },
+      { agent: "Lorena Domínguez", msgs: 746, avgLen: 69, typos: 1.2, missingAccents: 11.2, capsAbuse: 1.0, emojiPerMsg: 0.09, lowerStart: 30, score: 20.3, examples: { good: [], bad: [] } },
+      { agent: "Xel Xanat", msgs: 441, avgLen: 92, typos: 7.9, missingAccents: 12.6, capsAbuse: 0.8, emojiPerMsg: 0.07, lowerStart: 1, score: 22.6, examples: { good: [], bad: [] } },
+      { agent: "Elsa Hernández", msgs: 719, avgLen: 79, typos: 0.7, missingAccents: 10.3, capsAbuse: 1.4, emojiPerMsg: 0.15, lowerStart: 47, score: 24.1, examples: { good: [], bad: [] } },
+      { agent: "Cesar", msgs: 807, avgLen: 85, typos: 0.5, missingAccents: 12.6, capsAbuse: 0.8, emojiPerMsg: 0.0, lowerStart: 47, score: 25.3, examples: { good: [], bad: [] } },
+      { agent: "Fernanda Figueroa", msgs: 741, avgLen: 80, typos: 1.2, missingAccents: 11.5, capsAbuse: 1.8, emojiPerMsg: 0.04, lowerStart: 53, score: 27.8, examples: { good: [], bad: [] } },
+      { agent: "Jenifer", msgs: 566, avgLen: 68, typos: 5.7, missingAccents: 10.0, capsAbuse: 0.2, emojiPerMsg: 0.13, lowerStart: 37, score: 27.8, examples: { good: [], bad: [] } },
+      { agent: "Dylan Arellano", msgs: 1108, avgLen: 47, typos: 0.8, missingAccents: 13.8, capsAbuse: 2.7, emojiPerMsg: 0.01, lowerStart: 69, score: 34.3, examples: { good: [], bad: [] } },
+      { agent: "Horacio Gómez", msgs: 387, avgLen: 52, typos: 14.0, missingAccents: 10.2, capsAbuse: 0.3, emojiPerMsg: 0.13, lowerStart: 47, score: 43.4, examples: { good: [], bad: [] } },
     ];
 
     // Response time per agent (business hours only: M-F 9-19, Sat 9-15)
     // Jun 2 run — across full 21-agent dataset, ~33,551 messages.
     const responseTimes = [
-      { agent: "Dylan Arellano", avg: 20.0, median: 1.7, pairs: 359, under5: 71, under30: 90 },
-      { agent: "Karen Pérez", avg: 9.9, median: 1.9, pairs: 412, under5: 73, under30: 93 },
+      { agent: "Karen Pérez", avg: 7.2, median: 1.9, pairs: 406, under5: 76, under30: 95 },
+      { agent: "Cesar", avg: 13.2, median: 2.1, pairs: 468, under5: 69, under30: 92 },
       { agent: "Horacio Gómez", avg: 11.8, median: 2.5, pairs: 179, under5: 61, under30: 89 },
-      { agent: "Cesar", avg: 13.3, median: 3.5, pairs: 573, under5: 59, under30: 90 },
-      { agent: "Hugo", avg: 13.5, median: 3.6, pairs: 420, under5: 57, under30: 88 },
-      { agent: "Lorena Domínguez", avg: 25.2, median: 4.0, pairs: 334, under5: 54, under30: 80 },
-      { agent: "Elvia", avg: 12.9, median: 4.5, pairs: 575, under5: 53, under30: 89 },
-      { agent: "Fernanda Figueroa", avg: 27.4, median: 5.0, pairs: 348, under5: 50, under30: 79 },
-      { agent: "Jenifer", avg: 18.2, median: 5.6, pairs: 496, under5: 47, under30: 88 },
-      { agent: "Gabriel García", avg: 21.4, median: 5.9, pairs: 338, under5: 46, under30: 83 },
-      { agent: "Itzel Alarcón", avg: 22.7, median: 5.9, pairs: 356, under5: 46, under30: 78 },
-      { agent: "Elizabeth Castro", avg: 34.9, median: 7.5, pairs: 274, under5: 45, under30: 71 },
+      { agent: "Dylan Arellano", avg: 16.0, median: 2.9, pairs: 353, under5: 63, under30: 90 },
+      { agent: "Jenifer", avg: 10.4, median: 3.4, pairs: 349, under5: 62, under30: 93 },
+      { agent: "Cesar Iram Enriquez", avg: 11.3, median: 4.6, pairs: 440, under5: 52, under30: 90 },
+      { agent: "Elsa Hernández", avg: 15.5, median: 5.7, pairs: 419, under5: 47, under30: 92 },
+      { agent: "Fernanda Figueroa", avg: 25.3, median: 5.8, pairs: 384, under5: 45, under30: 83 },
+      { agent: "Lorena Domínguez", avg: 28.5, median: 6.5, pairs: 267, under5: 44, under30: 76 },
+      { agent: "Alfonso", avg: 19.8, median: 6.7, pairs: 281, under5: 44, under30: 85 },
+      { agent: "Elvia", avg: 18.9, median: 7.1, pairs: 637, under5: 41, under30: 81 },
+      { agent: "Gabriel García", avg: 24.3, median: 7.2, pairs: 338, under5: 44, under30: 82 },
       { agent: "Xel Xanat", avg: 23.1, median: 9.2, pairs: 300, under5: 38, under30: 81 },
-      { agent: "Elizabeth Bustos", avg: 25.7, median: 9.3, pairs: 351, under5: 38, under30: 74 },
-      { agent: "Eduardo", avg: 24.5, median: 9.6, pairs: 258, under5: 35, under30: 78 },
-      { agent: "Iran", avg: 18.9, median: 9.6, pairs: 446, under5: 37, under30: 82 },
-      { agent: "Paola Viveros", avg: 20.7, median: 12.4, pairs: 230, under5: 30, under30: 77 },
-      { agent: "Daniel Luna", avg: 29.6, median: 14.2, pairs: 264, under5: 29, under30: 73 },
-      { agent: "Kate González", avg: 23.8, median: 14.2, pairs: 362, under5: 26, under30: 77 },
+      { agent: "Hugo", avg: 20.4, median: 9.6, pairs: 402, under5: 39, under30: 78 },
+      { agent: "Itzel Alarcón", avg: 31.3, median: 10.2, pairs: 352, under5: 35, under30: 74 },
+      { agent: "Paola Viveros", avg: 24.9, median: 10.2, pairs: 309, under5: 33, under30: 79 },
+      { agent: "Kate González", avg: 21.6, median: 12.2, pairs: 313, under5: 29, under30: 81 },
       { agent: "Dana Lugo", avg: 28.6, median: 14.4, pairs: 212, under5: 26, under30: 75 },
-      { agent: "Carlos", avg: 53.4, median: 42.0, pairs: 395, under5: 19, under30: 44 },
+      { agent: "Carlos", avg: 33.6, median: 16.6, pairs: 428, under5: 27, under30: 64 },
+      { agent: "Diego Cedillo", avg: 21.9, median: 16.6, pairs: 144, under5: 20, under30: 76 },
+      { agent: "Daniel Luna", avg: 34.1, median: 20.1, pairs: 282, under5: 22, under30: 67 },
     ];
 
     // Evolution of problems — comparing baseline (Mar 11) vs latest (Jun 2, 21 agents)
@@ -358,19 +360,124 @@
 
     // Horarios de atención — per-agent daily activity (sent-message timestamps, CDMX local)
     const activityData = {
-  "generated_at": "2026-06-02T16:37:36.893997",
+  "generated_at": "2026-06-23T11:27:24.360060",
   "window_days": 90,
-  "start_date": "2026-03-04",
-  "end_date": "2026-06-02",
+  "start_date": "2026-03-25",
+  "end_date": "2026-06-23",
   "tz_note": "Mexico City local time (timestamps as returned by Evolution API). Mon-Fri only — weekends excluded.",
   "by_agent_day": {
     "Carlos": {
+      "2026-06-23": {
+        "coverage": 1.97,
+        "engaged": 3,
+        "msgs": 68,
+        "first": "09:27",
+        "last": "11:25"
+      },
+      "2026-06-22": {
+        "coverage": 8.82,
+        "engaged": 9,
+        "msgs": 144,
+        "first": "09:09",
+        "last": "17:59"
+      },
+      "2026-06-19": {
+        "coverage": 10.13,
+        "engaged": 10,
+        "msgs": 130,
+        "first": "09:03",
+        "last": "19:11"
+      },
+      "2026-06-18": {
+        "coverage": 9.95,
+        "engaged": 11,
+        "msgs": 74,
+        "first": "09:03",
+        "last": "19:00"
+      },
+      "2026-06-17": {
+        "coverage": 9.29,
+        "engaged": 10,
+        "msgs": 201,
+        "first": "09:11",
+        "last": "18:28"
+      },
+      "2026-06-16": {
+        "coverage": 8.84,
+        "engaged": 9,
+        "msgs": 161,
+        "first": "09:32",
+        "last": "18:23"
+      },
+      "2026-06-15": {
+        "coverage": 10.52,
+        "engaged": 10,
+        "msgs": 221,
+        "first": "09:11",
+        "last": "19:42"
+      },
+      "2026-06-12": {
+        "coverage": 17.8,
+        "engaged": 12,
+        "msgs": 122,
+        "first": "00:54",
+        "last": "18:42"
+      },
+      "2026-06-11": {
+        "coverage": 8.99,
+        "engaged": 9,
+        "msgs": 166,
+        "first": "09:23",
+        "last": "18:22"
+      },
+      "2026-06-10": {
+        "coverage": 9.26,
+        "engaged": 9,
+        "msgs": 158,
+        "first": "09:32",
+        "last": "18:48"
+      },
+      "2026-06-09": {
+        "coverage": 9.46,
+        "engaged": 9,
+        "msgs": 171,
+        "first": "09:11",
+        "last": "18:38"
+      },
+      "2026-06-08": {
+        "coverage": 11.35,
+        "engaged": 10,
+        "msgs": 216,
+        "first": "09:10",
+        "last": "20:31"
+      },
+      "2026-06-05": {
+        "coverage": 13.21,
+        "engaged": 10,
+        "msgs": 148,
+        "first": "10:10",
+        "last": "23:23"
+      },
+      "2026-06-04": {
+        "coverage": 9.32,
+        "engaged": 10,
+        "msgs": 152,
+        "first": "09:08",
+        "last": "18:27"
+      },
+      "2026-06-03": {
+        "coverage": 11.82,
+        "engaged": 11,
+        "msgs": 152,
+        "first": "09:40",
+        "last": "21:29"
+      },
       "2026-06-02": {
-        "coverage": 7.35,
-        "engaged": 7,
-        "msgs": 118,
+        "coverage": 9.35,
+        "engaged": 9,
+        "msgs": 165,
         "first": "09:15",
-        "last": "16:36"
+        "last": "18:36"
       },
       "2026-06-01": {
         "coverage": 9.29,
@@ -611,260 +718,118 @@
         "last": "18:07"
       }
     },
-    "Iran": {
-      "2026-06-02": {
-        "coverage": 7.44,
-        "engaged": 7,
-        "msgs": 283,
-        "first": "09:09",
-        "last": "16:35"
+    "Jenifer": {
+      "2026-06-23": {
+        "coverage": 0.0,
+        "engaged": 1,
+        "msgs": 2,
+        "first": "10:41",
+        "last": "10:41"
       },
-      "2026-06-01": {
-        "coverage": 9.91,
-        "engaged": 11,
-        "msgs": 294,
+      "2026-06-22": {
+        "coverage": 4.79,
+        "engaged": 4,
+        "msgs": 71,
         "first": "08:59",
-        "last": "18:54"
+        "last": "13:46"
       },
-      "2026-05-29": {
-        "coverage": 10.47,
-        "engaged": 11,
-        "msgs": 298,
-        "first": "09:24",
-        "last": "19:52"
+      "2026-06-19": {
+        "coverage": 7.51,
+        "engaged": 4,
+        "msgs": 16,
+        "first": "08:52",
+        "last": "16:22"
       },
-      "2026-05-28": {
-        "coverage": 9.82,
-        "engaged": 10,
-        "msgs": 347,
-        "first": "09:10",
-        "last": "18:59"
-      },
-      "2026-05-27": {
-        "coverage": 10.03,
-        "engaged": 11,
-        "msgs": 269,
+      "2026-06-18": {
+        "coverage": 9.65,
+        "engaged": 9,
+        "msgs": 117,
         "first": "09:07",
-        "last": "19:08"
+        "last": "18:46"
       },
-      "2026-05-26": {
-        "coverage": 9.75,
-        "engaged": 11,
-        "msgs": 233,
-        "first": "09:14",
-        "last": "19:00"
-      },
-      "2026-05-25": {
-        "coverage": 10.46,
-        "engaged": 12,
-        "msgs": 299,
-        "first": "08:58",
-        "last": "19:26"
-      },
-      "2026-05-22": {
-        "coverage": 13.95,
-        "engaged": 12,
-        "msgs": 298,
-        "first": "09:01",
-        "last": "22:58"
-      },
-      "2026-05-21": {
-        "coverage": 9.69,
-        "engaged": 11,
-        "msgs": 251,
-        "first": "09:23",
-        "last": "19:04"
-      },
-      "2026-05-20": {
-        "coverage": 9.58,
+      "2026-06-17": {
+        "coverage": 9.5,
         "engaged": 10,
-        "msgs": 185,
+        "msgs": 227,
+        "first": "09:06",
+        "last": "18:36"
+      },
+      "2026-06-16": {
+        "coverage": 10.35,
+        "engaged": 10,
+        "msgs": 201,
+        "first": "09:11",
+        "last": "19:31"
+      },
+      "2026-06-15": {
+        "coverage": 10.17,
+        "engaged": 11,
+        "msgs": 262,
+        "first": "08:45",
+        "last": "18:56"
+      },
+      "2026-06-12": {
+        "coverage": 9.56,
+        "engaged": 10,
+        "msgs": 226,
         "first": "09:09",
         "last": "18:43"
       },
-      "2026-05-19": {
+      "2026-06-11": {
         "coverage": 9.97,
         "engaged": 11,
-        "msgs": 195,
-        "first": "09:02",
-        "last": "19:00"
-      },
-      "2026-05-18": {
-        "coverage": 9.71,
-        "engaged": 11,
-        "msgs": 235,
-        "first": "09:24",
-        "last": "19:07"
-      },
-      "2026-05-15": {
-        "coverage": 12.07,
-        "engaged": 14,
-        "msgs": 187,
-        "first": "08:56",
-        "last": "21:00"
-      },
-      "2026-05-14": {
-        "coverage": 9.89,
-        "engaged": 11,
-        "msgs": 182,
-        "first": "09:06",
-        "last": "19:00"
-      },
-      "2026-05-13": {
-        "coverage": 9.58,
-        "engaged": 10,
-        "msgs": 191,
-        "first": "09:10",
-        "last": "18:45"
-      },
-      "2026-05-12": {
-        "coverage": 9.94,
-        "engaged": 11,
-        "msgs": 233,
+        "msgs": 133,
         "first": "09:03",
-        "last": "19:00"
-      },
-      "2026-05-11": {
-        "coverage": 9.54,
-        "engaged": 11,
-        "msgs": 225,
-        "first": "09:42",
-        "last": "19:15"
-      },
-      "2026-05-08": {
-        "coverage": 9.74,
-        "engaged": 10,
-        "msgs": 163,
-        "first": "09:06",
-        "last": "18:51"
-      },
-      "2026-05-07": {
-        "coverage": 18.4,
-        "engaged": 12,
-        "msgs": 176,
-        "first": "02:06",
-        "last": "20:30"
-      },
-      "2026-05-06": {
-        "coverage": 9.51,
-        "engaged": 10,
-        "msgs": 226,
-        "first": "09:23",
-        "last": "18:54"
-      },
-      "2026-05-05": {
-        "coverage": 10.47,
-        "engaged": 12,
-        "msgs": 165,
-        "first": "08:46",
-        "last": "19:15"
-      },
-      "2026-05-04": {
-        "coverage": 10.49,
-        "engaged": 12,
-        "msgs": 182,
-        "first": "08:36",
-        "last": "19:05"
-      },
-      "2026-05-01": {
-        "coverage": 16.56,
-        "engaged": 4,
-        "msgs": 6,
-        "first": "07:11",
-        "last": "23:44"
-      },
-      "2026-04-30": {
-        "coverage": 10.79,
-        "engaged": 12,
-        "msgs": 145,
-        "first": "09:20",
-        "last": "20:08"
-      },
-      "2026-04-29": {
-        "coverage": 10.0,
-        "engaged": 11,
-        "msgs": 101,
-        "first": "09:01",
         "last": "19:01"
       },
-      "2026-04-28": {
-        "coverage": 10.02,
-        "engaged": 11,
-        "msgs": 193,
-        "first": "09:01",
-        "last": "19:02"
-      },
-      "2026-04-27": {
-        "coverage": 9.92,
+      "2026-06-10": {
+        "coverage": 9.26,
         "engaged": 10,
-        "msgs": 176,
-        "first": "08:54",
-        "last": "18:50"
+        "msgs": 152,
+        "first": "09:17",
+        "last": "18:33"
       },
-      "2026-04-24": {
-        "coverage": 10.87,
-        "engaged": 12,
-        "msgs": 161,
-        "first": "07:55",
-        "last": "18:47"
-      },
-      "2026-04-23": {
-        "coverage": 10.09,
-        "engaged": 10,
-        "msgs": 133,
-        "first": "09:06",
-        "last": "19:12"
-      },
-      "2026-04-22": {
-        "coverage": 9.99,
-        "engaged": 11,
-        "msgs": 172,
-        "first": "09:02",
-        "last": "19:02"
-      },
-      "2026-04-21": {
-        "coverage": 8.89,
-        "engaged": 10,
-        "msgs": 122,
-        "first": "10:17",
-        "last": "19:11"
-      },
-      "2026-04-20": {
-        "coverage": 14.48,
-        "engaged": 11,
-        "msgs": 175,
-        "first": "09:02",
-        "last": "23:31"
-      },
-      "2026-04-17": {
-        "coverage": 10.2,
+      "2026-06-09": {
+        "coverage": 10.1,
         "engaged": 11,
         "msgs": 166,
-        "first": "08:42",
-        "last": "18:54"
+        "first": "09:16",
+        "last": "19:22"
       },
-      "2026-04-16": {
-        "coverage": 11.13,
+      "2026-06-08": {
+        "coverage": 11.63,
+        "engaged": 13,
+        "msgs": 212,
+        "first": "08:55",
+        "last": "20:32"
+      },
+      "2026-06-05": {
+        "coverage": 9.94,
         "engaged": 11,
-        "msgs": 140,
-        "first": "10:00",
-        "last": "21:08"
+        "msgs": 213,
+        "first": "09:06",
+        "last": "19:03"
       },
-      "2026-04-15": {
-        "coverage": 4.46,
-        "engaged": 5,
-        "msgs": 34,
-        "first": "12:47",
-        "last": "17:15"
-      }
-    },
-    "Jenifer": {
+      "2026-06-04": {
+        "coverage": 13.21,
+        "engaged": 14,
+        "msgs": 184,
+        "first": "08:44",
+        "last": "21:57"
+      },
+      "2026-06-03": {
+        "coverage": 12.43,
+        "engaged": 13,
+        "msgs": 207,
+        "first": "08:59",
+        "last": "21:25"
+      },
       "2026-06-02": {
-        "coverage": 7.56,
-        "engaged": 8,
-        "msgs": 131,
+        "coverage": 9.71,
+        "engaged": 10,
+        "msgs": 185,
         "first": "09:02",
-        "last": "16:35"
+        "last": "18:44"
       },
       "2026-06-01": {
         "coverage": 9.74,
@@ -1173,71 +1138,120 @@
         "msgs": 1,
         "first": "12:46",
         "last": "12:46"
-      },
-      "2026-03-23": {
-        "coverage": 4.71,
-        "engaged": 2,
-        "msgs": 2,
-        "first": "11:52",
-        "last": "16:34"
-      },
-      "2026-03-20": {
-        "coverage": 0.0,
-        "engaged": 1,
-        "msgs": 1,
-        "first": "12:00",
-        "last": "12:00"
-      },
-      "2026-03-19": {
-        "coverage": 0.0,
-        "engaged": 1,
-        "msgs": 1,
-        "first": "16:33",
-        "last": "16:33"
-      },
-      "2026-03-13": {
-        "coverage": 2.61,
-        "engaged": 3,
-        "msgs": 3,
-        "first": "16:42",
-        "last": "19:19"
-      },
-      "2026-03-12": {
-        "coverage": 8.19,
-        "engaged": 4,
-        "msgs": 5,
-        "first": "10:01",
-        "last": "18:13"
-      },
-      "2026-03-09": {
-        "coverage": 5.42,
-        "engaged": 3,
-        "msgs": 3,
-        "first": "12:54",
-        "last": "18:19"
-      },
-      "2026-03-06": {
-        "coverage": 4.59,
-        "engaged": 2,
-        "msgs": 2,
-        "first": "14:19",
-        "last": "18:54"
-      },
-      "2026-03-05": {
-        "coverage": 0.0,
-        "engaged": 1,
-        "msgs": 1,
-        "first": "13:05",
-        "last": "13:05"
       }
     },
     "Lorena Dominguez": {
-      "2026-06-02": {
-        "coverage": 6.87,
+      "2026-06-23": {
+        "coverage": 1.72,
+        "engaged": 3,
+        "msgs": 47,
+        "first": "09:27",
+        "last": "11:10"
+      },
+      "2026-06-22": {
+        "coverage": 8.65,
+        "engaged": 9,
+        "msgs": 192,
+        "first": "09:45",
+        "last": "18:25"
+      },
+      "2026-06-19": {
+        "coverage": 9.93,
         "engaged": 8,
-        "msgs": 205,
+        "msgs": 98,
+        "first": "10:24",
+        "last": "20:20"
+      },
+      "2026-06-18": {
+        "coverage": 10.12,
+        "engaged": 10,
+        "msgs": 230,
+        "first": "09:16",
+        "last": "19:24"
+      },
+      "2026-06-17": {
+        "coverage": 9.46,
+        "engaged": 11,
+        "msgs": 152,
+        "first": "09:32",
+        "last": "19:00"
+      },
+      "2026-06-16": {
+        "coverage": 9.79,
+        "engaged": 10,
+        "msgs": 189,
+        "first": "09:41",
+        "last": "19:28"
+      },
+      "2026-06-15": {
+        "coverage": 9.76,
+        "engaged": 11,
+        "msgs": 264,
+        "first": "09:17",
+        "last": "19:03"
+      },
+      "2026-06-12": {
+        "coverage": 9.89,
+        "engaged": 10,
+        "msgs": 239,
+        "first": "09:19",
+        "last": "19:12"
+      },
+      "2026-06-11": {
+        "coverage": 8.74,
+        "engaged": 9,
+        "msgs": 100,
+        "first": "09:08",
+        "last": "17:52"
+      },
+      "2026-06-10": {
+        "coverage": 9.35,
+        "engaged": 9,
+        "msgs": 202,
+        "first": "09:21",
+        "last": "18:42"
+      },
+      "2026-06-09": {
+        "coverage": 9.14,
+        "engaged": 10,
+        "msgs": 261,
+        "first": "09:57",
+        "last": "19:05"
+      },
+      "2026-06-08": {
+        "coverage": 9.39,
+        "engaged": 9,
+        "msgs": 332,
+        "first": "09:32",
+        "last": "18:55"
+      },
+      "2026-06-05": {
+        "coverage": 11.49,
+        "engaged": 13,
+        "msgs": 329,
+        "first": "09:31",
+        "last": "21:00"
+      },
+      "2026-06-04": {
+        "coverage": 9.86,
+        "engaged": 11,
+        "msgs": 218,
+        "first": "09:08",
+        "last": "19:00"
+      },
+      "2026-06-03": {
+        "coverage": 9.73,
+        "engaged": 10,
+        "msgs": 284,
+        "first": "09:13",
+        "last": "18:57"
+      },
+      "2026-06-02": {
+        "coverage": 9.26,
+        "engaged": 10,
+        "msgs": 296,
         "first": "09:43",
-        "last": "16:35"
+        "last": "18:59"
       },
       "2026-06-01": {
         "coverage": 9.23,
@@ -1410,39 +1424,314 @@
       "2026-03-30": {
         "coverage": 9.86,
         "engaged": 11,
-        "msgs": 476,
+        "msgs": 475,
         "first": "09:22",
         "last": "19:14"
+      }
+    },
+    "Alfonso": {
+      "2026-06-23": {
+        "coverage": 1.95,
+        "engaged": 3,
+        "msgs": 32,
+        "first": "09:20",
+        "last": "11:17"
       },
-      "2026-03-06": {
-        "coverage": 9.51,
+      "2026-06-22": {
+        "coverage": 9.55,
         "engaged": 10,
-        "msgs": 470,
-        "first": "09:11",
-        "last": "18:42"
+        "msgs": 205,
+        "first": "09:03",
+        "last": "18:36"
       },
-      "2026-03-05": {
-        "coverage": 10.36,
+      "2026-06-19": {
+        "coverage": 9.84,
         "engaged": 11,
-        "msgs": 516,
-        "first": "09:00",
-        "last": "19:22"
+        "msgs": 180,
+        "first": "09:21",
+        "last": "19:12"
       },
-      "2026-03-04": {
-        "coverage": 2.79,
-        "engaged": 4,
+      "2026-06-18": {
+        "coverage": 10.79,
+        "engaged": 11,
+        "msgs": 151,
+        "first": "09:10",
+        "last": "19:57"
+      },
+      "2026-06-17": {
+        "coverage": 9.53,
+        "engaged": 10,
+        "msgs": 93,
+        "first": "09:05",
+        "last": "18:37"
+      },
+      "2026-06-16": {
+        "coverage": 9.37,
+        "engaged": 10,
+        "msgs": 114,
+        "first": "09:18",
+        "last": "18:40"
+      },
+      "2026-06-15": {
+        "coverage": 10.95,
+        "engaged": 12,
+        "msgs": 160,
+        "first": "07:40",
+        "last": "18:37"
+      },
+      "2026-06-12": {
+        "coverage": 12.99,
+        "engaged": 14,
+        "msgs": 171,
+        "first": "08:45",
+        "last": "21:44"
+      },
+      "2026-06-11": {
+        "coverage": 9.39,
+        "engaged": 10,
+        "msgs": 158,
+        "first": "09:14",
+        "last": "18:38"
+      },
+      "2026-06-10": {
+        "coverage": 9.5,
+        "engaged": 11,
         "msgs": 128,
-        "first": "16:37",
+        "first": "09:54",
         "last": "19:24"
+      },
+      "2026-06-09": {
+        "coverage": 9.32,
+        "engaged": 9,
+        "msgs": 53,
+        "first": "09:37",
+        "last": "18:56"
+      },
+      "2026-06-08": {
+        "coverage": 9.54,
+        "engaged": 10,
+        "msgs": 126,
+        "first": "09:07",
+        "last": "18:39"
+      },
+      "2026-06-05": {
+        "coverage": 9.65,
+        "engaged": 10,
+        "msgs": 131,
+        "first": "09:13",
+        "last": "18:51"
+      },
+      "2026-06-04": {
+        "coverage": 9.63,
+        "engaged": 10,
+        "msgs": 92,
+        "first": "09:21",
+        "last": "18:59"
+      },
+      "2026-06-03": {
+        "coverage": 9.6,
+        "engaged": 10,
+        "msgs": 185,
+        "first": "09:22",
+        "last": "18:58"
+      },
+      "2026-06-02": {
+        "coverage": 11.88,
+        "engaged": 12,
+        "msgs": 100,
+        "first": "09:06",
+        "last": "20:59"
+      },
+      "2026-06-01": {
+        "coverage": 9.64,
+        "engaged": 10,
+        "msgs": 117,
+        "first": "09:17",
+        "last": "18:56"
+      },
+      "2026-05-29": {
+        "coverage": 13.99,
+        "engaged": 14,
+        "msgs": 119,
+        "first": "09:10",
+        "last": "23:09"
+      },
+      "2026-05-28": {
+        "coverage": 9.99,
+        "engaged": 11,
+        "msgs": 101,
+        "first": "09:02",
+        "last": "19:02"
+      },
+      "2026-05-27": {
+        "coverage": 10.12,
+        "engaged": 11,
+        "msgs": 87,
+        "first": "09:08",
+        "last": "19:15"
+      },
+      "2026-05-26": {
+        "coverage": 10.12,
+        "engaged": 11,
+        "msgs": 72,
+        "first": "09:06",
+        "last": "19:13"
+      },
+      "2026-05-25": {
+        "coverage": 10.0,
+        "engaged": 11,
+        "msgs": 97,
+        "first": "09:12",
+        "last": "19:12"
+      },
+      "2026-05-22": {
+        "coverage": 10.2,
+        "engaged": 8,
+        "msgs": 51,
+        "first": "09:41",
+        "last": "19:53"
+      },
+      "2026-05-21": {
+        "coverage": 9.19,
+        "engaged": 9,
+        "msgs": 42,
+        "first": "09:09",
+        "last": "18:20"
+      },
+      "2026-05-20": {
+        "coverage": 9.64,
+        "engaged": 11,
+        "msgs": 60,
+        "first": "09:28",
+        "last": "19:07"
+      },
+      "2026-05-19": {
+        "coverage": 9.74,
+        "engaged": 7,
+        "msgs": 20,
+        "first": "09:07",
+        "last": "18:51"
+      },
+      "2026-05-18": {
+        "coverage": 9.17,
+        "engaged": 6,
+        "msgs": 19,
+        "first": "09:20",
+        "last": "18:30"
       }
     },
     "Elvia": {
+      "2026-06-23": {
+        "coverage": 2.38,
+        "engaged": 3,
+        "msgs": 81,
+        "first": "09:05",
+        "last": "11:28"
+      },
+      "2026-06-22": {
+        "coverage": 9.04,
+        "engaged": 9,
+        "msgs": 282,
+        "first": "09:12",
+        "last": "18:14"
+      },
+      "2026-06-19": {
+        "coverage": 9.43,
+        "engaged": 11,
+        "msgs": 251,
+        "first": "08:51",
+        "last": "18:17"
+      },
+      "2026-06-18": {
+        "coverage": 9.0,
+        "engaged": 10,
+        "msgs": 333,
+        "first": "09:08",
+        "last": "18:08"
+      },
+      "2026-06-17": {
+        "coverage": 9.27,
+        "engaged": 10,
+        "msgs": 238,
+        "first": "09:07",
+        "last": "18:23"
+      },
+      "2026-06-16": {
+        "coverage": 9.35,
+        "engaged": 10,
+        "msgs": 328,
+        "first": "09:06",
+        "last": "18:27"
+      },
+      "2026-06-15": {
+        "coverage": 9.31,
+        "engaged": 10,
+        "msgs": 241,
+        "first": "09:10",
+        "last": "18:29"
+      },
+      "2026-06-12": {
+        "coverage": 13.07,
+        "engaged": 13,
+        "msgs": 277,
+        "first": "08:44",
+        "last": "21:48"
+      },
+      "2026-06-11": {
+        "coverage": 9.17,
+        "engaged": 10,
+        "msgs": 364,
+        "first": "09:07",
+        "last": "18:17"
+      },
+      "2026-06-10": {
+        "coverage": 9.33,
+        "engaged": 11,
+        "msgs": 236,
+        "first": "08:47",
+        "last": "18:07"
+      },
+      "2026-06-09": {
+        "coverage": 9.16,
+        "engaged": 10,
+        "msgs": 238,
+        "first": "09:10",
+        "last": "18:20"
+      },
+      "2026-06-08": {
+        "coverage": 9.3,
+        "engaged": 9,
+        "msgs": 278,
+        "first": "09:14",
+        "last": "18:32"
+      },
+      "2026-06-05": {
+        "coverage": 12.46,
+        "engaged": 12,
+        "msgs": 279,
+        "first": "08:55",
+        "last": "21:23"
+      },
+      "2026-06-04": {
+        "coverage": 10.39,
+        "engaged": 11,
+        "msgs": 462,
+        "first": "09:05",
+        "last": "19:29"
+      },
+      "2026-06-03": {
+        "coverage": 9.11,
+        "engaged": 11,
+        "msgs": 148,
+        "first": "08:54",
+        "last": "18:01"
+      },
       "2026-06-02": {
-        "coverage": 7.25,
-        "engaged": 8,
-        "msgs": 249,
+        "coverage": 9.4,
+        "engaged": 10,
+        "msgs": 276,
         "first": "09:16",
-        "last": "16:31"
+        "last": "18:40"
       },
       "2026-06-01": {
         "coverage": 9.37,
@@ -1781,559 +2070,11 @@
         "last": "18:00"
       },
       "2026-03-25": {
-        "coverage": 9.26,
-        "engaged": 10,
-        "msgs": 233,
-        "first": "09:23",
-        "last": "18:38"
-      },
-      "2026-03-24": {
-        "coverage": 8.83,
-        "engaged": 10,
-        "msgs": 281,
-        "first": "08:53",
-        "last": "17:43"
-      },
-      "2026-03-23": {
-        "coverage": 8.22,
-        "engaged": 10,
-        "msgs": 299,
-        "first": "08:55",
-        "last": "17:08"
-      },
-      "2026-03-20": {
-        "coverage": 12.7,
-        "engaged": 11,
-        "msgs": 272,
-        "first": "09:25",
-        "last": "22:07"
-      },
-      "2026-03-19": {
-        "coverage": 9.71,
-        "engaged": 11,
-        "msgs": 350,
-        "first": "08:20",
-        "last": "18:02"
-      },
-      "2026-03-18": {
-        "coverage": 14.67,
-        "engaged": 11,
-        "msgs": 275,
-        "first": "08:30",
-        "last": "23:11"
-      },
-      "2026-03-17": {
-        "coverage": 9.12,
-        "engaged": 10,
-        "msgs": 384,
-        "first": "09:06",
-        "last": "18:13"
-      },
-      "2026-03-16": {
-        "coverage": 0.0,
-        "engaged": 1,
-        "msgs": 1,
-        "first": "18:54",
-        "last": "18:54"
-      },
-      "2026-03-13": {
-        "coverage": 10.88,
-        "engaged": 11,
-        "msgs": 264,
-        "first": "09:27",
-        "last": "20:20"
-      },
-      "2026-03-12": {
-        "coverage": 8.54,
-        "engaged": 9,
-        "msgs": 385,
-        "first": "09:19",
-        "last": "17:51"
-      },
-      "2026-03-11": {
-        "coverage": 9.28,
-        "engaged": 10,
-        "msgs": 302,
-        "first": "08:41",
-        "last": "17:58"
-      },
-      "2026-03-10": {
-        "coverage": 8.81,
-        "engaged": 9,
-        "msgs": 316,
-        "first": "09:07",
-        "last": "17:56"
-      },
-      "2026-03-09": {
-        "coverage": 8.7,
-        "engaged": 9,
-        "msgs": 332,
-        "first": "09:16",
-        "last": "17:58"
-      },
-      "2026-03-06": {
-        "coverage": 12.81,
-        "engaged": 14,
-        "msgs": 420,
-        "first": "09:13",
-        "last": "22:01"
-      },
-      "2026-03-05": {
-        "coverage": 8.79,
-        "engaged": 9,
-        "msgs": 326,
-        "first": "09:12",
-        "last": "17:59"
-      },
-      "2026-03-04": {
-        "coverage": 1.06,
-        "engaged": 2,
-        "msgs": 45,
-        "first": "16:50",
-        "last": "17:53"
-      }
-    },
-    "Elizabeth Bustos": {
-      "2026-06-02": {
-        "coverage": 5.15,
-        "engaged": 6,
-        "msgs": 113,
-        "first": "10:23",
-        "last": "15:32"
-      },
-      "2026-06-01": {
-        "coverage": 9.33,
+        "coverage": 7.12,
         "engaged": 8,
-        "msgs": 179,
-        "first": "09:31",
-        "last": "18:50"
-      },
-      "2026-05-29": {
-        "coverage": 9.15,
-        "engaged": 9,
-        "msgs": 135,
-        "first": "09:24",
-        "last": "18:34"
-      },
-      "2026-05-28": {
-        "coverage": 8.07,
-        "engaged": 7,
-        "msgs": 97,
-        "first": "10:11",
-        "last": "18:15"
-      },
-      "2026-05-27": {
-        "coverage": 8.62,
-        "engaged": 9,
-        "msgs": 147,
-        "first": "09:52",
-        "last": "18:29"
-      },
-      "2026-05-26": {
-        "coverage": 8.94,
-        "engaged": 10,
-        "msgs": 108,
-        "first": "09:22",
-        "last": "18:18"
-      },
-      "2026-05-25": {
-        "coverage": 8.63,
-        "engaged": 8,
-        "msgs": 92,
-        "first": "09:41",
-        "last": "18:19"
-      },
-      "2026-05-22": {
-        "coverage": 7.37,
-        "engaged": 7,
-        "msgs": 108,
-        "first": "11:15",
-        "last": "18:37"
-      },
-      "2026-05-21": {
-        "coverage": 9.93,
-        "engaged": 11,
-        "msgs": 120,
-        "first": "08:56",
-        "last": "18:51"
-      },
-      "2026-05-20": {
-        "coverage": 8.02,
-        "engaged": 9,
-        "msgs": 84,
-        "first": "10:39",
-        "last": "18:40"
-      },
-      "2026-05-19": {
-        "coverage": 9.7,
-        "engaged": 10,
-        "msgs": 127,
-        "first": "09:13",
-        "last": "18:55"
-      },
-      "2026-05-18": {
-        "coverage": 9.15,
-        "engaged": 9,
-        "msgs": 151,
-        "first": "09:42",
-        "last": "18:51"
-      },
-      "2026-05-15": {
-        "coverage": 8.89,
-        "engaged": 9,
-        "msgs": 86,
-        "first": "10:04",
-        "last": "18:57"
-      },
-      "2026-05-14": {
-        "coverage": 9.92,
-        "engaged": 8,
-        "msgs": 105,
-        "first": "08:47",
-        "last": "18:42"
-      },
-      "2026-05-13": {
-        "coverage": 9.17,
-        "engaged": 10,
-        "msgs": 190,
-        "first": "09:57",
-        "last": "19:08"
-      },
-      "2026-05-12": {
-        "coverage": 8.03,
-        "engaged": 8,
-        "msgs": 145,
-        "first": "10:48",
-        "last": "18:50"
-      },
-      "2026-05-11": {
-        "coverage": 7.61,
-        "engaged": 7,
-        "msgs": 102,
-        "first": "11:03",
-        "last": "18:40"
-      },
-      "2026-05-08": {
-        "coverage": 8.09,
-        "engaged": 9,
-        "msgs": 134,
-        "first": "10:01",
-        "last": "18:06"
-      },
-      "2026-05-07": {
-        "coverage": 8.93,
-        "engaged": 10,
-        "msgs": 144,
-        "first": "09:30",
-        "last": "18:26"
-      },
-      "2026-05-06": {
-        "coverage": 8.34,
-        "engaged": 9,
-        "msgs": 92,
-        "first": "09:49",
-        "last": "18:09"
-      },
-      "2026-05-05": {
-        "coverage": 9.05,
-        "engaged": 10,
-        "msgs": 133,
-        "first": "09:04",
-        "last": "18:07"
-      },
-      "2026-05-04": {
-        "coverage": 9.49,
-        "engaged": 9,
-        "msgs": 208,
-        "first": "09:25",
-        "last": "18:54"
-      },
-      "2026-05-01": {
-        "coverage": 15.63,
-        "engaged": 6,
-        "msgs": 7,
-        "first": "08:06",
-        "last": "23:44"
-      },
-      "2026-04-30": {
-        "coverage": 12.23,
-        "engaged": 11,
-        "msgs": 164,
-        "first": "09:15",
-        "last": "21:29"
-      },
-      "2026-04-29": {
-        "coverage": 8.62,
-        "engaged": 7,
-        "msgs": 76,
-        "first": "10:02",
-        "last": "18:39"
-      },
-      "2026-04-28": {
-        "coverage": 9.12,
-        "engaged": 9,
-        "msgs": 134,
-        "first": "09:47",
-        "last": "18:54"
-      },
-      "2026-04-27": {
-        "coverage": 9.0,
-        "engaged": 10,
-        "msgs": 134,
-        "first": "09:20",
-        "last": "18:20"
-      },
-      "2026-04-24": {
-        "coverage": 9.0,
-        "engaged": 8,
-        "msgs": 114,
-        "first": "09:36",
-        "last": "18:36"
-      },
-      "2026-04-23": {
-        "coverage": 8.64,
-        "engaged": 10,
-        "msgs": 154,
-        "first": "09:48",
-        "last": "18:26"
-      },
-      "2026-04-22": {
-        "coverage": 9.26,
-        "engaged": 10,
-        "msgs": 88,
-        "first": "09:10",
-        "last": "18:25"
-      },
-      "2026-04-21": {
-        "coverage": 9.01,
-        "engaged": 9,
-        "msgs": 127,
-        "first": "09:24",
-        "last": "18:24"
-      },
-      "2026-04-20": {
-        "coverage": 8.42,
-        "engaged": 9,
-        "msgs": 130,
-        "first": "09:41",
-        "last": "18:06"
-      },
-      "2026-04-17": {
-        "coverage": 8.81,
-        "engaged": 9,
-        "msgs": 97,
-        "first": "09:28",
-        "last": "18:17"
-      },
-      "2026-04-16": {
-        "coverage": 9.85,
-        "engaged": 11,
-        "msgs": 115,
-        "first": "09:11",
-        "last": "19:02"
-      },
-      "2026-04-15": {
-        "coverage": 8.11,
-        "engaged": 8,
-        "msgs": 85,
-        "first": "10:16",
-        "last": "18:23"
-      },
-      "2026-04-14": {
-        "coverage": 8.86,
-        "engaged": 10,
-        "msgs": 155,
-        "first": "09:54",
-        "last": "18:46"
-      },
-      "2026-04-13": {
-        "coverage": 8.39,
-        "engaged": 8,
-        "msgs": 103,
-        "first": "10:19",
-        "last": "18:42"
-      },
-      "2026-04-10": {
-        "coverage": 7.68,
-        "engaged": 7,
-        "msgs": 124,
-        "first": "10:01",
-        "last": "17:42"
-      },
-      "2026-04-09": {
-        "coverage": 7.61,
-        "engaged": 8,
-        "msgs": 84,
-        "first": "09:34",
-        "last": "17:10"
-      },
-      "2026-04-08": {
-        "coverage": 9.09,
-        "engaged": 9,
-        "msgs": 135,
-        "first": "10:14",
-        "last": "19:19"
-      },
-      "2026-04-07": {
-        "coverage": 8.14,
-        "engaged": 9,
-        "msgs": 108,
-        "first": "10:57",
-        "last": "19:05"
-      },
-      "2026-04-06": {
-        "coverage": 9.06,
-        "engaged": 8,
-        "msgs": 98,
-        "first": "09:40",
-        "last": "18:43"
-      },
-      "2026-04-03": {
-        "coverage": 2.83,
-        "engaged": 4,
-        "msgs": 22,
-        "first": "09:58",
-        "last": "12:48"
-      },
-      "2026-04-01": {
-        "coverage": 8.47,
-        "engaged": 7,
-        "msgs": 126,
-        "first": "10:09",
-        "last": "18:38"
-      },
-      "2026-03-31": {
-        "coverage": 9.44,
-        "engaged": 9,
-        "msgs": 133,
-        "first": "09:50",
-        "last": "19:16"
-      },
-      "2026-03-30": {
-        "coverage": 9.41,
-        "engaged": 9,
         "msgs": 159,
-        "first": "09:27",
-        "last": "18:52"
-      },
-      "2026-03-27": {
-        "coverage": 9.29,
-        "engaged": 11,
-        "msgs": 193,
-        "first": "09:45",
-        "last": "19:03"
-      },
-      "2026-03-26": {
-        "coverage": 9.03,
-        "engaged": 9,
-        "msgs": 101,
-        "first": "09:14",
-        "last": "18:15"
-      },
-      "2026-03-25": {
-        "coverage": 8.53,
-        "engaged": 7,
-        "msgs": 92,
-        "first": "10:11",
-        "last": "18:43"
-      },
-      "2026-03-24": {
-        "coverage": 9.36,
-        "engaged": 10,
-        "msgs": 99,
-        "first": "09:37",
-        "last": "18:59"
-      },
-      "2026-03-23": {
-        "coverage": 8.17,
-        "engaged": 8,
-        "msgs": 142,
-        "first": "10:02",
-        "last": "18:12"
-      },
-      "2026-03-20": {
-        "coverage": 9.28,
-        "engaged": 9,
-        "msgs": 127,
-        "first": "09:18",
-        "last": "18:35"
-      },
-      "2026-03-19": {
-        "coverage": 8.98,
-        "engaged": 10,
-        "msgs": 134,
-        "first": "10:04",
-        "last": "19:03"
-      },
-      "2026-03-18": {
-        "coverage": 9.54,
-        "engaged": 10,
-        "msgs": 173,
-        "first": "09:05",
-        "last": "18:37"
-      },
-      "2026-03-17": {
-        "coverage": 10.17,
-        "engaged": 11,
-        "msgs": 138,
-        "first": "09:04",
-        "last": "19:14"
-      },
-      "2026-03-13": {
-        "coverage": 8.59,
-        "engaged": 10,
-        "msgs": 126,
-        "first": "09:35",
-        "last": "18:10"
-      },
-      "2026-03-12": {
-        "coverage": 9.36,
-        "engaged": 9,
-        "msgs": 135,
-        "first": "09:15",
-        "last": "18:37"
-      },
-      "2026-03-11": {
-        "coverage": 8.99,
-        "engaged": 10,
-        "msgs": 121,
-        "first": "10:20",
-        "last": "19:19"
-      },
-      "2026-03-10": {
-        "coverage": 13.86,
-        "engaged": 13,
-        "msgs": 168,
-        "first": "07:24",
-        "last": "21:15"
-      },
-      "2026-03-09": {
-        "coverage": 11.6,
-        "engaged": 12,
-        "msgs": 157,
-        "first": "10:23",
-        "last": "21:59"
-      },
-      "2026-03-06": {
-        "coverage": 9.95,
-        "engaged": 10,
-        "msgs": 145,
-        "first": "09:23",
-        "last": "19:20"
-      },
-      "2026-03-05": {
-        "coverage": 9.17,
-        "engaged": 9,
-        "msgs": 117,
-        "first": "09:07",
-        "last": "18:17"
-      },
-      "2026-03-04": {
-        "coverage": 0.69,
-        "engaged": 2,
-        "msgs": 23,
-        "first": "17:36",
-        "last": "18:18"
+        "first": "11:31",
+        "last": "18:38"
       }
     },
     "Xel Xanat": {
@@ -2415,125 +2156,125 @@
         "last": "18:57"
       },
       "2026-03-25": {
-        "coverage": 9.98,
-        "engaged": 11,
-        "msgs": 124,
-        "first": "08:21",
+        "coverage": 6.87,
+        "engaged": 8,
+        "msgs": 92,
+        "first": "11:28",
         "last": "18:20"
-      },
-      "2026-03-24": {
-        "coverage": 10.79,
-        "engaged": 11,
-        "msgs": 103,
-        "first": "08:03",
-        "last": "18:50"
-      },
-      "2026-03-23": {
-        "coverage": 9.45,
-        "engaged": 9,
-        "msgs": 121,
-        "first": "09:11",
-        "last": "18:38"
-      },
-      "2026-03-20": {
-        "coverage": 9.76,
-        "engaged": 11,
-        "msgs": 105,
-        "first": "09:20",
-        "last": "19:06"
-      },
-      "2026-03-19": {
-        "coverage": 8.83,
-        "engaged": 10,
-        "msgs": 149,
-        "first": "09:25",
-        "last": "18:14"
-      },
-      "2026-03-18": {
-        "coverage": 9.36,
-        "engaged": 9,
-        "msgs": 342,
-        "first": "09:13",
-        "last": "18:35"
-      },
-      "2026-03-17": {
-        "coverage": 10.2,
-        "engaged": 11,
-        "msgs": 147,
-        "first": "09:07",
-        "last": "19:19"
-      },
-      "2026-03-16": {
-        "coverage": 8.36,
-        "engaged": 4,
-        "msgs": 7,
-        "first": "10:28",
-        "last": "18:50"
-      },
-      "2026-03-13": {
-        "coverage": 8.72,
-        "engaged": 10,
-        "msgs": 177,
-        "first": "09:29",
-        "last": "18:12"
-      },
-      "2026-03-12": {
-        "coverage": 9.04,
-        "engaged": 10,
-        "msgs": 172,
-        "first": "09:28",
-        "last": "18:30"
-      },
-      "2026-03-11": {
-        "coverage": 9.39,
-        "engaged": 10,
-        "msgs": 148,
-        "first": "09:03",
-        "last": "18:27"
-      },
-      "2026-03-10": {
-        "coverage": 10.03,
-        "engaged": 12,
-        "msgs": 157,
-        "first": "08:59",
-        "last": "19:01"
-      },
-      "2026-03-09": {
-        "coverage": 10.12,
-        "engaged": 6,
-        "msgs": 138,
-        "first": "09:13",
-        "last": "19:21"
-      },
-      "2026-03-06": {
-        "coverage": 9.65,
-        "engaged": 9,
-        "msgs": 138,
-        "first": "09:16",
-        "last": "18:55"
-      },
-      "2026-03-05": {
-        "coverage": 9.81,
-        "engaged": 10,
-        "msgs": 143,
-        "first": "09:02",
-        "last": "18:50"
-      },
-      "2026-03-04": {
-        "coverage": 1.89,
-        "engaged": 3,
-        "msgs": 23,
-        "first": "16:50",
-        "last": "18:43"
       }
     },
     "Gabriel Garcia": {
+      "2026-06-23": {
+        "coverage": 2.48,
+        "engaged": 3,
+        "msgs": 71,
+        "first": "09:00",
+        "last": "11:29"
+      },
+      "2026-06-22": {
+        "coverage": 10.05,
+        "engaged": 12,
+        "msgs": 282,
+        "first": "08:59",
+        "last": "19:02"
+      },
+      "2026-06-19": {
+        "coverage": 9.86,
+        "engaged": 11,
+        "msgs": 215,
+        "first": "08:57",
+        "last": "18:48"
+      },
+      "2026-06-18": {
+        "coverage": 9.53,
+        "engaged": 10,
+        "msgs": 297,
+        "first": "09:07",
+        "last": "18:39"
+      },
+      "2026-06-17": {
+        "coverage": 9.71,
+        "engaged": 10,
+        "msgs": 360,
+        "first": "09:11",
+        "last": "18:53"
+      },
+      "2026-06-16": {
+        "coverage": 9.92,
+        "engaged": 10,
+        "msgs": 332,
+        "first": "09:02",
+        "last": "18:57"
+      },
+      "2026-06-15": {
+        "coverage": 9.18,
+        "engaged": 10,
+        "msgs": 332,
+        "first": "09:07",
+        "last": "18:18"
+      },
+      "2026-06-12": {
+        "coverage": 11.64,
+        "engaged": 11,
+        "msgs": 219,
+        "first": "07:23",
+        "last": "19:02"
+      },
+      "2026-06-11": {
+        "coverage": 10.07,
+        "engaged": 10,
+        "msgs": 108,
+        "first": "09:02",
+        "last": "19:06"
+      },
+      "2026-06-10": {
+        "coverage": 12.34,
+        "engaged": 12,
+        "msgs": 171,
+        "first": "06:37",
+        "last": "18:58"
+      },
+      "2026-06-09": {
+        "coverage": 9.73,
+        "engaged": 10,
+        "msgs": 186,
+        "first": "09:10",
+        "last": "18:54"
+      },
+      "2026-06-08": {
+        "coverage": 9.54,
+        "engaged": 10,
+        "msgs": 325,
+        "first": "09:11",
+        "last": "18:43"
+      },
+      "2026-06-05": {
+        "coverage": 9.1,
+        "engaged": 8,
+        "msgs": 160,
+        "first": "09:20",
+        "last": "18:26"
+      },
+      "2026-06-04": {
+        "coverage": 9.61,
+        "engaged": 10,
+        "msgs": 230,
+        "first": "09:16",
+        "last": "18:53"
+      },
+      "2026-06-03": {
+        "coverage": 9.61,
+        "engaged": 10,
+        "msgs": 260,
+        "first": "09:13",
+        "last": "18:49"
+      },
       "2026-06-02": {
-        "coverage": 7.23,
-        "engaged": 7,
-        "msgs": 115,
+        "coverage": 9.51,
+        "engaged": 9,
+        "msgs": 188,
         "first": "09:15",
-        "last": "16:29"
+        "last": "18:45"
       },
       "2026-06-01": {
         "coverage": 9.84,
@@ -2695,113 +2436,120 @@
         "msgs": 219,
         "first": "12:22",
         "last": "18:45"
-      },
-      "2026-03-24": {
-        "coverage": 9.76,
-        "engaged": 7,
-        "msgs": 144,
-        "first": "09:09",
-        "last": "18:55"
-      },
-      "2026-03-23": {
-        "coverage": 9.01,
-        "engaged": 10,
-        "msgs": 277,
-        "first": "09:08",
-        "last": "18:08"
-      },
-      "2026-03-20": {
-        "coverage": 15.81,
-        "engaged": 10,
-        "msgs": 177,
-        "first": "05:00",
-        "last": "20:49"
-      },
-      "2026-03-19": {
-        "coverage": 9.62,
-        "engaged": 9,
-        "msgs": 200,
-        "first": "09:10",
-        "last": "18:48"
-      },
-      "2026-03-18": {
-        "coverage": 8.57,
-        "engaged": 9,
-        "msgs": 440,
-        "first": "10:12",
-        "last": "18:46"
-      },
-      "2026-03-17": {
-        "coverage": 0.96,
-        "engaged": 2,
-        "msgs": 33,
-        "first": "09:09",
-        "last": "10:07"
-      },
-      "2026-03-13": {
-        "coverage": 9.26,
-        "engaged": 11,
-        "msgs": 244,
-        "first": "08:58",
-        "last": "18:14"
-      },
-      "2026-03-12": {
-        "coverage": 9.32,
-        "engaged": 10,
-        "msgs": 264,
-        "first": "09:27",
-        "last": "18:46"
-      },
-      "2026-03-11": {
-        "coverage": 9.24,
-        "engaged": 9,
-        "msgs": 213,
-        "first": "09:17",
-        "last": "18:31"
-      },
-      "2026-03-10": {
-        "coverage": 9.31,
-        "engaged": 9,
-        "msgs": 211,
-        "first": "09:17",
-        "last": "18:35"
-      },
-      "2026-03-09": {
-        "coverage": 9.63,
-        "engaged": 5,
-        "msgs": 127,
-        "first": "09:20",
-        "last": "18:58"
-      },
-      "2026-03-06": {
-        "coverage": 11.26,
-        "engaged": 10,
-        "msgs": 215,
-        "first": "06:31",
-        "last": "17:46"
-      },
-      "2026-03-05": {
-        "coverage": 8.65,
-        "engaged": 10,
-        "msgs": 168,
-        "first": "09:29",
-        "last": "18:08"
-      },
-      "2026-03-04": {
-        "coverage": 1.09,
-        "engaged": 2,
-        "msgs": 17,
-        "first": "17:32",
-        "last": "18:37"
       }
     },
     "Fernanda Figueroa": {
+      "2026-06-23": {
+        "coverage": 1.94,
+        "engaged": 3,
+        "msgs": 20,
+        "first": "09:14",
+        "last": "11:10"
+      },
+      "2026-06-22": {
+        "coverage": 10.27,
+        "engaged": 11,
+        "msgs": 120,
+        "first": "09:04",
+        "last": "19:21"
+      },
+      "2026-06-19": {
+        "coverage": 9.6,
+        "engaged": 10,
+        "msgs": 122,
+        "first": "09:22",
+        "last": "18:58"
+      },
+      "2026-06-18": {
+        "coverage": 9.16,
+        "engaged": 9,
+        "msgs": 134,
+        "first": "09:11",
+        "last": "18:20"
+      },
+      "2026-06-17": {
+        "coverage": 9.78,
+        "engaged": 10,
+        "msgs": 108,
+        "first": "09:03",
+        "last": "18:50"
+      },
+      "2026-06-16": {
+        "coverage": 9.58,
+        "engaged": 10,
+        "msgs": 151,
+        "first": "09:11",
+        "last": "18:46"
+      },
+      "2026-06-15": {
+        "coverage": 9.93,
+        "engaged": 11,
+        "msgs": 139,
+        "first": "09:10",
+        "last": "19:06"
+      },
+      "2026-06-12": {
+        "coverage": 9.79,
+        "engaged": 9,
+        "msgs": 194,
+        "first": "09:09",
+        "last": "18:56"
+      },
+      "2026-06-11": {
+        "coverage": 9.7,
+        "engaged": 8,
+        "msgs": 61,
+        "first": "09:14",
+        "last": "18:55"
+      },
+      "2026-06-10": {
+        "coverage": 9.68,
+        "engaged": 10,
+        "msgs": 160,
+        "first": "09:07",
+        "last": "18:48"
+      },
+      "2026-06-09": {
+        "coverage": 9.77,
+        "engaged": 10,
+        "msgs": 122,
+        "first": "09:03",
+        "last": "18:49"
+      },
+      "2026-06-08": {
+        "coverage": 9.89,
+        "engaged": 10,
+        "msgs": 173,
+        "first": "09:20",
+        "last": "19:14"
+      },
+      "2026-06-05": {
+        "coverage": 10.09,
+        "engaged": 11,
+        "msgs": 275,
+        "first": "09:15",
+        "last": "19:20"
+      },
+      "2026-06-04": {
+        "coverage": 10.17,
+        "engaged": 11,
+        "msgs": 161,
+        "first": "09:04",
+        "last": "19:14"
+      },
+      "2026-06-03": {
+        "coverage": 9.96,
+        "engaged": 9,
+        "msgs": 136,
+        "first": "09:01",
+        "last": "18:59"
+      },
       "2026-06-02": {
-        "coverage": 6.41,
-        "engaged": 7,
-        "msgs": 96,
+        "coverage": 10.09,
+        "engaged": 10,
+        "msgs": 114,
         "first": "09:00",
-        "last": "15:24"
+        "last": "19:05"
       },
       "2026-06-01": {
         "coverage": 10.12,
@@ -2914,71 +2662,92 @@
         "msgs": 128,
         "first": "09:02",
         "last": "18:39"
-      },
-      "2026-03-13": {
-        "coverage": 9.66,
-        "engaged": 9,
-        "msgs": 123,
-        "first": "09:16",
-        "last": "18:56"
-      },
-      "2026-03-12": {
-        "coverage": 9.82,
-        "engaged": 10,
-        "msgs": 208,
-        "first": "09:04",
-        "last": "18:53"
-      },
-      "2026-03-11": {
-        "coverage": 9.82,
-        "engaged": 10,
-        "msgs": 154,
-        "first": "09:03",
-        "last": "18:52"
-      },
-      "2026-03-10": {
-        "coverage": 9.84,
-        "engaged": 10,
-        "msgs": 219,
-        "first": "09:03",
-        "last": "18:53"
-      },
-      "2026-03-09": {
-        "coverage": 8.87,
-        "engaged": 10,
-        "msgs": 134,
-        "first": "10:14",
-        "last": "19:07"
-      },
-      "2026-03-06": {
-        "coverage": 5.41,
-        "engaged": 6,
-        "msgs": 65,
-        "first": "09:18",
-        "last": "14:43"
-      },
-      "2026-03-05": {
-        "coverage": 10.01,
-        "engaged": 11,
-        "msgs": 140,
-        "first": "09:00",
-        "last": "19:00"
-      },
-      "2026-03-04": {
-        "coverage": 2.24,
-        "engaged": 3,
-        "msgs": 49,
-        "first": "16:40",
-        "last": "18:54"
       }
     },
     "Kate Gonzalez": {
+      "2026-06-17": {
+        "coverage": 1.69,
+        "engaged": 2,
+        "msgs": 56,
+        "first": "09:10",
+        "last": "10:51"
+      },
+      "2026-06-16": {
+        "coverage": 9.04,
+        "engaged": 10,
+        "msgs": 261,
+        "first": "09:18",
+        "last": "18:21"
+      },
+      "2026-06-15": {
+        "coverage": 9.04,
+        "engaged": 9,
+        "msgs": 520,
+        "first": "09:15",
+        "last": "18:18"
+      },
+      "2026-06-12": {
+        "coverage": 10.65,
+        "engaged": 11,
+        "msgs": 395,
+        "first": "09:13",
+        "last": "19:52"
+      },
+      "2026-06-11": {
+        "coverage": 9.92,
+        "engaged": 11,
+        "msgs": 293,
+        "first": "09:06",
+        "last": "19:01"
+      },
+      "2026-06-10": {
+        "coverage": 9.52,
+        "engaged": 10,
+        "msgs": 302,
+        "first": "09:11",
+        "last": "18:42"
+      },
+      "2026-06-09": {
+        "coverage": 9.25,
+        "engaged": 9,
+        "msgs": 282,
+        "first": "09:11",
+        "last": "18:27"
+      },
+      "2026-06-08": {
+        "coverage": 9.18,
+        "engaged": 10,
+        "msgs": 364,
+        "first": "09:16",
+        "last": "18:26"
+      },
+      "2026-06-05": {
+        "coverage": 10.04,
+        "engaged": 11,
+        "msgs": 234,
+        "first": "09:01",
+        "last": "19:03"
+      },
+      "2026-06-04": {
+        "coverage": 9.26,
+        "engaged": 10,
+        "msgs": 281,
+        "first": "09:08",
+        "last": "18:23"
+      },
+      "2026-06-03": {
+        "coverage": 9.42,
+        "engaged": 10,
+        "msgs": 345,
+        "first": "09:08",
+        "last": "18:34"
+      },
       "2026-06-02": {
-        "coverage": 7.43,
-        "engaged": 8,
-        "msgs": 330,
+        "coverage": 9.38,
+        "engaged": 10,
+        "msgs": 401,
         "first": "09:09",
-        "last": "16:35"
+        "last": "18:32"
       },
       "2026-06-01": {
         "coverage": 9.52,
@@ -3114,125 +2883,125 @@
         "last": "18:40"
       },
       "2026-03-25": {
-        "coverage": 9.01,
-        "engaged": 5,
-        "msgs": 114,
-        "first": "09:04",
+        "coverage": 3.22,
+        "engaged": 4,
+        "msgs": 65,
+        "first": "14:51",
         "last": "18:04"
-      },
-      "2026-03-24": {
-        "coverage": 8.61,
-        "engaged": 10,
-        "msgs": 308,
-        "first": "09:57",
-        "last": "18:34"
-      },
-      "2026-03-23": {
-        "coverage": 8.88,
-        "engaged": 10,
-        "msgs": 302,
-        "first": "09:14",
-        "last": "18:07"
-      },
-      "2026-03-20": {
-        "coverage": 9.46,
-        "engaged": 9,
-        "msgs": 264,
-        "first": "09:00",
-        "last": "18:27"
-      },
-      "2026-03-19": {
-        "coverage": 9.56,
-        "engaged": 9,
-        "msgs": 182,
-        "first": "09:04",
-        "last": "18:38"
-      },
-      "2026-03-18": {
-        "coverage": 19.01,
-        "engaged": 12,
-        "msgs": 303,
-        "first": "00:11",
-        "last": "19:12"
-      },
-      "2026-03-17": {
-        "coverage": 13.95,
-        "engaged": 12,
-        "msgs": 541,
-        "first": "09:03",
-        "last": "23:00"
-      },
-      "2026-03-16": {
-        "coverage": 2.31,
-        "engaged": 3,
-        "msgs": 3,
-        "first": "14:44",
-        "last": "17:03"
-      },
-      "2026-03-13": {
-        "coverage": 9.92,
-        "engaged": 11,
-        "msgs": 403,
-        "first": "09:07",
-        "last": "19:02"
-      },
-      "2026-03-12": {
-        "coverage": 8.55,
-        "engaged": 9,
-        "msgs": 223,
-        "first": "09:17",
-        "last": "17:50"
-      },
-      "2026-03-11": {
-        "coverage": 9.63,
-        "engaged": 9,
-        "msgs": 209,
-        "first": "09:11",
-        "last": "18:49"
-      },
-      "2026-03-10": {
-        "coverage": 9.29,
-        "engaged": 9,
-        "msgs": 313,
-        "first": "09:02",
-        "last": "18:19"
-      },
-      "2026-03-09": {
-        "coverage": 9.07,
-        "engaged": 6,
-        "msgs": 127,
-        "first": "09:10",
-        "last": "18:14"
-      },
-      "2026-03-06": {
-        "coverage": 9.36,
-        "engaged": 10,
-        "msgs": 372,
-        "first": "09:11",
-        "last": "18:32"
-      },
-      "2026-03-05": {
-        "coverage": 8.95,
-        "engaged": 9,
-        "msgs": 213,
-        "first": "09:06",
-        "last": "18:03"
-      },
-      "2026-03-04": {
-        "coverage": 1.67,
-        "engaged": 3,
-        "msgs": 72,
-        "first": "16:38",
-        "last": "18:18"
       }
     },
     "Daniel Luna": {
-      "2026-06-02": {
-        "coverage": 7.28,
+      "2026-06-23": {
+        "coverage": 1.83,
+        "engaged": 3,
+        "msgs": 53,
+        "first": "09:25",
+        "last": "11:15"
+      },
+      "2026-06-22": {
+        "coverage": 11.22,
+        "engaged": 12,
+        "msgs": 228,
+        "first": "09:35",
+        "last": "20:48"
+      },
+      "2026-06-19": {
+        "coverage": 10.04,
+        "engaged": 10,
+        "msgs": 140,
+        "first": "09:19",
+        "last": "19:21"
+      },
+      "2026-06-18": {
+        "coverage": 9.72,
+        "engaged": 11,
+        "msgs": 136,
+        "first": "09:37",
+        "last": "19:21"
+      },
+      "2026-06-17": {
+        "coverage": 11.64,
+        "engaged": 13,
+        "msgs": 216,
+        "first": "08:25",
+        "last": "20:04"
+      },
+      "2026-06-16": {
+        "coverage": 14.97,
+        "engaged": 14,
+        "msgs": 185,
+        "first": "08:10",
+        "last": "23:09"
+      },
+      "2026-06-15": {
+        "coverage": 12.55,
+        "engaged": 13,
+        "msgs": 208,
+        "first": "07:28",
+        "last": "20:01"
+      },
+      "2026-06-12": {
+        "coverage": 9.7,
+        "engaged": 11,
+        "msgs": 164,
+        "first": "09:38",
+        "last": "19:20"
+      },
+      "2026-06-11": {
+        "coverage": 10.03,
         "engaged": 8,
-        "msgs": 90,
+        "msgs": 58,
+        "first": "09:23",
+        "last": "19:24"
+      },
+      "2026-06-10": {
+        "coverage": 10.62,
+        "engaged": 11,
+        "msgs": 193,
+        "first": "09:08",
+        "last": "19:45"
+      },
+      "2026-06-09": {
+        "coverage": 9.3,
+        "engaged": 9,
+        "msgs": 156,
+        "first": "09:23",
+        "last": "18:41"
+      },
+      "2026-06-08": {
+        "coverage": 9.33,
+        "engaged": 10,
+        "msgs": 178,
+        "first": "09:33",
+        "last": "18:53"
+      },
+      "2026-06-05": {
+        "coverage": 9.29,
+        "engaged": 10,
+        "msgs": 111,
+        "first": "09:40",
+        "last": "18:57"
+      },
+      "2026-06-04": {
+        "coverage": 9.5,
+        "engaged": 10,
+        "msgs": 112,
+        "first": "09:20",
+        "last": "18:50"
+      },
+      "2026-06-03": {
+        "coverage": 11.46,
+        "engaged": 12,
+        "msgs": 180,
+        "first": "09:17",
+        "last": "20:44"
+      },
+      "2026-06-02": {
+        "coverage": 9.28,
+        "engaged": 10,
+        "msgs": 119,
         "first": "09:16",
-        "last": "16:33"
+        "last": "18:33"
       },
       "2026-06-01": {
         "coverage": 10.21,
@@ -3571,109 +3340,11 @@
         "last": "19:00"
       },
       "2026-03-25": {
-        "coverage": 10.04,
-        "engaged": 11,
-        "msgs": 111,
-        "first": "09:17",
+        "coverage": 7.68,
+        "engaged": 9,
+        "msgs": 70,
+        "first": "11:39",
         "last": "19:19"
-      },
-      "2026-03-24": {
-        "coverage": 9.2,
-        "engaged": 10,
-        "msgs": 167,
-        "first": "10:02",
-        "last": "19:14"
-      },
-      "2026-03-23": {
-        "coverage": 13.53,
-        "engaged": 13,
-        "msgs": 169,
-        "first": "09:26",
-        "last": "22:58"
-      },
-      "2026-03-20": {
-        "coverage": 9.97,
-        "engaged": 11,
-        "msgs": 130,
-        "first": "09:13",
-        "last": "19:12"
-      },
-      "2026-03-19": {
-        "coverage": 9.39,
-        "engaged": 10,
-        "msgs": 129,
-        "first": "09:24",
-        "last": "18:47"
-      },
-      "2026-03-18": {
-        "coverage": 9.51,
-        "engaged": 10,
-        "msgs": 89,
-        "first": "09:16",
-        "last": "18:47"
-      },
-      "2026-03-17": {
-        "coverage": 9.71,
-        "engaged": 10,
-        "msgs": 156,
-        "first": "09:34",
-        "last": "19:17"
-      },
-      "2026-03-13": {
-        "coverage": 9.01,
-        "engaged": 10,
-        "msgs": 143,
-        "first": "09:09",
-        "last": "18:10"
-      },
-      "2026-03-12": {
-        "coverage": 9.01,
-        "engaged": 10,
-        "msgs": 100,
-        "first": "09:02",
-        "last": "18:02"
-      },
-      "2026-03-11": {
-        "coverage": 9.52,
-        "engaged": 10,
-        "msgs": 152,
-        "first": "09:46",
-        "last": "19:17"
-      },
-      "2026-03-10": {
-        "coverage": 9.71,
-        "engaged": 11,
-        "msgs": 110,
-        "first": "09:49",
-        "last": "19:31"
-      },
-      "2026-03-09": {
-        "coverage": 8.94,
-        "engaged": 10,
-        "msgs": 123,
-        "first": "09:41",
-        "last": "18:38"
-      },
-      "2026-03-06": {
-        "coverage": 9.13,
-        "engaged": 10,
-        "msgs": 101,
-        "first": "09:22",
-        "last": "18:30"
-      },
-      "2026-03-05": {
-        "coverage": 9.86,
-        "engaged": 10,
-        "msgs": 177,
-        "first": "09:40",
-        "last": "19:31"
-      },
-      "2026-03-04": {
-        "coverage": 0.98,
-        "engaged": 2,
-        "msgs": 25,
-        "first": "18:14",
-        "last": "19:13"
       }
     },
     "Dana Lugo": {
@@ -3725,106 +3396,120 @@
         "msgs": 132,
         "first": "09:34",
         "last": "18:47"
-      },
-      "2026-03-23": {
-        "coverage": 7.74,
-        "engaged": 7,
-        "msgs": 144,
-        "first": "08:26",
-        "last": "16:10"
-      },
-      "2026-03-20": {
-        "coverage": 9.61,
-        "engaged": 10,
-        "msgs": 209,
-        "first": "09:03",
-        "last": "18:39"
-      },
-      "2026-03-19": {
-        "coverage": 9.94,
-        "engaged": 11,
-        "msgs": 347,
-        "first": "09:06",
-        "last": "19:02"
-      },
-      "2026-03-18": {
-        "coverage": 8.45,
-        "engaged": 9,
-        "msgs": 399,
-        "first": "10:10",
-        "last": "18:38"
-      },
-      "2026-03-16": {
-        "coverage": 0.0,
-        "engaged": 1,
-        "msgs": 1,
-        "first": "09:32",
-        "last": "09:32"
-      },
-      "2026-03-13": {
-        "coverage": 9.32,
-        "engaged": 10,
-        "msgs": 167,
-        "first": "09:17",
-        "last": "18:36"
-      },
-      "2026-03-12": {
-        "coverage": 9.84,
-        "engaged": 11,
-        "msgs": 211,
-        "first": "09:16",
-        "last": "19:06"
-      },
-      "2026-03-11": {
-        "coverage": 9.11,
-        "engaged": 9,
-        "msgs": 151,
-        "first": "09:25",
-        "last": "18:32"
-      },
-      "2026-03-10": {
-        "coverage": 9.98,
-        "engaged": 11,
-        "msgs": 168,
-        "first": "09:03",
-        "last": "19:01"
-      },
-      "2026-03-09": {
-        "coverage": 8.16,
-        "engaged": 9,
-        "msgs": 278,
-        "first": "09:17",
-        "last": "17:27"
-      },
-      "2026-03-06": {
-        "coverage": 11.38,
-        "engaged": 13,
-        "msgs": 172,
-        "first": "08:52",
-        "last": "20:15"
-      },
-      "2026-03-05": {
-        "coverage": 11.16,
-        "engaged": 11,
-        "msgs": 152,
-        "first": "08:05",
-        "last": "19:15"
-      },
-      "2026-03-04": {
-        "coverage": 5.29,
-        "engaged": 5,
-        "msgs": 78,
-        "first": "16:56",
-        "last": "22:13"
       }
     },
     "Cesar": {
+      "2026-06-23": {
+        "coverage": 2.27,
+        "engaged": 3,
+        "msgs": 72,
+        "first": "09:13",
+        "last": "11:29"
+      },
+      "2026-06-22": {
+        "coverage": 10.09,
+        "engaged": 11,
+        "msgs": 180,
+        "first": "09:03",
+        "last": "19:09"
+      },
+      "2026-06-19": {
+        "coverage": 10.03,
+        "engaged": 10,
+        "msgs": 160,
+        "first": "09:01",
+        "last": "19:03"
+      },
+      "2026-06-18": {
+        "coverage": 9.6,
+        "engaged": 10,
+        "msgs": 205,
+        "first": "09:03",
+        "last": "18:39"
+      },
+      "2026-06-17": {
+        "coverage": 9.8,
+        "engaged": 10,
+        "msgs": 196,
+        "first": "09:09",
+        "last": "18:57"
+      },
+      "2026-06-16": {
+        "coverage": 9.7,
+        "engaged": 10,
+        "msgs": 170,
+        "first": "09:00",
+        "last": "18:42"
+      },
+      "2026-06-15": {
+        "coverage": 9.72,
+        "engaged": 10,
+        "msgs": 179,
+        "first": "09:14",
+        "last": "18:58"
+      },
+      "2026-06-12": {
+        "coverage": 9.89,
+        "engaged": 11,
+        "msgs": 165,
+        "first": "09:08",
+        "last": "19:01"
+      },
+      "2026-06-11": {
+        "coverage": 10.2,
+        "engaged": 11,
+        "msgs": 84,
+        "first": "09:10",
+        "last": "19:22"
+      },
+      "2026-06-10": {
+        "coverage": 10.48,
+        "engaged": 11,
+        "msgs": 107,
+        "first": "09:21",
+        "last": "19:50"
+      },
+      "2026-06-09": {
+        "coverage": 9.09,
+        "engaged": 9,
+        "msgs": 124,
+        "first": "09:39",
+        "last": "18:45"
+      },
+      "2026-06-08": {
+        "coverage": 9.46,
+        "engaged": 10,
+        "msgs": 163,
+        "first": "09:07",
+        "last": "18:34"
+      },
+      "2026-06-05": {
+        "coverage": 10.1,
+        "engaged": 11,
+        "msgs": 217,
+        "first": "09:08",
+        "last": "19:14"
+      },
+      "2026-06-04": {
+        "coverage": 9.89,
+        "engaged": 11,
+        "msgs": 164,
+        "first": "09:07",
+        "last": "19:01"
+      },
+      "2026-06-03": {
+        "coverage": 9.49,
+        "engaged": 10,
+        "msgs": 163,
+        "first": "09:11",
+        "last": "18:40"
+      },
       "2026-06-02": {
-        "coverage": 7.58,
-        "engaged": 8,
-        "msgs": 127,
+        "coverage": 9.98,
+        "engaged": 11,
+        "msgs": 143,
         "first": "09:05",
-        "last": "16:40"
+        "last": "19:04"
       },
       "2026-06-01": {
         "coverage": 9.4,
@@ -3988,638 +3673,202 @@
         "last": "20:22"
       }
     },
-    "Eduardo Gomez": {
-      "2026-06-02": {
-        "coverage": 7.23,
-        "engaged": 7,
-        "msgs": 48,
-        "first": "09:15",
-        "last": "16:29"
+    "Cesar Iram Enriquez": {
+      "2026-06-23": {
+        "coverage": 2.4,
+        "engaged": 3,
+        "msgs": 86,
+        "first": "09:05",
+        "last": "11:29"
       },
-      "2026-06-01": {
-        "coverage": 9.24,
-        "engaged": 10,
-        "msgs": 58,
-        "first": "09:20",
-        "last": "18:35"
-      },
-      "2026-05-29": {
-        "coverage": 12.09,
+      "2026-06-22": {
+        "coverage": 10.13,
         "engaged": 11,
-        "msgs": 48,
+        "msgs": 187,
+        "first": "09:21",
+        "last": "19:29"
+      },
+      "2026-06-19": {
+        "coverage": 10.3,
+        "engaged": 11,
+        "msgs": 227,
+        "first": "09:21",
+        "last": "19:40"
+      },
+      "2026-06-18": {
+        "coverage": 10.27,
+        "engaged": 11,
+        "msgs": 76,
+        "first": "08:02",
+        "last": "18:19"
+      },
+      "2026-06-17": {
+        "coverage": 9.2,
+        "engaged": 10,
+        "msgs": 152,
         "first": "09:04",
-        "last": "21:10"
+        "last": "18:16"
       },
-      "2026-05-28": {
-        "coverage": 11.6,
-        "engaged": 13,
-        "msgs": 61,
-        "first": "08:59",
-        "last": "20:35"
-      },
-      "2026-05-27": {
-        "coverage": 8.92,
+      "2026-06-16": {
+        "coverage": 8.69,
         "engaged": 10,
-        "msgs": 67,
-        "first": "09:16",
-        "last": "18:11"
+        "msgs": 121,
+        "first": "09:28",
+        "last": "18:10"
       },
-      "2026-05-26": {
-        "coverage": 9.02,
-        "engaged": 9,
-        "msgs": 35,
-        "first": "09:24",
-        "last": "18:26"
-      },
-      "2026-05-25": {
-        "coverage": 7.97,
-        "engaged": 7,
-        "msgs": 30,
-        "first": "09:45",
-        "last": "17:43"
-      },
-      "2026-05-22": {
-        "coverage": 7.4,
-        "engaged": 5,
-        "msgs": 17,
-        "first": "09:01",
-        "last": "16:26"
-      },
-      "2026-05-21": {
-        "coverage": 6.63,
-        "engaged": 5,
-        "msgs": 13,
-        "first": "09:26",
-        "last": "16:04"
-      },
-      "2026-05-20": {
-        "coverage": 8.8,
-        "engaged": 8,
-        "msgs": 27,
-        "first": "09:25",
-        "last": "18:13"
-      },
-      "2026-05-19": {
-        "coverage": 1.03,
-        "engaged": 2,
-        "msgs": 8,
-        "first": "09:23",
-        "last": "10:24"
-      },
-      "2026-05-18": {
-        "coverage": 9.8,
-        "engaged": 8,
-        "msgs": 53,
-        "first": "10:00",
-        "last": "19:48"
-      },
-      "2026-05-15": {
-        "coverage": 12.61,
+      "2026-06-15": {
+        "coverage": 9.79,
         "engaged": 11,
-        "msgs": 43,
-        "first": "09:06",
-        "last": "21:43"
+        "msgs": 161,
+        "first": "08:59",
+        "last": "18:47"
       },
-      "2026-05-14": {
-        "coverage": 4.86,
-        "engaged": 5,
-        "msgs": 18,
-        "first": "13:18",
-        "last": "18:09"
+      "2026-06-12": {
+        "coverage": 10.82,
+        "engaged": 12,
+        "msgs": 165,
+        "first": "09:18",
+        "last": "20:07"
       },
-      "2026-05-13": {
-        "coverage": 8.34,
-        "engaged": 7,
-        "msgs": 16,
-        "first": "09:14",
-        "last": "17:34"
-      },
-      "2026-05-12": {
-        "coverage": 9.93,
-        "engaged": 8,
-        "msgs": 32,
-        "first": "09:03",
-        "last": "18:59"
-      },
-      "2026-05-11": {
-        "coverage": 10.4,
-        "engaged": 8,
-        "msgs": 33,
-        "first": "09:14",
-        "last": "19:39"
-      },
-      "2026-05-08": {
-        "coverage": 9.4,
+      "2026-06-11": {
+        "coverage": 9.78,
         "engaged": 9,
-        "msgs": 34,
-        "first": "09:27",
-        "last": "18:51"
+        "msgs": 118,
+        "first": "09:02",
+        "last": "18:49"
       },
-      "2026-05-07": {
-        "coverage": 7.44,
-        "engaged": 7,
-        "msgs": 30,
-        "first": "09:03",
-        "last": "16:30"
+      "2026-06-10": {
+        "coverage": 9.68,
+        "engaged": 11,
+        "msgs": 113,
+        "first": "09:21",
+        "last": "19:02"
       },
-      "2026-05-06": {
-        "coverage": 7.63,
-        "engaged": 8,
-        "msgs": 38,
-        "first": "10:57",
-        "last": "18:35"
+      "2026-06-09": {
+        "coverage": 9.03,
+        "engaged": 10,
+        "msgs": 148,
+        "first": "09:26",
+        "last": "18:28"
       },
-      "2026-05-05": {
-        "coverage": 7.74,
-        "engaged": 5,
-        "msgs": 9,
-        "first": "09:23",
-        "last": "17:07"
-      },
-      "2026-05-04": {
-        "coverage": 9.76,
-        "engaged": 9,
-        "msgs": 21,
-        "first": "09:15",
+      "2026-06-08": {
+        "coverage": 9.6,
+        "engaged": 11,
+        "msgs": 130,
+        "first": "09:24",
         "last": "19:00"
       },
-      "2026-04-30": {
-        "coverage": 9.72,
-        "engaged": 6,
-        "msgs": 23,
-        "first": "09:01",
-        "last": "18:44"
+      "2026-06-05": {
+        "coverage": 11.49,
+        "engaged": 12,
+        "msgs": 123,
+        "first": "09:31",
+        "last": "21:01"
       },
-      "2026-04-29": {
-        "coverage": 4.53,
+      "2026-06-04": {
+        "coverage": 9.09,
+        "engaged": 10,
+        "msgs": 125,
+        "first": "09:21",
+        "last": "18:26"
+      },
+      "2026-06-03": {
+        "coverage": 8.04,
+        "engaged": 9,
+        "msgs": 106,
+        "first": "09:12",
+        "last": "17:15"
+      },
+      "2026-06-02": {
+        "coverage": 9.14,
+        "engaged": 10,
+        "msgs": 86,
+        "first": "09:07",
+        "last": "18:15"
+      },
+      "2026-06-01": {
+        "coverage": 9.04,
+        "engaged": 10,
+        "msgs": 93,
+        "first": "09:25",
+        "last": "18:28"
+      },
+      "2026-05-29": {
+        "coverage": 11.06,
+        "engaged": 11,
+        "msgs": 125,
+        "first": "09:05",
+        "last": "20:09"
+      },
+      "2026-05-28": {
+        "coverage": 8.13,
+        "engaged": 9,
+        "msgs": 55,
+        "first": "09:21",
+        "last": "17:29"
+      },
+      "2026-05-27": {
+        "coverage": 9.08,
+        "engaged": 9,
+        "msgs": 70,
+        "first": "09:16",
+        "last": "18:21"
+      },
+      "2026-05-26": {
+        "coverage": 9.95,
+        "engaged": 11,
+        "msgs": 141,
+        "first": "09:14",
+        "last": "19:11"
+      },
+      "2026-05-25": {
+        "coverage": 9.79,
+        "engaged": 11,
+        "msgs": 105,
+        "first": "09:27",
+        "last": "19:14"
+      },
+      "2026-05-22": {
+        "coverage": 10.77,
+        "engaged": 12,
+        "msgs": 97,
+        "first": "09:44",
+        "last": "20:30"
+      },
+      "2026-05-21": {
+        "coverage": 10.11,
+        "engaged": 12,
+        "msgs": 87,
+        "first": "08:57",
+        "last": "19:04"
+      },
+      "2026-05-20": {
+        "coverage": 9.0,
+        "engaged": 7,
+        "msgs": 37,
+        "first": "09:39",
+        "last": "18:39"
+      },
+      "2026-05-19": {
+        "coverage": 3.01,
         "engaged": 4,
-        "msgs": 24,
-        "first": "13:27",
-        "last": "17:58"
+        "msgs": 6,
+        "first": "10:25",
+        "last": "13:25"
       },
-      "2026-04-28": {
-        "coverage": 4.39,
-        "engaged": 4,
-        "msgs": 20,
-        "first": "13:09",
-        "last": "17:33"
+      "2026-05-18": {
+        "coverage": 2.86,
+        "engaged": 2,
+        "msgs": 3,
+        "first": "11:33",
+        "last": "14:25"
       },
-      "2026-04-20": {
+      "2026-05-14": {
         "coverage": 0.0,
         "engaged": 1,
         "msgs": 1,
-        "first": "10:46",
-        "last": "10:46"
-      }
-    },
-    "Elizabeth Castro": {
-      "2026-06-02": {
-        "coverage": 6.5,
-        "engaged": 7,
-        "msgs": 148,
-        "first": "09:12",
-        "last": "15:42"
-      },
-      "2026-06-01": {
-        "coverage": 9.49,
-        "engaged": 9,
-        "msgs": 247,
-        "first": "09:12",
-        "last": "18:42"
-      },
-      "2026-05-29": {
-        "coverage": 10.59,
-        "engaged": 11,
-        "msgs": 281,
-        "first": "08:59",
-        "last": "19:35"
-      },
-      "2026-05-28": {
-        "coverage": 9.84,
-        "engaged": 10,
-        "msgs": 252,
-        "first": "09:22",
-        "last": "19:12"
-      },
-      "2026-05-27": {
-        "coverage": 9.71,
-        "engaged": 11,
-        "msgs": 366,
-        "first": "09:19",
-        "last": "19:02"
-      },
-      "2026-05-26": {
-        "coverage": 9.78,
-        "engaged": 11,
-        "msgs": 232,
-        "first": "09:13",
-        "last": "19:00"
-      },
-      "2026-05-25": {
-        "coverage": 10.17,
-        "engaged": 11,
-        "msgs": 273,
-        "first": "09:06",
-        "last": "19:16"
-      },
-      "2026-05-22": {
-        "coverage": 9.64,
-        "engaged": 11,
-        "msgs": 259,
-        "first": "09:27",
-        "last": "19:06"
-      },
-      "2026-05-21": {
-        "coverage": 10.03,
-        "engaged": 11,
-        "msgs": 232,
-        "first": "09:02",
-        "last": "19:03"
-      },
-      "2026-05-20": {
-        "coverage": 9.93,
-        "engaged": 11,
-        "msgs": 217,
-        "first": "09:05",
-        "last": "19:01"
-      },
-      "2026-05-19": {
-        "coverage": 9.94,
-        "engaged": 10,
-        "msgs": 223,
-        "first": "09:11",
-        "last": "19:08"
-      },
-      "2026-05-18": {
-        "coverage": 9.9,
-        "engaged": 11,
-        "msgs": 218,
-        "first": "09:09",
-        "last": "19:03"
-      },
-      "2026-05-15": {
-        "coverage": 9.53,
-        "engaged": 11,
-        "msgs": 194,
-        "first": "09:32",
-        "last": "19:04"
-      },
-      "2026-05-14": {
-        "coverage": 9.44,
-        "engaged": 9,
-        "msgs": 172,
-        "first": "09:09",
-        "last": "18:35"
-      },
-      "2026-05-13": {
-        "coverage": 9.68,
-        "engaged": 10,
-        "msgs": 193,
-        "first": "09:13",
-        "last": "18:54"
-      },
-      "2026-05-12": {
-        "coverage": 9.61,
-        "engaged": 9,
-        "msgs": 191,
-        "first": "09:19",
-        "last": "18:56"
-      },
-      "2026-05-11": {
-        "coverage": 9.86,
-        "engaged": 11,
-        "msgs": 229,
-        "first": "09:15",
-        "last": "19:06"
-      },
-      "2026-05-08": {
-        "coverage": 9.95,
-        "engaged": 10,
-        "msgs": 178,
-        "first": "09:34",
-        "last": "19:31"
-      },
-      "2026-05-07": {
-        "coverage": 9.52,
-        "engaged": 10,
-        "msgs": 131,
-        "first": "09:21",
-        "last": "18:52"
-      },
-      "2026-05-06": {
-        "coverage": 9.83,
-        "engaged": 11,
-        "msgs": 157,
-        "first": "09:10",
-        "last": "19:00"
-      },
-      "2026-05-05": {
-        "coverage": 9.39,
-        "engaged": 10,
-        "msgs": 146,
-        "first": "09:22",
-        "last": "18:46"
-      },
-      "2026-05-04": {
-        "coverage": 9.64,
-        "engaged": 9,
-        "msgs": 150,
-        "first": "09:16",
-        "last": "18:54"
-      },
-      "2026-05-01": {
-        "coverage": 4.37,
-        "engaged": 3,
-        "msgs": 4,
-        "first": "09:09",
-        "last": "13:31"
-      },
-      "2026-04-30": {
-        "coverage": 10.39,
-        "engaged": 11,
-        "msgs": 136,
-        "first": "09:13",
-        "last": "19:36"
-      },
-      "2026-04-29": {
-        "coverage": 9.77,
-        "engaged": 10,
-        "msgs": 153,
-        "first": "09:12",
-        "last": "18:59"
-      },
-      "2026-04-28": {
-        "coverage": 9.75,
-        "engaged": 11,
-        "msgs": 187,
         "first": "09:24",
-        "last": "19:09"
-      },
-      "2026-04-27": {
-        "coverage": 9.76,
-        "engaged": 10,
-        "msgs": 144,
-        "first": "09:13",
-        "last": "18:59"
-      },
-      "2026-04-24": {
-        "coverage": 9.12,
-        "engaged": 10,
-        "msgs": 167,
-        "first": "09:51",
-        "last": "18:58"
-      },
-      "2026-04-23": {
-        "coverage": 10.45,
-        "engaged": 11,
-        "msgs": 182,
-        "first": "09:04",
-        "last": "19:31"
-      },
-      "2026-04-22": {
-        "coverage": 9.49,
-        "engaged": 10,
-        "msgs": 226,
-        "first": "09:07",
-        "last": "18:37"
-      },
-      "2026-04-21": {
-        "coverage": 9.72,
-        "engaged": 11,
-        "msgs": 180,
-        "first": "09:29",
-        "last": "19:13"
-      },
-      "2026-04-20": {
-        "coverage": 10.18,
-        "engaged": 11,
-        "msgs": 281,
-        "first": "09:12",
-        "last": "19:22"
-      },
-      "2026-04-17": {
-        "coverage": 9.97,
-        "engaged": 11,
-        "msgs": 280,
-        "first": "09:12",
-        "last": "19:10"
-      },
-      "2026-04-16": {
-        "coverage": 10.36,
-        "engaged": 11,
-        "msgs": 288,
-        "first": "09:04",
-        "last": "19:26"
-      },
-      "2026-04-15": {
-        "coverage": 9.16,
-        "engaged": 10,
-        "msgs": 279,
-        "first": "09:16",
-        "last": "18:25"
-      },
-      "2026-04-14": {
-        "coverage": 9.09,
-        "engaged": 10,
-        "msgs": 246,
-        "first": "09:27",
-        "last": "18:33"
-      },
-      "2026-04-13": {
-        "coverage": 10.51,
-        "engaged": 11,
-        "msgs": 214,
-        "first": "09:21",
-        "last": "19:51"
-      },
-      "2026-04-10": {
-        "coverage": 12.06,
-        "engaged": 12,
-        "msgs": 256,
-        "first": "09:01",
-        "last": "21:05"
-      },
-      "2026-04-09": {
-        "coverage": 10.94,
-        "engaged": 12,
-        "msgs": 206,
-        "first": "08:55",
-        "last": "19:52"
-      },
-      "2026-04-08": {
-        "coverage": 9.71,
-        "engaged": 9,
-        "msgs": 226,
-        "first": "09:10",
-        "last": "18:53"
-      },
-      "2026-04-07": {
-        "coverage": 10.4,
-        "engaged": 11,
-        "msgs": 160,
-        "first": "09:10",
-        "last": "19:33"
-      },
-      "2026-04-06": {
-        "coverage": 10.29,
-        "engaged": 12,
-        "msgs": 239,
-        "first": "08:44",
-        "last": "19:01"
-      },
-      "2026-04-02": {
-        "coverage": 4.55,
-        "engaged": 6,
-        "msgs": 47,
-        "first": "09:31",
-        "last": "14:05"
-      },
-      "2026-04-01": {
-        "coverage": 11.03,
-        "engaged": 11,
-        "msgs": 292,
-        "first": "09:11",
-        "last": "20:12"
-      },
-      "2026-03-31": {
-        "coverage": 10.07,
-        "engaged": 11,
-        "msgs": 243,
-        "first": "09:14",
-        "last": "19:19"
-      },
-      "2026-03-30": {
-        "coverage": 9.59,
-        "engaged": 7,
-        "msgs": 112,
-        "first": "09:24",
-        "last": "18:59"
-      },
-      "2026-03-27": {
-        "coverage": 13.33,
-        "engaged": 11,
-        "msgs": 90,
-        "first": "09:16",
-        "last": "22:35"
-      },
-      "2026-03-26": {
-        "coverage": 8.52,
-        "engaged": 10,
-        "msgs": 163,
-        "first": "09:30",
-        "last": "18:01"
-      },
-      "2026-03-25": {
-        "coverage": 9.62,
-        "engaged": 10,
-        "msgs": 170,
-        "first": "09:24",
-        "last": "19:02"
-      },
-      "2026-03-24": {
-        "coverage": 9.45,
-        "engaged": 10,
-        "msgs": 113,
-        "first": "09:30",
-        "last": "18:57"
-      },
-      "2026-03-23": {
-        "coverage": 9.16,
-        "engaged": 10,
-        "msgs": 124,
-        "first": "09:15",
-        "last": "18:25"
-      },
-      "2026-03-20": {
-        "coverage": 14.35,
-        "engaged": 13,
-        "msgs": 294,
-        "first": "08:28",
-        "last": "22:49"
-      },
-      "2026-03-19": {
-        "coverage": 12.45,
-        "engaged": 13,
-        "msgs": 189,
-        "first": "09:09",
-        "last": "21:36"
-      },
-      "2026-03-18": {
-        "coverage": 9.94,
-        "engaged": 10,
-        "msgs": 204,
-        "first": "09:17",
-        "last": "19:13"
-      },
-      "2026-03-17": {
-        "coverage": 9.75,
-        "engaged": 10,
-        "msgs": 225,
-        "first": "09:10",
-        "last": "18:55"
-      },
-      "2026-03-16": {
-        "coverage": 18.58,
-        "engaged": 2,
-        "msgs": 3,
-        "first": "01:24",
-        "last": "19:59"
-      },
-      "2026-03-13": {
-        "coverage": 9.73,
-        "engaged": 11,
-        "msgs": 220,
-        "first": "09:32",
-        "last": "19:16"
-      },
-      "2026-03-12": {
-        "coverage": 9.65,
-        "engaged": 10,
-        "msgs": 209,
-        "first": "09:21",
-        "last": "19:00"
-      },
-      "2026-03-11": {
-        "coverage": 9.85,
-        "engaged": 11,
-        "msgs": 228,
-        "first": "09:24",
-        "last": "19:15"
-      },
-      "2026-03-10": {
-        "coverage": 9.07,
-        "engaged": 10,
-        "msgs": 239,
-        "first": "09:13",
-        "last": "18:17"
-      },
-      "2026-03-09": {
-        "coverage": 11.24,
-        "engaged": 12,
-        "msgs": 235,
-        "first": "09:05",
-        "last": "20:20"
-      },
-      "2026-03-06": {
-        "coverage": 9.19,
-        "engaged": 10,
-        "msgs": 239,
-        "first": "09:21",
-        "last": "18:33"
-      },
-      "2026-03-05": {
-        "coverage": 9.9,
-        "engaged": 11,
-        "msgs": 204,
-        "first": "09:12",
-        "last": "19:05"
-      },
-      "2026-03-04": {
-        "coverage": 1.71,
-        "engaged": 3,
-        "msgs": 38,
-        "first": "16:37",
-        "last": "18:20"
+        "last": "09:24"
       }
     },
     "Horacio Gómez": {
@@ -4650,113 +3899,199 @@
         "msgs": 304,
         "first": "09:22",
         "last": "20:07"
+      }
+    },
+    "Diego Cedillo": {
+      "2026-06-23": {
+        "coverage": 2.85,
+        "engaged": 4,
+        "msgs": 40,
+        "first": "08:37",
+        "last": "11:28"
       },
-      "2026-03-23": {
-        "coverage": 8.7,
-        "engaged": 9,
-        "msgs": 317,
-        "first": "09:08",
-        "last": "17:50"
-      },
-      "2026-03-20": {
-        "coverage": 12.33,
-        "engaged": 12,
-        "msgs": 498,
-        "first": "09:10",
-        "last": "21:30"
-      },
-      "2026-03-19": {
-        "coverage": 10.44,
-        "engaged": 11,
-        "msgs": 385,
-        "first": "09:20",
-        "last": "19:47"
-      },
-      "2026-03-18": {
-        "coverage": 19.01,
+      "2026-06-22": {
+        "coverage": 14.26,
         "engaged": 13,
-        "msgs": 573,
-        "first": "00:10",
-        "last": "19:11"
+        "msgs": 178,
+        "first": "09:21",
+        "last": "23:37"
       },
-      "2026-03-17": {
-        "coverage": 9.82,
+      "2026-06-19": {
+        "coverage": 8.76,
         "engaged": 9,
-        "msgs": 376,
-        "first": "09:04",
+        "msgs": 114,
+        "first": "09:59",
+        "last": "18:44"
+      },
+      "2026-05-20": {
+        "coverage": 9.95,
+        "engaged": 10,
+        "msgs": 181,
+        "first": "07:11",
+        "last": "17:08"
+      },
+      "2026-05-19": {
+        "coverage": 15.2,
+        "engaged": 12,
+        "msgs": 200,
+        "first": "07:42",
+        "last": "22:54"
+      },
+      "2026-05-18": {
+        "coverage": 13.12,
+        "engaged": 13,
+        "msgs": 180,
+        "first": "09:20",
+        "last": "22:28"
+      },
+      "2026-05-15": {
+        "coverage": 10.63,
+        "engaged": 11,
+        "msgs": 113,
+        "first": "08:15",
         "last": "18:53"
       },
-      "2026-03-16": {
-        "coverage": 11.0,
-        "engaged": 5,
-        "msgs": 7,
-        "first": "08:48",
-        "last": "19:48"
-      },
-      "2026-03-13": {
-        "coverage": 11.39,
-        "engaged": 12,
-        "msgs": 458,
-        "first": "09:02",
-        "last": "20:25"
-      },
-      "2026-03-12": {
-        "coverage": 8.25,
-        "engaged": 9,
-        "msgs": 206,
-        "first": "09:15",
-        "last": "17:30"
-      },
-      "2026-03-11": {
-        "coverage": 10.01,
+      "2026-05-14": {
+        "coverage": 11.06,
         "engaged": 11,
-        "msgs": 312,
-        "first": "09:10",
-        "last": "19:11"
+        "msgs": 148,
+        "first": "09:37",
+        "last": "20:41"
       },
-      "2026-03-10": {
-        "coverage": 10.24,
-        "engaged": 12,
-        "msgs": 346,
-        "first": "08:57",
-        "last": "19:11"
+      "2026-05-13": {
+        "coverage": 15.51,
+        "engaged": 14,
+        "msgs": 183,
+        "first": "07:33",
+        "last": "23:04"
       },
-      "2026-03-09": {
-        "coverage": 9.66,
+      "2026-05-12": {
+        "coverage": 15.01,
+        "engaged": 14,
+        "msgs": 167,
+        "first": "06:45",
+        "last": "21:45"
+      },
+      "2026-05-11": {
+        "coverage": 9.73,
         "engaged": 11,
-        "msgs": 269,
-        "first": "09:20",
-        "last": "19:00"
-      },
-      "2026-03-06": {
-        "coverage": 9.69,
-        "engaged": 11,
-        "msgs": 261,
-        "first": "09:55",
-        "last": "19:36"
-      },
-      "2026-03-05": {
-        "coverage": 10.07,
-        "engaged": 9,
-        "msgs": 316,
-        "first": "09:01",
-        "last": "19:05"
-      },
-      "2026-03-04": {
-        "coverage": 1.89,
-        "engaged": 3,
-        "msgs": 67,
-        "first": "16:57",
-        "last": "18:51"
+        "msgs": 181,
+        "first": "09:24",
+        "last": "19:08"
       }
     },
     "Hugo": {
+      "2026-06-23": {
+        "coverage": 2.06,
+        "engaged": 3,
+        "msgs": 85,
+        "first": "09:24",
+        "last": "11:27"
+      },
+      "2026-06-22": {
+        "coverage": 9.29,
+        "engaged": 10,
+        "msgs": 264,
+        "first": "09:12",
+        "last": "18:30"
+      },
+      "2026-06-19": {
+        "coverage": 9.43,
+        "engaged": 9,
+        "msgs": 202,
+        "first": "09:25",
+        "last": "18:50"
+      },
+      "2026-06-18": {
+        "coverage": 8.24,
+        "engaged": 9,
+        "msgs": 206,
+        "first": "10:04",
+        "last": "18:18"
+      },
+      "2026-06-17": {
+        "coverage": 9.34,
+        "engaged": 10,
+        "msgs": 195,
+        "first": "09:39",
+        "last": "19:00"
+      },
+      "2026-06-16": {
+        "coverage": 10.39,
+        "engaged": 10,
+        "msgs": 174,
+        "first": "09:15",
+        "last": "19:38"
+      },
+      "2026-06-15": {
+        "coverage": 11.34,
+        "engaged": 11,
+        "msgs": 166,
+        "first": "07:33",
+        "last": "18:53"
+      },
+      "2026-06-12": {
+        "coverage": 9.69,
+        "engaged": 11,
+        "msgs": 207,
+        "first": "09:38",
+        "last": "19:19"
+      },
+      "2026-06-11": {
+        "coverage": 9.96,
+        "engaged": 11,
+        "msgs": 80,
+        "first": "09:37",
+        "last": "19:34"
+      },
+      "2026-06-10": {
+        "coverage": 10.39,
+        "engaged": 11,
+        "msgs": 249,
+        "first": "08:28",
+        "last": "18:52"
+      },
+      "2026-06-09": {
+        "coverage": 10.02,
+        "engaged": 11,
+        "msgs": 213,
+        "first": "09:06",
+        "last": "19:07"
+      },
+      "2026-06-08": {
+        "coverage": 9.75,
+        "engaged": 10,
+        "msgs": 185,
+        "first": "09:11",
+        "last": "18:56"
+      },
+      "2026-06-05": {
+        "coverage": 9.68,
+        "engaged": 11,
+        "msgs": 219,
+        "first": "09:30",
+        "last": "19:10"
+      },
+      "2026-06-04": {
+        "coverage": 9.33,
+        "engaged": 10,
+        "msgs": 168,
+        "first": "09:08",
+        "last": "18:28"
+      },
+      "2026-06-03": {
+        "coverage": 9.18,
+        "engaged": 11,
+        "msgs": 167,
+        "first": "08:54",
+        "last": "18:05"
+      },
       "2026-06-02": {
-        "coverage": 6.97,
-        "engaged": 8,
-        "msgs": 88,
+        "coverage": 9.0,
+        "engaged": 10,
+        "msgs": 131,
         "first": "09:28",
-        "last": "16:27"
+        "last": "18:29"
       },
       "2026-06-01": {
         "coverage": 8.79,
@@ -4963,462 +4298,567 @@
       }
     },
     "Karen Perez": {
-      "2026-06-02": {
-        "coverage": 7.66,
+      "2026-06-23": {
+        "coverage": 2.08,
+        "engaged": 3,
+        "msgs": 36,
+        "first": "09:16",
+        "last": "11:21"
+      },
+      "2026-06-22": {
+        "coverage": 8.28,
         "engaged": 8,
-        "msgs": 111,
+        "msgs": 159,
+        "first": "09:10",
+        "last": "17:27"
+      },
+      "2026-06-19": {
+        "coverage": 10.64,
+        "engaged": 10,
+        "msgs": 113,
+        "first": "09:25",
+        "last": "20:04"
+      },
+      "2026-06-18": {
+        "coverage": 9.11,
+        "engaged": 9,
+        "msgs": 123,
+        "first": "09:05",
+        "last": "18:11"
+      },
+      "2026-06-17": {
+        "coverage": 9.65,
+        "engaged": 9,
+        "msgs": 315,
+        "first": "09:06",
+        "last": "18:45"
+      },
+      "2026-06-16": {
+        "coverage": 9.38,
+        "engaged": 9,
+        "msgs": 232,
+        "first": "09:07",
+        "last": "18:30"
+      },
+      "2026-06-15": {
+        "coverage": 9.57,
+        "engaged": 9,
+        "msgs": 398,
+        "first": "09:02",
+        "last": "18:36"
+      },
+      "2026-06-12": {
+        "coverage": 8.33,
+        "engaged": 8,
+        "msgs": 233,
+        "first": "09:21",
+        "last": "17:40"
+      },
+      "2026-06-11": {
+        "coverage": 8.25,
+        "engaged": 7,
+        "msgs": 113,
+        "first": "08:57",
+        "last": "17:12"
+      },
+      "2026-06-10": {
+        "coverage": 8.9,
+        "engaged": 9,
+        "msgs": 266,
+        "first": "09:06",
+        "last": "18:00"
+      },
+      "2026-06-09": {
+        "coverage": 11.16,
+        "engaged": 12,
+        "msgs": 412,
+        "first": "08:07",
+        "last": "19:17"
+      },
+      "2026-06-08": {
+        "coverage": 9.09,
+        "engaged": 10,
+        "msgs": 342,
+        "first": "09:28",
+        "last": "18:34"
+      },
+      "2026-06-05": {
+        "coverage": 11.1,
+        "engaged": 11,
+        "msgs": 385,
+        "first": "09:14",
+        "last": "20:20"
+      },
+      "2026-06-04": {
+        "coverage": 9.5,
+        "engaged": 10,
+        "msgs": 338,
+        "first": "09:04",
+        "last": "18:34"
+      },
+      "2026-06-03": {
+        "coverage": 9.06,
+        "engaged": 10,
+        "msgs": 351,
+        "first": "09:09",
+        "last": "18:13"
+      },
+      "2026-06-02": {
+        "coverage": 9.46,
+        "engaged": 10,
+        "msgs": 256,
         "first": "08:54",
-        "last": "16:34"
+        "last": "18:22"
       },
       "2026-06-01": {
         "coverage": 9.51,
         "engaged": 10,
-        "msgs": 224,
+        "msgs": 433,
         "first": "09:04",
         "last": "18:35"
       },
       "2026-05-29": {
         "coverage": 12.7,
         "engaged": 11,
-        "msgs": 258,
+        "msgs": 491,
         "first": "09:06",
         "last": "21:48"
       },
       "2026-05-28": {
         "coverage": 10.17,
         "engaged": 10,
-        "msgs": 220,
+        "msgs": 419,
         "first": "09:11",
         "last": "19:21"
       },
       "2026-05-27": {
         "coverage": 9.37,
         "engaged": 10,
-        "msgs": 192,
+        "msgs": 369,
         "first": "09:12",
         "last": "18:34"
       },
       "2026-05-26": {
         "coverage": 9.91,
         "engaged": 11,
-        "msgs": 182,
+        "msgs": 343,
         "first": "09:08",
         "last": "19:03"
       },
       "2026-05-25": {
         "coverage": 10.0,
         "engaged": 11,
-        "msgs": 294,
+        "msgs": 555,
         "first": "09:07",
         "last": "19:07"
       },
       "2026-05-22": {
         "coverage": 13.88,
         "engaged": 11,
-        "msgs": 158,
+        "msgs": 299,
         "first": "09:10",
         "last": "23:03"
       },
       "2026-05-21": {
         "coverage": 9.44,
         "engaged": 10,
-        "msgs": 146,
+        "msgs": 282,
         "first": "09:11",
         "last": "18:37"
       },
       "2026-05-20": {
         "coverage": 8.22,
         "engaged": 9,
-        "msgs": 118,
+        "msgs": 218,
         "first": "09:27",
         "last": "17:40"
       },
       "2026-05-19": {
         "coverage": 8.99,
         "engaged": 9,
-        "msgs": 70,
+        "msgs": 133,
         "first": "09:42",
         "last": "18:41"
       },
       "2026-05-18": {
         "coverage": 9.59,
         "engaged": 9,
-        "msgs": 175,
+        "msgs": 335,
         "first": "09:10",
         "last": "18:45"
       },
       "2026-05-15": {
         "coverage": 9.9,
         "engaged": 10,
-        "msgs": 155,
+        "msgs": 295,
         "first": "09:14",
         "last": "19:08"
       },
       "2026-05-14": {
         "coverage": 9.78,
         "engaged": 9,
-        "msgs": 195,
+        "msgs": 371,
         "first": "09:02",
         "last": "18:49"
       },
       "2026-05-13": {
         "coverage": 9.72,
         "engaged": 10,
-        "msgs": 219,
+        "msgs": 432,
         "first": "09:11",
         "last": "18:55"
       },
       "2026-05-12": {
         "coverage": 9.67,
         "engaged": 10,
-        "msgs": 156,
+        "msgs": 304,
         "first": "08:56",
         "last": "18:37"
       },
       "2026-05-11": {
         "coverage": 9.94,
         "engaged": 10,
-        "msgs": 289,
+        "msgs": 582,
         "first": "09:06",
         "last": "19:02"
       },
       "2026-05-08": {
         "coverage": 11.68,
         "engaged": 10,
-        "msgs": 148,
+        "msgs": 298,
         "first": "09:13",
         "last": "20:53"
       },
       "2026-05-07": {
         "coverage": 11.19,
         "engaged": 10,
-        "msgs": 191,
+        "msgs": 384,
         "first": "09:02",
         "last": "20:13"
       },
       "2026-05-06": {
         "coverage": 8.6,
         "engaged": 9,
-        "msgs": 77,
+        "msgs": 155,
         "first": "09:36",
         "last": "18:12"
       },
       "2026-05-05": {
         "coverage": 8.82,
         "engaged": 8,
-        "msgs": 122,
+        "msgs": 245,
         "first": "09:09",
         "last": "17:58"
       },
       "2026-05-04": {
         "coverage": 9.54,
         "engaged": 10,
-        "msgs": 159,
+        "msgs": 321,
         "first": "09:01",
         "last": "18:34"
       },
       "2026-05-01": {
         "coverage": 5.09,
         "engaged": 2,
-        "msgs": 4,
+        "msgs": 8,
         "first": "08:08",
         "last": "13:13"
       },
       "2026-04-30": {
         "coverage": 8.31,
         "engaged": 9,
-        "msgs": 145,
+        "msgs": 290,
         "first": "09:02",
         "last": "17:21"
       },
       "2026-04-29": {
         "coverage": 8.85,
         "engaged": 9,
-        "msgs": 154,
+        "msgs": 312,
         "first": "09:06",
         "last": "17:56"
       },
       "2026-04-28": {
         "coverage": 9.83,
         "engaged": 10,
-        "msgs": 157,
+        "msgs": 315,
         "first": "09:08",
         "last": "18:57"
       },
       "2026-04-27": {
         "coverage": 9.54,
         "engaged": 9,
-        "msgs": 154,
+        "msgs": 310,
         "first": "09:04",
         "last": "18:36"
       },
       "2026-04-24": {
         "coverage": 9.36,
         "engaged": 10,
-        "msgs": 109,
+        "msgs": 220,
         "first": "09:07",
         "last": "18:29"
       },
       "2026-04-23": {
         "coverage": 8.83,
         "engaged": 8,
-        "msgs": 58,
+        "msgs": 119,
         "first": "09:08",
         "last": "17:58"
       },
       "2026-04-22": {
         "coverage": 8.41,
         "engaged": 9,
-        "msgs": 68,
+        "msgs": 136,
         "first": "09:19",
         "last": "17:43"
       },
       "2026-04-21": {
         "coverage": 8.56,
         "engaged": 9,
-        "msgs": 79,
+        "msgs": 158,
         "first": "09:02",
         "last": "17:35"
       },
       "2026-04-20": {
         "coverage": 9.35,
         "engaged": 9,
-        "msgs": 140,
+        "msgs": 279,
         "first": "09:03",
         "last": "18:24"
       },
       "2026-04-17": {
         "coverage": 8.86,
         "engaged": 10,
-        "msgs": 117,
+        "msgs": 235,
         "first": "09:24",
         "last": "18:15"
       },
       "2026-04-16": {
         "coverage": 9.13,
         "engaged": 10,
-        "msgs": 123,
+        "msgs": 248,
         "first": "09:06",
         "last": "18:14"
       },
       "2026-04-15": {
         "coverage": 8.44,
         "engaged": 9,
-        "msgs": 134,
+        "msgs": 269,
         "first": "09:14",
         "last": "17:40"
       },
       "2026-04-14": {
         "coverage": 8.44,
         "engaged": 9,
-        "msgs": 118,
+        "msgs": 237,
         "first": "09:11",
         "last": "17:38"
       },
       "2026-04-13": {
         "coverage": 8.97,
         "engaged": 10,
-        "msgs": 136,
+        "msgs": 273,
         "first": "09:44",
         "last": "18:43"
       },
       "2026-04-10": {
         "coverage": 9.39,
         "engaged": 9,
-        "msgs": 116,
+        "msgs": 232,
         "first": "09:15",
         "last": "18:39"
       },
       "2026-04-09": {
         "coverage": 9.87,
         "engaged": 11,
-        "msgs": 110,
+        "msgs": 222,
         "first": "08:28",
         "last": "18:21"
       },
       "2026-04-08": {
         "coverage": 10.21,
         "engaged": 11,
-        "msgs": 82,
+        "msgs": 164,
         "first": "07:56",
         "last": "18:09"
       },
       "2026-04-07": {
         "coverage": 8.38,
         "engaged": 9,
-        "msgs": 124,
+        "msgs": 250,
         "first": "09:30",
         "last": "17:52"
       },
       "2026-04-06": {
         "coverage": 9.94,
         "engaged": 11,
-        "msgs": 145,
+        "msgs": 292,
         "first": "08:33",
         "last": "18:30"
       },
       "2026-04-02": {
         "coverage": 0.0,
         "engaged": 1,
-        "msgs": 1,
+        "msgs": 2,
         "first": "10:10",
         "last": "10:10"
       },
       "2026-04-01": {
         "coverage": 9.68,
         "engaged": 10,
-        "msgs": 165,
+        "msgs": 331,
         "first": "09:10",
         "last": "18:51"
       },
       "2026-03-31": {
         "coverage": 9.38,
         "engaged": 10,
-        "msgs": 102,
+        "msgs": 209,
         "first": "09:06",
         "last": "18:29"
       },
       "2026-03-30": {
         "coverage": 8.2,
         "engaged": 8,
-        "msgs": 94,
+        "msgs": 188,
         "first": "09:40",
         "last": "17:52"
       },
       "2026-03-27": {
         "coverage": 12.13,
         "engaged": 10,
-        "msgs": 75,
+        "msgs": 150,
         "first": "10:20",
         "last": "22:28"
       },
       "2026-03-26": {
         "coverage": 9.35,
         "engaged": 10,
-        "msgs": 131,
+        "msgs": 262,
         "first": "09:06",
         "last": "18:27"
       },
       "2026-03-25": {
-        "coverage": 9.4,
-        "engaged": 11,
-        "msgs": 141,
-        "first": "08:58",
+        "coverage": 6.49,
+        "engaged": 8,
+        "msgs": 181,
+        "first": "11:52",
         "last": "18:22"
-      },
-      "2026-03-24": {
-        "coverage": 8.8,
-        "engaged": 10,
-        "msgs": 108,
-        "first": "09:23",
-        "last": "18:11"
-      },
-      "2026-03-23": {
-        "coverage": 8.39,
-        "engaged": 8,
-        "msgs": 119,
-        "first": "09:11",
-        "last": "17:35"
-      },
-      "2026-03-20": {
-        "coverage": 9.25,
-        "engaged": 9,
-        "msgs": 187,
-        "first": "09:08",
-        "last": "18:23"
-      },
-      "2026-03-19": {
-        "coverage": 9.83,
-        "engaged": 11,
-        "msgs": 113,
-        "first": "08:28",
-        "last": "18:18"
-      },
-      "2026-03-18": {
-        "coverage": 10.02,
-        "engaged": 11,
-        "msgs": 150,
-        "first": "09:03",
-        "last": "19:04"
-      },
-      "2026-03-17": {
-        "coverage": 9.97,
-        "engaged": 9,
-        "msgs": 127,
-        "first": "07:51",
-        "last": "17:49"
-      },
-      "2026-03-16": {
-        "coverage": 0.0,
-        "engaged": 1,
-        "msgs": 1,
-        "first": "17:38",
-        "last": "17:38"
-      },
-      "2026-03-13": {
-        "coverage": 7.82,
-        "engaged": 9,
-        "msgs": 81,
-        "first": "09:22",
-        "last": "17:11"
-      },
-      "2026-03-12": {
-        "coverage": 8.52,
-        "engaged": 9,
-        "msgs": 154,
-        "first": "09:08",
-        "last": "17:39"
-      },
-      "2026-03-11": {
-        "coverage": 9.64,
-        "engaged": 11,
-        "msgs": 105,
-        "first": "09:22",
-        "last": "19:01"
-      },
-      "2026-03-10": {
-        "coverage": 8.91,
-        "engaged": 10,
-        "msgs": 139,
-        "first": "09:13",
-        "last": "18:07"
-      },
-      "2026-03-09": {
-        "coverage": 9.42,
-        "engaged": 10,
-        "msgs": 167,
-        "first": "09:10",
-        "last": "18:35"
-      },
-      "2026-03-06": {
-        "coverage": 8.31,
-        "engaged": 8,
-        "msgs": 89,
-        "first": "09:08",
-        "last": "17:27"
-      },
-      "2026-03-05": {
-        "coverage": 9.13,
-        "engaged": 9,
-        "msgs": 110,
-        "first": "09:11",
-        "last": "18:19"
-      },
-      "2026-03-04": {
-        "coverage": 2.08,
-        "engaged": 3,
-        "msgs": 43,
-        "first": "16:38",
-        "last": "18:43"
       }
     },
     "Dylan Arellano": {
+      "2026-06-23": {
+        "coverage": 1.68,
+        "engaged": 3,
+        "msgs": 39,
+        "first": "09:42",
+        "last": "11:23"
+      },
+      "2026-06-22": {
+        "coverage": 9.74,
+        "engaged": 10,
+        "msgs": 220,
+        "first": "09:06",
+        "last": "18:50"
+      },
+      "2026-06-19": {
+        "coverage": 8.83,
+        "engaged": 10,
+        "msgs": 195,
+        "first": "09:39",
+        "last": "18:29"
+      },
+      "2026-06-18": {
+        "coverage": 9.31,
+        "engaged": 10,
+        "msgs": 229,
+        "first": "09:13",
+        "last": "18:32"
+      },
+      "2026-06-17": {
+        "coverage": 9.67,
+        "engaged": 10,
+        "msgs": 213,
+        "first": "09:09",
+        "last": "18:49"
+      },
+      "2026-06-16": {
+        "coverage": 8.81,
+        "engaged": 10,
+        "msgs": 113,
+        "first": "09:15",
+        "last": "18:04"
+      },
+      "2026-06-15": {
+        "coverage": 9.37,
+        "engaged": 10,
+        "msgs": 206,
+        "first": "09:10",
+        "last": "18:33"
+      },
+      "2026-06-12": {
+        "coverage": 8.5,
+        "engaged": 9,
+        "msgs": 192,
+        "first": "09:06",
+        "last": "17:36"
+      },
+      "2026-06-11": {
+        "coverage": 8.01,
+        "engaged": 9,
+        "msgs": 70,
+        "first": "09:12",
+        "last": "17:12"
+      },
+      "2026-06-10": {
+        "coverage": 8.65,
+        "engaged": 10,
+        "msgs": 196,
+        "first": "09:27",
+        "last": "18:06"
+      },
+      "2026-06-09": {
+        "coverage": 7.96,
+        "engaged": 9,
+        "msgs": 185,
+        "first": "09:31",
+        "last": "17:28"
+      },
+      "2026-06-08": {
+        "coverage": 9.55,
+        "engaged": 10,
+        "msgs": 171,
+        "first": "09:10",
+        "last": "18:43"
+      },
+      "2026-06-05": {
+        "coverage": 9.42,
+        "engaged": 9,
+        "msgs": 162,
+        "first": "09:12",
+        "last": "18:38"
+      },
+      "2026-06-04": {
+        "coverage": 9.1,
+        "engaged": 10,
+        "msgs": 150,
+        "first": "09:23",
+        "last": "18:28"
+      },
+      "2026-06-03": {
+        "coverage": 9.16,
+        "engaged": 9,
+        "msgs": 186,
+        "first": "09:06",
+        "last": "18:15"
+      },
       "2026-06-02": {
-        "coverage": 7.22,
-        "engaged": 8,
-        "msgs": 193,
+        "coverage": 8.78,
+        "engaged": 9,
+        "msgs": 202,
         "first": "09:08",
-        "last": "16:21"
+        "last": "17:55"
       },
       "2026-06-01": {
         "coverage": 9.1,
@@ -5538,106 +4978,570 @@
         "msgs": 18,
         "first": "17:43",
         "last": "18:38"
-      },
-      "2026-03-23": {
-        "coverage": 5.79,
+      }
+    },
+    "Elsa Hernández": {
+      "2026-06-23": {
+        "coverage": 4.11,
         "engaged": 5,
-        "msgs": 126,
-        "first": "09:05",
-        "last": "14:53"
+        "msgs": 72,
+        "first": "07:26",
+        "last": "11:33"
       },
-      "2026-03-20": {
-        "coverage": 9.79,
-        "engaged": 10,
-        "msgs": 277,
-        "first": "09:09",
-        "last": "18:56"
+      "2026-06-22": {
+        "coverage": 11.82,
+        "engaged": 13,
+        "msgs": 240,
+        "first": "08:59",
+        "last": "20:48"
       },
-      "2026-03-19": {
-        "coverage": 9.92,
-        "engaged": 9,
-        "msgs": 209,
-        "first": "09:30",
-        "last": "19:25"
+      "2026-06-19": {
+        "coverage": 11.08,
+        "engaged": 12,
+        "msgs": 241,
+        "first": "07:50",
+        "last": "18:55"
       },
-      "2026-03-18": {
-        "coverage": 8.99,
-        "engaged": 10,
-        "msgs": 644,
-        "first": "10:03",
+      "2026-06-18": {
+        "coverage": 10.01,
+        "engaged": 11,
+        "msgs": 218,
+        "first": "08:28",
+        "last": "18:29"
+      },
+      "2026-06-17": {
+        "coverage": 12.13,
+        "engaged": 13,
+        "msgs": 153,
+        "first": "07:14",
+        "last": "19:22"
+      },
+      "2026-06-16": {
+        "coverage": 13.88,
+        "engaged": 13,
+        "msgs": 267,
+        "first": "07:05",
+        "last": "20:58"
+      },
+      "2026-06-15": {
+        "coverage": 14.48,
+        "engaged": 11,
+        "msgs": 303,
+        "first": "09:02",
+        "last": "23:31"
+      },
+      "2026-06-12": {
+        "coverage": 10.71,
+        "engaged": 11,
+        "msgs": 220,
+        "first": "08:25",
+        "last": "19:07"
+      },
+      "2026-06-11": {
+        "coverage": 13.78,
+        "engaged": 14,
+        "msgs": 197,
+        "first": "08:59",
+        "last": "22:46"
+      },
+      "2026-06-10": {
+        "coverage": 12.39,
+        "engaged": 13,
+        "msgs": 238,
+        "first": "07:14",
+        "last": "19:38"
+      },
+      "2026-06-09": {
+        "coverage": 11.37,
+        "engaged": 12,
+        "msgs": 231,
+        "first": "08:01",
+        "last": "19:23"
+      },
+      "2026-06-08": {
+        "coverage": 14.16,
+        "engaged": 14,
+        "msgs": 268,
+        "first": "09:11",
+        "last": "23:21"
+      },
+      "2026-06-05": {
+        "coverage": 10.7,
+        "engaged": 11,
+        "msgs": 163,
+        "first": "08:12",
+        "last": "18:55"
+      },
+      "2026-06-04": {
+        "coverage": 11.71,
+        "engaged": 12,
+        "msgs": 210,
+        "first": "07:08",
+        "last": "18:51"
+      },
+      "2026-06-03": {
+        "coverage": 12.39,
+        "engaged": 13,
+        "msgs": 143,
+        "first": "08:27",
+        "last": "20:50"
+      },
+      "2026-06-02": {
+        "coverage": 13.46,
+        "engaged": 12,
+        "msgs": 230,
+        "first": "07:35",
+        "last": "21:02"
+      },
+      "2026-06-01": {
+        "coverage": 11.81,
+        "engaged": 12,
+        "msgs": 332,
+        "first": "09:00",
+        "last": "20:49"
+      },
+      "2026-05-29": {
+        "coverage": 10.98,
+        "engaged": 12,
+        "msgs": 496,
+        "first": "08:11",
+        "last": "19:10"
+      },
+      "2026-05-28": {
+        "coverage": 13.43,
+        "engaged": 15,
+        "msgs": 451,
+        "first": "07:38",
+        "last": "21:04"
+      },
+      "2026-05-27": {
+        "coverage": 21.11,
+        "engaged": 15,
+        "msgs": 571,
+        "first": "00:51",
+        "last": "21:58"
+      },
+      "2026-05-26": {
+        "coverage": 13.44,
+        "engaged": 14,
+        "msgs": 702,
+        "first": "07:26",
+        "last": "20:53"
+      },
+      "2026-05-25": {
+        "coverage": 12.97,
+        "engaged": 12,
+        "msgs": 726,
+        "first": "09:01",
+        "last": "22:00"
+      },
+      "2026-05-22": {
+        "coverage": 10.67,
+        "engaged": 12,
+        "msgs": 667,
+        "first": "08:23",
         "last": "19:03"
       },
-      "2026-03-17": {
-        "coverage": 3.87,
-        "engaged": 3,
-        "msgs": 3,
-        "first": "09:19",
-        "last": "13:11"
+      "2026-05-21": {
+        "coverage": 13.62,
+        "engaged": 14,
+        "msgs": 429,
+        "first": "08:20",
+        "last": "21:58"
       },
-      "2026-03-13": {
-        "coverage": 9.18,
-        "engaged": 10,
-        "msgs": 349,
-        "first": "09:15",
-        "last": "18:26"
+      "2026-05-20": {
+        "coverage": 12.89,
+        "engaged": 13,
+        "msgs": 545,
+        "first": "07:01",
+        "last": "19:54"
       },
-      "2026-03-12": {
-        "coverage": 9.43,
-        "engaged": 10,
-        "msgs": 306,
-        "first": "09:11",
-        "last": "18:37"
+      "2026-05-19": {
+        "coverage": 12.17,
+        "engaged": 12,
+        "msgs": 508,
+        "first": "09:03",
+        "last": "21:14"
       },
-      "2026-03-11": {
-        "coverage": 10.16,
+      "2026-05-18": {
+        "coverage": 12.0,
+        "engaged": 13,
+        "msgs": 805,
+        "first": "09:05",
+        "last": "21:05"
+      },
+      "2026-05-15": {
+        "coverage": 9.67,
         "engaged": 10,
-        "msgs": 401,
-        "first": "09:14",
+        "msgs": 527,
+        "first": "09:06",
+        "last": "18:46"
+      },
+      "2026-05-14": {
+        "coverage": 11.56,
+        "engaged": 13,
+        "msgs": 630,
+        "first": "08:44",
+        "last": "20:17"
+      },
+      "2026-05-13": {
+        "coverage": 12.94,
+        "engaged": 14,
+        "msgs": 459,
+        "first": "07:15",
+        "last": "20:12"
+      },
+      "2026-05-12": {
+        "coverage": 12.49,
+        "engaged": 14,
+        "msgs": 495,
+        "first": "08:37",
+        "last": "21:06"
+      },
+      "2026-05-11": {
+        "coverage": 15.1,
+        "engaged": 15,
+        "msgs": 589,
+        "first": "06:58",
+        "last": "22:04"
+      },
+      "2026-05-08": {
+        "coverage": 12.39,
+        "engaged": 13,
+        "msgs": 577,
+        "first": "08:11",
+        "last": "20:35"
+      },
+      "2026-05-07": {
+        "coverage": 12.83,
+        "engaged": 14,
+        "msgs": 432,
+        "first": "06:58",
+        "last": "19:48"
+      },
+      "2026-05-06": {
+        "coverage": 13.87,
+        "engaged": 14,
+        "msgs": 520,
+        "first": "06:34",
+        "last": "20:26"
+      },
+      "2026-05-05": {
+        "coverage": 14.22,
+        "engaged": 14,
+        "msgs": 555,
+        "first": "06:34",
+        "last": "20:47"
+      },
+      "2026-05-04": {
+        "coverage": 11.35,
+        "engaged": 12,
+        "msgs": 774,
+        "first": "09:04",
+        "last": "20:25"
+      },
+      "2026-05-01": {
+        "coverage": 14.1,
+        "engaged": 5,
+        "msgs": 12,
+        "first": "09:51",
+        "last": "23:56"
+      },
+      "2026-04-30": {
+        "coverage": 11.99,
+        "engaged": 13,
+        "msgs": 484,
+        "first": "07:23",
+        "last": "19:23"
+      },
+      "2026-04-29": {
+        "coverage": 13.03,
+        "engaged": 13,
+        "msgs": 470,
+        "first": "06:25",
+        "last": "19:27"
+      },
+      "2026-04-28": {
+        "coverage": 13.2,
+        "engaged": 14,
+        "msgs": 421,
+        "first": "07:11",
+        "last": "20:23"
+      },
+      "2026-04-27": {
+        "coverage": 12.63,
+        "engaged": 11,
+        "msgs": 361,
+        "first": "09:04",
+        "last": "21:42"
+      },
+      "2026-04-24": {
+        "coverage": 10.21,
+        "engaged": 11,
+        "msgs": 380,
+        "first": "08:16",
+        "last": "18:29"
+      },
+      "2026-04-23": {
+        "coverage": 10.99,
+        "engaged": 11,
+        "msgs": 380,
+        "first": "08:56",
+        "last": "19:55"
+      },
+      "2026-04-22": {
+        "coverage": 10.25,
+        "engaged": 11,
+        "msgs": 491,
+        "first": "09:10",
         "last": "19:24"
       },
-      "2026-03-10": {
-        "coverage": 9.86,
+      "2026-04-21": {
+        "coverage": 12.99,
+        "engaged": 13,
+        "msgs": 458,
+        "first": "07:55",
+        "last": "20:54"
+      },
+      "2026-04-20": {
+        "coverage": 13.31,
+        "engaged": 14,
+        "msgs": 444,
+        "first": "07:30",
+        "last": "20:49"
+      },
+      "2026-04-17": {
+        "coverage": 12.93,
+        "engaged": 13,
+        "msgs": 318,
+        "first": "07:06",
+        "last": "20:02"
+      },
+      "2026-04-16": {
+        "coverage": 13.66,
+        "engaged": 15,
+        "msgs": 511,
+        "first": "07:34",
+        "last": "21:13"
+      },
+      "2026-04-15": {
+        "coverage": 11.46,
+        "engaged": 12,
+        "msgs": 482,
+        "first": "09:09",
+        "last": "20:36"
+      },
+      "2026-04-14": {
+        "coverage": 12.25,
+        "engaged": 13,
+        "msgs": 409,
+        "first": "09:10",
+        "last": "21:25"
+      },
+      "2026-04-13": {
+        "coverage": 10.46,
         "engaged": 11,
-        "msgs": 343,
-        "first": "09:40",
+        "msgs": 420,
+        "first": "09:03",
         "last": "19:31"
       },
-      "2026-03-09": {
-        "coverage": 7.11,
-        "engaged": 7,
-        "msgs": 196,
-        "first": "09:10",
-        "last": "16:16"
+      "2026-04-10": {
+        "coverage": 10.29,
+        "engaged": 12,
+        "msgs": 405,
+        "first": "08:46",
+        "last": "19:03"
       },
-      "2026-03-06": {
-        "coverage": 9.96,
+      "2026-04-09": {
+        "coverage": 11.04,
+        "engaged": 13,
+        "msgs": 335,
+        "first": "07:58",
+        "last": "19:01"
+      },
+      "2026-04-08": {
+        "coverage": 11.76,
+        "engaged": 12,
+        "msgs": 435,
+        "first": "08:09",
+        "last": "19:55"
+      },
+      "2026-04-07": {
+        "coverage": 10.93,
+        "engaged": 12,
+        "msgs": 318,
+        "first": "08:29",
+        "last": "19:25"
+      },
+      "2026-04-06": {
+        "coverage": 14.13,
+        "engaged": 14,
+        "msgs": 592,
+        "first": "07:45",
+        "last": "21:52"
+      },
+      "2026-04-02": {
+        "coverage": 0.0,
+        "engaged": 1,
+        "msgs": 2,
+        "first": "18:50",
+        "last": "18:50"
+      },
+      "2026-04-01": {
+        "coverage": 10.26,
         "engaged": 11,
-        "msgs": 282,
-        "first": "09:15",
-        "last": "19:13"
+        "msgs": 609,
+        "first": "08:26",
+        "last": "18:42"
       },
-      "2026-03-05": {
-        "coverage": 9.84,
-        "engaged": 10,
-        "msgs": 388,
-        "first": "09:08",
-        "last": "18:59"
+      "2026-03-31": {
+        "coverage": 14.14,
+        "engaged": 15,
+        "msgs": 546,
+        "first": "07:24",
+        "last": "21:32"
       },
-      "2026-03-04": {
-        "coverage": 1.95,
-        "engaged": 3,
-        "msgs": 66,
-        "first": "16:38",
-        "last": "18:35"
+      "2026-03-30": {
+        "coverage": 13.13,
+        "engaged": 14,
+        "msgs": 632,
+        "first": "08:32",
+        "last": "21:40"
+      },
+      "2026-03-27": {
+        "coverage": 10.65,
+        "engaged": 12,
+        "msgs": 558,
+        "first": "08:32",
+        "last": "19:11"
+      },
+      "2026-03-26": {
+        "coverage": 11.95,
+        "engaged": 13,
+        "msgs": 486,
+        "first": "08:46",
+        "last": "20:43"
+      },
+      "2026-03-25": {
+        "coverage": 9.91,
+        "engaged": 11,
+        "msgs": 398,
+        "first": "11:27",
+        "last": "21:22"
       }
     },
     "Itzel Alarcon": {
-      "2026-06-02": {
-        "coverage": 7.41,
+      "2026-06-23": {
+        "coverage": 2.45,
+        "engaged": 3,
+        "msgs": 52,
+        "first": "09:01",
+        "last": "11:28"
+      },
+      "2026-06-22": {
+        "coverage": 9.39,
+        "engaged": 10,
+        "msgs": 191,
+        "first": "09:12",
+        "last": "18:36"
+      },
+      "2026-06-19": {
+        "coverage": 8.31,
+        "engaged": 10,
+        "msgs": 165,
+        "first": "09:54",
+        "last": "18:12"
+      },
+      "2026-06-18": {
+        "coverage": 9.27,
+        "engaged": 10,
+        "msgs": 184,
+        "first": "09:11",
+        "last": "18:27"
+      },
+      "2026-06-17": {
+        "coverage": 8.94,
+        "engaged": 10,
+        "msgs": 249,
+        "first": "09:21",
+        "last": "18:18"
+      },
+      "2026-06-16": {
+        "coverage": 9.0,
+        "engaged": 10,
+        "msgs": 183,
+        "first": "09:06",
+        "last": "18:06"
+      },
+      "2026-06-15": {
+        "coverage": 9.46,
+        "engaged": 10,
+        "msgs": 271,
+        "first": "09:08",
+        "last": "18:35"
+      },
+      "2026-06-12": {
+        "coverage": 8.78,
+        "engaged": 10,
+        "msgs": 215,
+        "first": "09:24",
+        "last": "18:11"
+      },
+      "2026-06-11": {
+        "coverage": 9.05,
+        "engaged": 10,
+        "msgs": 105,
+        "first": "09:12",
+        "last": "18:15"
+      },
+      "2026-06-10": {
+        "coverage": 9.44,
+        "engaged": 9,
+        "msgs": 165,
+        "first": "09:02",
+        "last": "18:28"
+      },
+      "2026-06-09": {
+        "coverage": 8.22,
         "engaged": 8,
-        "msgs": 142,
+        "msgs": 114,
+        "first": "10:27",
+        "last": "18:40"
+      },
+      "2026-06-08": {
+        "coverage": 3.6,
+        "engaged": 4,
+        "msgs": 78,
+        "first": "09:02",
+        "last": "12:38"
+      },
+      "2026-06-05": {
+        "coverage": 8.58,
+        "engaged": 9,
+        "msgs": 258,
+        "first": "09:10",
+        "last": "17:45"
+      },
+      "2026-06-04": {
+        "coverage": 9.12,
+        "engaged": 10,
+        "msgs": 258,
+        "first": "09:21",
+        "last": "18:29"
+      },
+      "2026-06-03": {
+        "coverage": 9.06,
+        "engaged": 10,
+        "msgs": 337,
+        "first": "09:06",
+        "last": "18:10"
+      },
+      "2026-06-02": {
+        "coverage": 9.66,
+        "engaged": 10,
+        "msgs": 163,
         "first": "09:15",
-        "last": "16:40"
+        "last": "18:55"
       },
       "2026-06-01": {
         "coverage": 9.22,
@@ -5771,99 +5675,120 @@
         "msgs": 24,
         "first": "16:26",
         "last": "17:50"
-      },
-      "2026-03-20": {
-        "coverage": 5.76,
-        "engaged": 5,
-        "msgs": 57,
-        "first": "12:15",
-        "last": "18:01"
-      },
-      "2026-03-19": {
-        "coverage": 8.71,
-        "engaged": 10,
-        "msgs": 195,
-        "first": "09:28",
-        "last": "18:11"
-      },
-      "2026-03-18": {
-        "coverage": 7.1,
-        "engaged": 8,
-        "msgs": 176,
-        "first": "10:23",
-        "last": "17:29"
-      },
-      "2026-03-17": {
-        "coverage": 2.69,
-        "engaged": 4,
-        "msgs": 108,
-        "first": "10:28",
-        "last": "13:09"
-      },
-      "2026-03-13": {
-        "coverage": 13.61,
-        "engaged": 10,
-        "msgs": 141,
-        "first": "09:54",
-        "last": "23:31"
-      },
-      "2026-03-12": {
-        "coverage": 8.67,
-        "engaged": 9,
-        "msgs": 150,
-        "first": "09:17",
-        "last": "17:57"
-      },
-      "2026-03-11": {
-        "coverage": 8.7,
-        "engaged": 10,
-        "msgs": 228,
-        "first": "09:37",
-        "last": "18:19"
-      },
-      "2026-03-10": {
-        "coverage": 8.64,
-        "engaged": 10,
-        "msgs": 234,
-        "first": "09:36",
-        "last": "18:14"
-      },
-      "2026-03-09": {
-        "coverage": 5.25,
-        "engaged": 6,
-        "msgs": 159,
-        "first": "09:11",
-        "last": "14:26"
-      },
-      "2026-03-06": {
-        "coverage": 8.24,
-        "engaged": 8,
-        "msgs": 132,
-        "first": "09:22",
-        "last": "17:37"
-      },
-      "2026-03-05": {
-        "coverage": 8.77,
-        "engaged": 10,
-        "msgs": 205,
-        "first": "09:14",
-        "last": "18:00"
-      },
-      "2026-03-04": {
-        "coverage": 1.31,
-        "engaged": 2,
-        "msgs": 47,
-        "first": "16:37",
-        "last": "17:56"
       }
     },
     "Paola Viveros": {
-      "2026-06-02": {
-        "coverage": 7.57,
-        "engaged": 8,
-        "msgs": 218,
+      "2026-06-23": {
+        "coverage": 2.29,
+        "engaged": 4,
+        "msgs": 43,
+        "first": "08:56",
+        "last": "11:13"
+      },
+      "2026-06-22": {
+        "coverage": 9.8,
+        "engaged": 10,
+        "msgs": 306,
+        "first": "09:11",
+        "last": "18:59"
+      },
+      "2026-06-19": {
+        "coverage": 9.93,
+        "engaged": 11,
+        "msgs": 345,
+        "first": "09:08",
+        "last": "19:04"
+      },
+      "2026-06-18": {
+        "coverage": 9.9,
+        "engaged": 10,
+        "msgs": 404,
+        "first": "09:04",
+        "last": "18:58"
+      },
+      "2026-06-17": {
+        "coverage": 9.81,
+        "engaged": 11,
+        "msgs": 318,
+        "first": "09:13",
+        "last": "19:02"
+      },
+      "2026-06-16": {
+        "coverage": 9.88,
+        "engaged": 10,
+        "msgs": 286,
+        "first": "09:04",
+        "last": "18:57"
+      },
+      "2026-06-15": {
+        "coverage": 9.83,
+        "engaged": 10,
+        "msgs": 269,
         "first": "09:05",
-        "last": "16:39"
+        "last": "18:54"
+      },
+      "2026-06-12": {
+        "coverage": 9.56,
+        "engaged": 10,
+        "msgs": 295,
+        "first": "09:17",
+        "last": "18:51"
+      },
+      "2026-06-11": {
+        "coverage": 9.78,
+        "engaged": 10,
+        "msgs": 142,
+        "first": "09:07",
+        "last": "18:54"
+      },
+      "2026-06-10": {
+        "coverage": 9.84,
+        "engaged": 10,
+        "msgs": 255,
+        "first": "09:10",
+        "last": "19:01"
+      },
+      "2026-06-09": {
+        "coverage": 9.51,
+        "engaged": 10,
+        "msgs": 265,
+        "first": "09:10",
+        "last": "18:40"
+      },
+      "2026-06-08": {
+        "coverage": 9.84,
+        "engaged": 10,
+        "msgs": 316,
+        "first": "09:06",
+        "last": "18:56"
+      },
+      "2026-06-05": {
+        "coverage": 9.07,
+        "engaged": 10,
+        "msgs": 200,
+        "first": "09:05",
+        "last": "18:09"
+      },
+      "2026-06-04": {
+        "coverage": 10.95,
+        "engaged": 11,
+        "msgs": 201,
+        "first": "09:11",
+        "last": "20:08"
+      },
+      "2026-06-03": {
+        "coverage": 9.64,
+        "engaged": 10,
+        "msgs": 305,
+        "first": "09:14",
+        "last": "18:52"
+      },
+      "2026-06-02": {
+        "coverage": 9.97,
+        "engaged": 11,
+        "msgs": 298,
+        "first": "09:05",
+        "last": "19:03"
       },
       "2026-06-01": {
         "coverage": 10.14,
@@ -5910,7 +5835,7 @@
       "2026-05-22": {
         "coverage": 11.55,
         "engaged": 11,
-        "msgs": 262,
+        "msgs": 261,
         "first": "07:11",
         "last": "18:44"
       },
@@ -6195,355 +6120,18 @@
         "last": "20:03"
       },
       "2026-03-25": {
-        "coverage": 13.32,
-        "engaged": 11,
-        "msgs": 171,
-        "first": "09:08",
+        "coverage": 10.99,
+        "engaged": 9,
+        "msgs": 129,
+        "first": "11:28",
         "last": "22:27"
-      },
-      "2026-03-24": {
-        "coverage": 9.53,
-        "engaged": 10,
-        "msgs": 196,
-        "first": "09:29",
-        "last": "19:01"
-      },
-      "2026-03-23": {
-        "coverage": 9.84,
-        "engaged": 11,
-        "msgs": 232,
-        "first": "09:26",
-        "last": "19:17"
-      },
-      "2026-03-20": {
-        "coverage": 10.66,
-        "engaged": 11,
-        "msgs": 187,
-        "first": "08:19",
-        "last": "18:59"
-      },
-      "2026-03-19": {
-        "coverage": 11.49,
-        "engaged": 12,
-        "msgs": 266,
-        "first": "08:03",
-        "last": "19:32"
-      },
-      "2026-03-18": {
-        "coverage": 13.04,
-        "engaged": 13,
-        "msgs": 184,
-        "first": "08:53",
-        "last": "21:55"
-      },
-      "2026-03-17": {
-        "coverage": 11.13,
-        "engaged": 12,
-        "msgs": 245,
-        "first": "09:08",
-        "last": "20:16"
-      },
-      "2026-03-16": {
-        "coverage": 4.24,
-        "engaged": 3,
-        "msgs": 3,
-        "first": "11:01",
-        "last": "15:15"
-      },
-      "2026-03-13": {
-        "coverage": 11.12,
-        "engaged": 12,
-        "msgs": 237,
-        "first": "08:32",
-        "last": "19:39"
-      },
-      "2026-03-12": {
-        "coverage": 12.14,
-        "engaged": 12,
-        "msgs": 180,
-        "first": "08:51",
-        "last": "20:59"
-      },
-      "2026-03-11": {
-        "coverage": 12.95,
-        "engaged": 13,
-        "msgs": 223,
-        "first": "08:27",
-        "last": "21:24"
-      },
-      "2026-03-10": {
-        "coverage": 12.28,
-        "engaged": 13,
-        "msgs": 221,
-        "first": "08:03",
-        "last": "20:20"
-      },
-      "2026-03-09": {
-        "coverage": 10.39,
-        "engaged": 11,
-        "msgs": 246,
-        "first": "09:17",
-        "last": "19:40"
-      },
-      "2026-03-06": {
-        "coverage": 10.58,
-        "engaged": 12,
-        "msgs": 209,
-        "first": "08:25",
-        "last": "19:00"
-      },
-      "2026-03-05": {
-        "coverage": 12.91,
-        "engaged": 13,
-        "msgs": 209,
-        "first": "07:30",
-        "last": "20:25"
-      },
-      "2026-03-04": {
-        "coverage": 3.8,
-        "engaged": 5,
-        "msgs": 66,
-        "first": "16:39",
-        "last": "20:27"
       }
     }
   }
 };
 
     // Manejo de Contratos — per-agent contract-change handling (deeper pull)
-    const contractHandling = {
-  "generated_at": "2026-06-02",
-  "window": "deeper pull (≤70 chats/agente)",
-  "note": "Denominador = conversaciones donde el cliente pidió un cambio al contrato. Causa raíz suele ser el paso legal/contratos, no el asesor.",
-  "team": {
-    "contractConvs": 403,
-    "problems": 117,
-    "problemRate": 29,
-    "recoveryPct": 56
-  },
-  "agents": [
-    {
-      "agent": "Eduardo",
-      "inRoster": true,
-      "convsTotal": 35,
-      "contractConvs": 22,
-      "problems": 12,
-      "problemRate": 55,
-      "problemsUnresolved": 5,
-      "recoveryPct": 58,
-      "resolvedPct": 68
-    },
-    {
-      "agent": "Iran",
-      "inRoster": true,
-      "convsTotal": 35,
-      "contractConvs": 17,
-      "problems": 9,
-      "problemRate": 53,
-      "problemsUnresolved": 6,
-      "recoveryPct": 33,
-      "resolvedPct": 59
-    },
-    {
-      "agent": "Jenifer",
-      "inRoster": true,
-      "convsTotal": 35,
-      "contractConvs": 22,
-      "problems": 10,
-      "problemRate": 45,
-      "problemsUnresolved": 6,
-      "recoveryPct": 40,
-      "resolvedPct": 50
-    },
-    {
-      "agent": "Carlos",
-      "inRoster": true,
-      "convsTotal": 35,
-      "contractConvs": 23,
-      "problems": 8,
-      "problemRate": 35,
-      "problemsUnresolved": 5,
-      "recoveryPct": 38,
-      "resolvedPct": 39
-    },
-    {
-      "agent": "Cesar",
-      "inRoster": true,
-      "convsTotal": 35,
-      "contractConvs": 21,
-      "problems": 7,
-      "problemRate": 33,
-      "problemsUnresolved": 3,
-      "recoveryPct": 57,
-      "resolvedPct": 81
-    },
-    {
-      "agent": "Horacio Gómez",
-      "inRoster": true,
-      "convsTotal": 35,
-      "contractConvs": 21,
-      "problems": 7,
-      "problemRate": 33,
-      "problemsUnresolved": 2,
-      "recoveryPct": 71,
-      "resolvedPct": 71
-    },
-    {
-      "agent": "Xel Xanat",
-      "inRoster": true,
-      "convsTotal": 35,
-      "contractConvs": 29,
-      "problems": 9,
-      "problemRate": 31,
-      "problemsUnresolved": 2,
-      "recoveryPct": 78,
-      "resolvedPct": 79
-    },
-    {
-      "agent": "Hugo",
-      "inRoster": true,
-      "convsTotal": 35,
-      "contractConvs": 20,
-      "problems": 6,
-      "problemRate": 30,
-      "problemsUnresolved": 3,
-      "recoveryPct": 50,
-      "resolvedPct": 70
-    },
-    {
-      "agent": "Fernanda Figueroa",
-      "inRoster": true,
-      "convsTotal": 35,
-      "contractConvs": 22,
-      "problems": 6,
-      "problemRate": 27,
-      "problemsUnresolved": 6,
-      "recoveryPct": 0,
-      "resolvedPct": 36
-    },
-    {
-      "agent": "Gabriel García",
-      "inRoster": true,
-      "convsTotal": 35,
-      "contractConvs": 22,
-      "problems": 6,
-      "problemRate": 27,
-      "problemsUnresolved": 1,
-      "recoveryPct": 83,
-      "resolvedPct": 86
-    },
-    {
-      "agent": "Karen Pérez",
-      "inRoster": true,
-      "convsTotal": 35,
-      "contractConvs": 23,
-      "problems": 6,
-      "problemRate": 26,
-      "problemsUnresolved": 1,
-      "recoveryPct": 83,
-      "resolvedPct": 70
-    },
-    {
-      "agent": "Dylan Arellano",
-      "inRoster": true,
-      "convsTotal": 35,
-      "contractConvs": 24,
-      "problems": 6,
-      "problemRate": 25,
-      "problemsUnresolved": 1,
-      "recoveryPct": 83,
-      "resolvedPct": 88
-    },
-    {
-      "agent": "Kate González",
-      "inRoster": true,
-      "convsTotal": 35,
-      "contractConvs": 21,
-      "problems": 5,
-      "problemRate": 24,
-      "problemsUnresolved": 4,
-      "recoveryPct": 20,
-      "resolvedPct": 38
-    },
-    {
-      "agent": "Paola Viveros",
-      "inRoster": true,
-      "convsTotal": 35,
-      "contractConvs": 21,
-      "problems": 5,
-      "problemRate": 24,
-      "problemsUnresolved": 4,
-      "recoveryPct": 20,
-      "resolvedPct": 57
-    },
-    {
-      "agent": "Lorena Domínguez",
-      "inRoster": true,
-      "convsTotal": 35,
-      "contractConvs": 26,
-      "problems": 6,
-      "problemRate": 23,
-      "problemsUnresolved": 1,
-      "recoveryPct": 83,
-      "resolvedPct": 81
-    },
-    {
-      "agent": "Cesar Iram Enriquez",
-      "inRoster": false,
-      "convsTotal": 34,
-      "contractConvs": 16,
-      "problems": 3,
-      "problemRate": 19,
-      "problemsUnresolved": 2,
-      "recoveryPct": 33,
-      "resolvedPct": 56
-    },
-    {
-      "agent": "Elvia",
-      "inRoster": true,
-      "convsTotal": 35,
-      "contractConvs": 21,
-      "problems": 4,
-      "problemRate": 19,
-      "problemsUnresolved": 1,
-      "recoveryPct": 75,
-      "resolvedPct": 71
-    },
-    {
-      "agent": "Daniel Luna",
-      "inRoster": true,
-      "convsTotal": 35,
-      "contractConvs": 23,
-      "problems": 3,
-      "problemRate": 13,
-      "problemsUnresolved": 1,
-      "recoveryPct": 67,
-      "resolvedPct": 78
-    },
-    {
-      "agent": "Dana Lugo",
-      "inRoster": true,
-      "convsTotal": 35,
-      "contractConvs": 25,
-      "problems": 2,
-      "problemRate": 8,
-      "problemsUnresolved": 0,
-      "recoveryPct": 100,
-      "resolvedPct": 72
-    },
-    {
-      "agent": "Alfonso",
-      "inRoster": false,
-      "convsTotal": 34,
-      "contractConvs": 20,
-      "problems": 1,
-      "problemRate": 5,
-      "problemsUnresolved": 1,
-      "recoveryPct": 0,
-      "resolvedPct": 70
-    }
-  ]
-};
+    const contractHandling = {"generated_at": "2026-06-02", "window": "deeper pull (≤70 chats/agente)", "note": "Denominador = conversaciones donde el cliente pidió un cambio al contrato. Causa raíz suele ser el paso legal/contratos, no el asesor.", "team": {"contractConvs": 370, "problems": 129, "problemRate": 35, "recoveryPct": 54}, "agents": [{"agent": "Jenifer", "inRoster": true, "convsTotal": 35, "contractConvs": 23, "problems": 14, "problemRate": 61, "problemsUnresolved": 8, "recoveryPct": 43, "resolvedPct": 52}, {"agent": "Fernanda Figueroa", "inRoster": true, "convsTotal": 35, "contractConvs": 24, "problems": 13, "problemRate": 54, "problemsUnresolved": 5, "recoveryPct": 62, "resolvedPct": 71}, {"agent": "Carlos", "inRoster": true, "convsTotal": 35, "contractConvs": 24, "problems": 12, "problemRate": 50, "problemsUnresolved": 8, "recoveryPct": 33, "resolvedPct": 58}, {"agent": "Hugo", "inRoster": true, "convsTotal": 35, "contractConvs": 18, "problems": 8, "problemRate": 44, "problemsUnresolved": 5, "recoveryPct": 38, "resolvedPct": 72}, {"agent": "Alfonso", "inRoster": false, "convsTotal": 35, "contractConvs": 16, "problems": 7, "problemRate": 44, "problemsUnresolved": 2, "recoveryPct": 71, "resolvedPct": 75}, {"agent": "Diego Cedillo", "inRoster": false, "convsTotal": 35, "contractConvs": 16, "problems": 7, "problemRate": 44, "problemsUnresolved": 2, "recoveryPct": 71, "resolvedPct": 75}, {"agent": "Lorena Domínguez", "inRoster": true, "convsTotal": 35, "contractConvs": 18, "problems": 8, "problemRate": 44, "problemsUnresolved": 1, "recoveryPct": 88, "resolvedPct": 83}, {"agent": "Xel Xanat", "inRoster": true, "convsTotal": 35, "contractConvs": 26, "problems": 11, "problemRate": 42, "problemsUnresolved": 4, "recoveryPct": 64, "resolvedPct": 77}, {"agent": "Itzel Alarcón", "inRoster": true, "convsTotal": 35, "contractConvs": 29, "problems": 12, "problemRate": 41, "problemsUnresolved": 4, "recoveryPct": 67, "resolvedPct": 76}, {"agent": "Elvia", "inRoster": true, "convsTotal": 35, "contractConvs": 23, "problems": 8, "problemRate": 35, "problemsUnresolved": 4, "recoveryPct": 50, "resolvedPct": 70}, {"agent": "Daniel Luna", "inRoster": true, "convsTotal": 35, "contractConvs": 18, "problems": 6, "problemRate": 33, "problemsUnresolved": 3, "recoveryPct": 50, "resolvedPct": 72}, {"agent": "Cesar", "inRoster": true, "convsTotal": 35, "contractConvs": 21, "problems": 7, "problemRate": 33, "problemsUnresolved": 3, "recoveryPct": 57, "resolvedPct": 76}, {"agent": "Dylan Arellano", "inRoster": true, "convsTotal": 35, "contractConvs": 25, "problems": 7, "problemRate": 28, "problemsUnresolved": 5, "recoveryPct": 29, "resolvedPct": 80}, {"agent": "Horacio Gómez", "inRoster": true, "convsTotal": 35, "contractConvs": 18, "problems": 5, "problemRate": 28, "problemsUnresolved": 3, "recoveryPct": 40, "resolvedPct": 67}, {"agent": "Elsa Hernández", "inRoster": false, "convsTotal": 35, "contractConvs": 21, "problems": 5, "problemRate": 24, "problemsUnresolved": 2, "recoveryPct": 60, "resolvedPct": 71}, {"agent": "Paola Viveros", "inRoster": true, "convsTotal": 35, "contractConvs": 23, "problems": 5, "problemRate": 22, "problemsUnresolved": 3, "recoveryPct": 40, "resolvedPct": 83}, {"agent": "Gabriel García", "inRoster": true, "convsTotal": 35, "contractConvs": 24, "problems": 5, "problemRate": 21, "problemsUnresolved": 2, "recoveryPct": 60, "resolvedPct": 83}, {"agent": "Cesar Iram Enriquez", "inRoster": false, "convsTotal": 35, "contractConvs": 22, "problems": 4, "problemRate": 18, "problemsUnresolved": 3, "recoveryPct": 25, "resolvedPct": 86}, {"agent": "Karen Pérez", "inRoster": true, "convsTotal": 35, "contractConvs": 18, "problems": 3, "problemRate": 17, "problemsUnresolved": 1, "recoveryPct": 67, "resolvedPct": 89}, {"agent": "Dana Lugo", "inRoster": true, "convsTotal": 35, "contractConvs": 20, "problems": 3, "problemRate": 15, "problemsUnresolved": 0, "recoveryPct": 100, "resolvedPct": 85}, {"agent": "Kate González", "inRoster": true, "convsTotal": 35, "contractConvs": 18, "problems": 2, "problemRate": 11, "problemsUnresolved": 0, "recoveryPct": 100, "resolvedPct": 89}]};
 
     // Volumen de Mensajes — per-agent daily message counts (sent + received)
     const volumeData = {
@@ -10781,7 +10369,7 @@
     }
 
     function Hero() {
-      const lastFrust = 16; // Jun 2 run — across 200 conversations, 21 agents
+      const lastFrust = 15; // Jun 23 run — across 200 conversations, 21 agents
       const baselineFrust = 39.7;
       const improvement = (baselineFrust - lastFrust).toFixed(1);
       return (
@@ -10939,10 +10527,12 @@
       const avgMay13 = (agentsWithMay13.reduce((s, a) => s + a.may13, 0) / agentsWithMay13.length).toFixed(1);
       const agentsWithJun2 = agentRanking.filter(a => a.jun2 !== null && a.jun2 !== undefined);
       const avgJun2 = (agentsWithJun2.reduce((s, a) => s + a.jun2, 0) / agentsWithJun2.length).toFixed(1);
+      const agentsWithJun23 = agentRanking.filter(a => a.jun23 !== null && a.jun23 !== undefined);
+      const avgJun23 = (agentsWithJun23.reduce((s, a) => s + a.jun23, 0) / agentsWithJun23.length).toFixed(1);
       return (
-        <Section title="Evolución de Frustración (6 Mediciones)" dark id="comparison">
-          {/* Big KPI - 6 columns */}
-          <div className="grid grid-cols-2 lg:grid-cols-6 gap-4 mb-10">
+        <Section title="Evolución de Frustración (7 Mediciones)" dark id="comparison">
+          {/* Big KPI - 7 columns */}
+          <div className="grid grid-cols-2 lg:grid-cols-7 gap-4 mb-10">
             <div className="bg-navy-card rounded-xl p-5 text-center">
               <div className="text-gray-400 text-xs uppercase tracking-wide mb-1">Mar 11 (Baseline)</div>
               <div className="text-3xl font-extrabold text-coral">39.7%</div>
@@ -10968,9 +10558,14 @@
               <div className="text-3xl font-extrabold text-green-400">{avgMay13}%</div>
               <div className="text-gray-500 text-xs mt-1">23 agentes</div>
             </div>
-            <div className="bg-navy-card rounded-xl p-5 text-center" style={{border: '1px solid rgba(34,197,94,0.5)'}}>
-              <div className="text-gray-400 text-xs uppercase tracking-wide mb-1">Jun 2 NUEVO</div>
+            <div className="bg-navy-card rounded-xl p-5 text-center">
+              <div className="text-gray-400 text-xs uppercase tracking-wide mb-1">Jun 2</div>
               <div className="text-3xl font-extrabold text-green-400">{avgJun2}%</div>
+              <div className="text-gray-500 text-xs mt-1">21 agentes</div>
+            </div>
+            <div className="bg-navy-card rounded-xl p-5 text-center" style={{border: '1px solid rgba(34,197,94,0.5)'}}>
+              <div className="text-gray-400 text-xs uppercase tracking-wide mb-1">Jun 23 NUEVO</div>
+              <div className="text-3xl font-extrabold text-green-400">{avgJun23}%</div>
               <div className="text-gray-500 text-xs mt-1">21 agentes</div>
             </div>
           </div>
@@ -10990,7 +10585,7 @@
             <div className="flex flex-wrap gap-x-4 gap-y-1.5 mb-4 text-[11px] text-gray-400">
               {[
                 { d: 'Mar 11', c: '#E8505B' }, { d: 'Mar 30', c: '#2EC4B6' }, { d: 'May 4 AM', c: '#F97316' },
-                { d: 'May 4 PM', c: '#22C55E' }, { d: 'May 13', c: '#4ADE80' }, { d: 'Jun 2', c: '#86EFAC' },
+                { d: 'May 4 PM', c: '#22C55E' }, { d: 'May 13', c: '#4ADE80' }, { d: 'Jun 2', c: '#86EFAC' }, { d: 'Jun 23', c: '#BBF7D0' },
               ].map(p => (
                 <span key={p.d} className="inline-flex items-center gap-1.5">
                   <span className="w-2.5 h-2.5 rounded-full" style={{ background: p.c }}></span>{p.d}
@@ -11003,15 +10598,15 @@
             <div className="grid items-center gap-3 mb-3 pb-2 border-b border-navy-light/50" style={{gridTemplateColumns: '170px 64px 1fr 70px 78px'}}>
               <div className="text-xs text-gray-500 uppercase tracking-wide">Agente</div>
               <div className="text-xs text-gray-500 uppercase tracking-wide text-right">1ª medición</div>
-              <div className="text-xs text-gray-500 uppercase tracking-wide text-center">Trayectoria de frustración (Mar 11 → Jun 2)</div>
-              <div className="text-xs text-gray-500 uppercase tracking-wide text-right">Jun 2</div>
+              <div className="text-xs text-gray-500 uppercase tracking-wide text-center">Trayectoria de frustración (Mar 11 → Jun 23)</div>
+              <div className="text-xs text-gray-500 uppercase tracking-wide text-right">Jun 23</div>
               <div className="text-xs text-gray-500 uppercase tracking-wide text-right">Cambio</div>
             </div>
 
             <div className="space-y-2">
               {agentRanking
-                .filter(a => a.rate !== null || a.mar30 !== null || a.may4 !== null || a.may4pm !== null || a.may13 !== null || a.jun2 !== null)
-                .sort((a, b) => (b.jun2 ?? b.may13 ?? b.may4pm ?? b.may4 ?? b.mar30 ?? b.rate ?? -1) - (a.jun2 ?? a.may13 ?? a.may4pm ?? a.may4 ?? a.mar30 ?? a.rate ?? -1))
+                .filter(a => a.rate !== null || a.mar30 !== null || a.may4 !== null || a.may4pm !== null || a.may13 !== null || a.jun2 !== null || a.jun23 !== null)
+                .sort((a, b) => (b.jun23 ?? b.jun2 ?? b.may13 ?? b.may4pm ?? b.may4 ?? b.mar30 ?? b.rate ?? -1) - (a.jun23 ?? a.jun2 ?? a.may13 ?? a.may4pm ?? a.may4 ?? a.mar30 ?? a.rate ?? -1))
                 .map((a, i) => {
                   // Build sequence of points (with which measurement each is)
                   const points = [
@@ -11021,6 +10616,7 @@
                     { date: 'May 4 PM',   value: a.may4pm, color: '#22C55E' },
                     { date: 'May 13',     value: a.may13,  color: '#4ADE80' },
                     { date: 'Jun 2',      value: a.jun2,   color: '#86EFAC' },
+                    { date: 'Jun 23',     value: a.jun23,  color: '#BBF7D0' },
                   ];
                   const valid = points.map((p, idx) => ({...p, idx})).filter(p => p.value !== null && p.value !== undefined);
                   if (valid.length === 0) return null;
@@ -11031,9 +10627,9 @@
                   // 'mejoró' if delta < 0 (less frustration), 'empeoró' if positive
                   const deltaColor = delta === null ? '#94A3B8' : delta < -3 ? '#22C55E' : delta > 3 ? '#E8505B' : '#94A3B8';
                   // Convert frustration % to y-axis (inverted: 0 at top means 100% frustration)
-                  // 6 slots now (indices 0-5) — divide by 5 in xFor
+                  // 7 slots now (indices 0-6) — divide by 6 in xFor
                   const W = 600, H = 80, PAD = 16;
-                  const xFor = (slot) => PAD + (slot / 5) * (W - PAD * 2);
+                  const xFor = (slot) => PAD + (slot / 6) * (W - PAD * 2);
                   const yFor = (val) => PAD + ((100 - val) / 100) * (H - PAD * 2);
 
                   // Build path
@@ -11148,7 +10744,7 @@
       }, []);
 
       // Frustración del equipo (último vs baseline)
-      const frustNow = 16;
+      const frustNow = 15;
       const frustBase = 39.7;
       const frustDelta = (frustBase - frustNow).toFixed(1);
 
@@ -12225,8 +11821,8 @@
       const getRateBg = (rate) => rate === null ? '#F1F5F9' : rate >= 50 ? '#FEE2E2' : rate >= 35 ? '#FEF3C7' : rate >= 20 ? '#FEF9C3' : '#D1FAE5';
       // Sort by latest available rate
       const sorted = [...agentRanking].sort((a, b) => {
-        const aRate = a.jun2 ?? a.may13 ?? a.may4pm ?? a.may4 ?? a.mar30 ?? a.rate ?? 0;
-        const bRate = b.jun2 ?? b.may13 ?? b.may4pm ?? b.may4 ?? b.mar30 ?? b.rate ?? 0;
+        const aRate = a.jun23 ?? a.jun2 ?? a.may13 ?? a.may4pm ?? a.may4 ?? a.mar30 ?? a.rate ?? 0;
+        const bRate = b.jun23 ?? b.jun2 ?? b.may13 ?? b.may4pm ?? b.may4 ?? b.mar30 ?? b.rate ?? 0;
         return bRate - aRate;
       });
       const renderCell = (val) => {
@@ -12234,7 +11830,7 @@
         return <span className="inline-block text-xs font-bold px-2 py-0.5 rounded-full" style={{color: getRateColor(val), backgroundColor: getRateBg(val)}}>{val}%</span>;
       };
       return (
-        <Section title="Ranking de Agentes CS — 6 Mediciones" id="agents">
+        <Section title="Ranking de Agentes CS — 7 Mediciones" id="agents">
           {/* Methodology explanation */}
           <div className="bg-white rounded-xl p-5 mb-5 shadow-sm border-l-4 border-coral">
             <h3 className="text-base font-bold text-navy-dark mb-2">¿Cómo se mide la frustración?</h3>
@@ -12291,7 +11887,8 @@
                     <th className="py-3 px-3 text-center text-xs font-semibold">May 4 AM</th>
                     <th className="py-3 px-3 text-center text-xs font-semibold">May 4 PM</th>
                     <th className="py-3 px-3 text-center text-xs font-semibold">May 13</th>
-                    <th className="py-3 px-3 text-center text-xs font-semibold bg-teal/20">Jun 2</th>
+                    <th className="py-3 px-3 text-center text-xs font-semibold">Jun 2</th>
+                    <th className="py-3 px-3 text-center text-xs font-semibold bg-teal/20">Jun 23</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -12307,7 +11904,8 @@
                       <td className="py-3 px-3 text-center">{renderCell(a.may4)}</td>
                       <td className="py-3 px-3 text-center">{renderCell(a.may4pm)}</td>
                       <td className="py-3 px-3 text-center">{renderCell(a.may13)}</td>
-                      <td className="py-3 px-3 text-center bg-teal/5">{renderCell(a.jun2)}</td>
+                      <td className="py-3 px-3 text-center">{renderCell(a.jun2)}</td>
+                      <td className="py-3 px-3 text-center bg-teal/5">{renderCell(a.jun23)}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -12327,7 +11925,7 @@
         <Section title="Evolución de Problemas en el Tiempo" id="evolution">
           <div className="bg-white rounded-xl p-4 mb-8 border border-navy/10">
             <p className="text-xs text-gray-600">
-              📅 Comparativa entre Mar 11 (baseline) y Jun 2 (corrida actual con 21 agentes · 200 conversaciones analizadas). Detecta qué se redujo, qué desapareció, y qué problemas nuevos surgieron.
+              📅 Comparativa entre Mar 11 (baseline) y Jun 23 (corrida actual con 21 agentes · 200 conversaciones analizadas). Detecta qué se redujo, qué desapareció, y qué problemas nuevos surgieron.
             </p>
           </div>
 
@@ -12508,7 +12106,7 @@
         <footer className="bg-navy-dark py-8 border-t border-navy-light">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 text-center">
             <p className="text-gray-500 text-sm">Morada Uno — Análisis de Conversaciones WhatsApp — {PERIOD}</p>
-            <p className="text-gray-600 text-xs mt-1">6 mediciones: Mar 11 (140 convs) · Mar 30 (82 convs) · May 4 AM (75 convs) · May 4 PM (87 convs) · May 13 (200 convs · 23 agentes) · Jun 2 (200 convs · 21 agentes)</p>
+            <p className="text-gray-600 text-xs mt-1">7 mediciones: Mar 11 · Mar 30 · May 4 AM · May 4 PM · May 13 · Jun 2 · Jun 23 (200 convs · 21 agentes)</p>
           </div>
         </footer>
       );
@@ -12533,7 +12131,7 @@
       let trendNote = '';
 
       // === Frustration analysis ===
-      const fAll = [ranking?.rate, ranking?.mar30, ranking?.may4, ranking?.may4pm, ranking?.may13, ranking?.jun2].filter(v => v !== null && v !== undefined);
+      const fAll = [ranking?.rate, ranking?.mar30, ranking?.may4, ranking?.may4pm, ranking?.may13, ranking?.jun2, ranking?.jun23].filter(v => v !== null && v !== undefined);
       const latest = fAll[fAll.length - 1];
       const earliest = fAll[0];
       const frustHistory = fAll;
@@ -12680,7 +12278,7 @@
       const resolution = resolutionData.find(r => r.agent === agentName);
 
       // Frustration: latest available
-      const fAll = ranking ? [ranking.rate, ranking.mar30, ranking.may4, ranking.may4pm, ranking.may13, ranking.jun2].filter(v => v !== null && v !== undefined) : [];
+      const fAll = ranking ? [ranking.rate, ranking.mar30, ranking.may4, ranking.may4pm, ranking.may13, ranking.jun2, ranking.jun23].filter(v => v !== null && v !== undefined) : [];
       const frustration = fAll.length ? fAll[fAll.length - 1] : null;
 
       // Calls: aggregate from live data, matching agent first name to instance
@@ -12859,6 +12457,7 @@
         responseTimes.find(r => r.agent === a.name || r.agent === a.name.replace(/^Whats App /, ''))
         || writingQuality.find(w => w.agent === a.name)
         || resolutionData.find(r => r.agent === a.name)
+        || a.jun23 !== null
         || a.jun2 !== null
         || a.may13 !== null
         || a.may4pm !== null
@@ -13084,7 +12683,7 @@
 
       // Build per-agent points: only agents with frustration data
       const data = agentRanking.map(a => {
-        const fAll = [a.rate, a.mar30, a.may4, a.may4pm, a.may13, a.jun2].filter(v => v !== null && v !== undefined);
+        const fAll = [a.rate, a.mar30, a.may4, a.may4pm, a.may13, a.jun2, a.jun23].filter(v => v !== null && v !== undefined);
         const frust = fAll.length ? fAll[fAll.length - 1] : null;
         const resp = responseTimes.find(r => r.agent === a.name)?.median ?? null;
         const writingObj = writingQuality.find(w => w.agent === a.name);
