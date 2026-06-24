@@ -11929,6 +11929,57 @@ const volumeData = {
   }
 };
 
+// Monthly team trend for response time + writing (compute_metrics by_month)
+const metricsMonthly = [{
+  "month": "2026-01",
+  "response_median_min": 4.6,
+  "response_under5_pct": 50,
+  "response_pairs": 90,
+  "writing_score": 29.1,
+  "writing_grade": 65,
+  "broker_msgs": 201
+}, {
+  "month": "2026-02",
+  "response_median_min": 6.3,
+  "response_under5_pct": 46,
+  "response_pairs": 144,
+  "writing_score": 24.5,
+  "writing_grade": 71,
+  "broker_msgs": 293
+}, {
+  "month": "2026-03",
+  "response_median_min": 6.2,
+  "response_under5_pct": 45,
+  "response_pairs": 211,
+  "writing_score": 24.1,
+  "writing_grade": 71,
+  "broker_msgs": 810
+}, {
+  "month": "2026-04",
+  "response_median_min": 11.1,
+  "response_under5_pct": 26,
+  "response_pairs": 76,
+  "writing_score": 13.0,
+  "writing_grade": 84,
+  "broker_msgs": 167
+}, {
+  "month": "2026-05",
+  "response_median_min": 6.6,
+  "response_under5_pct": 44,
+  "response_pairs": 1414,
+  "writing_score": 22.0,
+  "writing_grade": 74,
+  "broker_msgs": 2612
+}, {
+  "month": "2026-06",
+  "response_median_min": 6.3,
+  "response_under5_pct": 45,
+  "response_pairs": 5297,
+  "writing_score": 17.0,
+  "writing_grade": 80,
+  "broker_msgs": 10377
+}];
+
 // ─── COMPONENTS ───
 function Header({
   onToggleNav,
@@ -12814,6 +12865,12 @@ function ExecutiveSummary({
   const chm = contractHandling.by_month || [];
   const chLast = chm[chm.length - 1],
     chPrev = chm[chm.length - 2];
+  const mm = typeof metricsMonthly !== 'undefined' && metricsMonthly.length ? metricsMonthly : [];
+  const mLast = mm[mm.length - 1],
+    mPrev = mm[mm.length - 2];
+  const mn2 = k => k ? new Date(k.month + '-01T00:00:00').toLocaleDateString('es-MX', {
+    month: 'short'
+  }) : '';
   // status: green = mejoró, yellow = se mantuvo / sin comparación, red = empeoró
   const dirStatus = (curr, prev, lowerBetter, eps = 1) => {
     if (prev == null || curr == null) return 'yellow';
@@ -12872,10 +12929,11 @@ function ExecutiveSummary({
     key: 'response',
     label: 'Respuesta (mediana)',
     value: teamMedian.toFixed(1) + ' min',
-    status: 'yellow',
+    status: mPrev ? dirStatus(mLast.response_median_min, mPrev.response_median_min, true) : 'yellow',
     trend: /*#__PURE__*/React.createElement(Trend, {
-      dir: "flat",
-      txt: "horario laboral"
+      dir: mPrev ? '' : 'flat',
+      good: mPrev ? mLast.response_median_min <= mPrev.response_median_min : false,
+      txt: mPrev ? `${mLast.response_median_min <= mPrev.response_median_min ? '↓' : '↑'} ${mLast.response_median_min}min vs ${mn2(mPrev)} ${mPrev.response_median_min}min` : 'horario laboral'
     })
   }, {
     key: 'contracts',
@@ -12890,10 +12948,11 @@ function ExecutiveSummary({
     key: 'writing',
     label: 'Escritura',
     value: writeAvg + '/100',
-    status: 'yellow',
+    status: mPrev ? dirStatus(mLast.writing_grade, mPrev.writing_grade, false) : 'yellow',
     trend: /*#__PURE__*/React.createElement(Trend, {
-      dir: "flat",
-      txt: "promedio equipo"
+      dir: mPrev ? '' : 'flat',
+      good: mPrev ? mLast.writing_grade >= mPrev.writing_grade : false,
+      txt: mPrev ? `${mLast.writing_grade >= mPrev.writing_grade ? '↑' : '↓'} ${mLast.writing_grade}/100 vs ${mn2(mPrev)} ${mPrev.writing_grade}/100` : 'promedio equipo'
     })
   }];
   return /*#__PURE__*/React.createElement(Section, {
@@ -13569,6 +13628,65 @@ function ResolutionSection() {
     className: "pt-1 text-gray-400"
   }, "Mensajes y duraci\xF3n promedio son se\xF1ales adicionales: muchos mensajes + larga duraci\xF3n pueden indicar conversaciones dif\xEDciles, no necesariamente mal manejo."))));
 }
+function MetricMonthlyTrend({
+  field,
+  unit,
+  label,
+  dark,
+  lowerBetter
+}) {
+  const mm = typeof metricsMonthly !== 'undefined' && metricsMonthly || [];
+  if (mm.length < 2) return null;
+  const mn = k => new Date(k + '-01T00:00:00').toLocaleDateString('es-MX', {
+    month: 'short',
+    year: 'numeric'
+  });
+  const last = mm[mm.length - 1][field],
+    prev = mm[mm.length - 2][field];
+  const improved = lowerBetter ? last < prev : last > prev;
+  return /*#__PURE__*/React.createElement("div", {
+    className: "rounded-xl p-5 mb-6",
+    style: {
+      background: dark ? '#1B2A4A' : '#FFFFFF',
+      borderLeft: '4px solid #2EC4B6',
+      boxShadow: dark ? 'none' : '0 1px 3px rgba(0,0,0,0.06)'
+    }
+  }, /*#__PURE__*/React.createElement("p", {
+    className: "text-sm font-bold mb-0.5",
+    style: {
+      color: dark ? '#FFFFFF' : '#1B2A4A'
+    }
+  }, "Tendencia por mes (equipo)"), /*#__PURE__*/React.createElement("p", {
+    className: "text-xs mb-3",
+    style: {
+      color: dark ? '#94A3B8' : '#6B7280'
+    }
+  }, label, " por mes. Se va llenando cada corrida."), /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center gap-2 flex-wrap"
+  }, mm.map((m, i) => /*#__PURE__*/React.createElement(React.Fragment, {
+    key: m.month
+  }, i > 0 && /*#__PURE__*/React.createElement("span", {
+    style: {
+      color: '#94A3B8'
+    }
+  }, "\u2192"), /*#__PURE__*/React.createElement("div", {
+    className: "rounded-lg px-3 py-2",
+    style: {
+      background: dark ? 'rgba(255,255,255,0.06)' : '#F8FAFC',
+      border: dark ? '1px solid rgba(255,255,255,0.1)' : '1px solid #E2E8F0'
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "text-[11px]",
+    style: {
+      color: dark ? '#94A3B8' : '#6B7280'
+    }
+  }, mn(m.month)), /*#__PURE__*/React.createElement("div", {
+    className: "text-sm font-bold",
+    style: {
+      color: i === mm.length - 1 ? improved ? '#1D9E75' : '#E8505B' : dark ? '#E5E7EB' : '#1B2A4A'
+    }
+  }, m[field], unit))))));
+}
 function WritingQualitySection() {
   // Convert internal "errors score" (lower is better) to "calificación 0-100" (higher is better)
   const toGrade = s => Math.max(0, Math.min(100, Math.round(100 - s * 1.2)));
@@ -13584,7 +13702,12 @@ function WritingQualitySection() {
   return /*#__PURE__*/React.createElement(Section, {
     title: "Calidad de Escritura y Profesionalismo",
     id: "writing"
-  }, /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement(MetricMonthlyTrend, {
+    field: "writing_grade",
+    unit: "/100",
+    label: "Calidad de escritura (0\u2013100, m\xE1s alto = mejor)",
+    lowerBetter: false
+  }), /*#__PURE__*/React.createElement("div", {
     className: "bg-white rounded-xl p-4 mb-6 border border-navy/10"
   }, /*#__PURE__*/React.createElement("p", {
     className: "text-xs text-gray-600"
@@ -13746,7 +13869,13 @@ function ResponseTimeSection() {
     title: "Tiempo de Respuesta a Mensajes",
     dark: true,
     id: "response-time"
-  }, /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement(MetricMonthlyTrend, {
+    field: "response_median_min",
+    unit: " min",
+    label: "Mediana de respuesta en horario laboral (menos = mejor)",
+    dark: true,
+    lowerBetter: true
+  }), /*#__PURE__*/React.createElement("div", {
     className: "grid grid-cols-1 sm:grid-cols-3 gap-5 mb-8"
   }, /*#__PURE__*/React.createElement("div", {
     className: "bg-navy-card rounded-xl p-6 text-center"
