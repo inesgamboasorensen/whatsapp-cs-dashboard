@@ -12506,10 +12506,11 @@ function FocusScorecard({
   const wq = {};
   writingQuality.forEach(w => wq[w.agent] = w.score);
   const names = new Set([...Object.keys(frust), ...Object.keys(res), ...Object.keys(ch), ...Object.keys(resp)]);
-  const rows = [];
+  const allRows = [];
   names.forEach(a => {
     const flags = [];
     let score = 0;
+    let serious = false;
     const f = frust[a];
     if (f != null && f >= 25) {
       flags.push({
@@ -12518,6 +12519,7 @@ function FocusScorecard({
         hi: true
       });
       score += 2;
+      serious = true;
     }
     const r = res[a];
     if (r && r.unresolvedPct >= 25) {
@@ -12527,6 +12529,7 @@ function FocusScorecard({
         hi: true
       });
       score += 2;
+      serious = true;
     }
     const c = ch[a];
     if (c && c.problemRate >= 40 && c.recoveryPct != null && c.recoveryPct < 50) {
@@ -12536,6 +12539,7 @@ function FocusScorecard({
         hi: true
       });
       score += 3;
+      serious = true;
     } else if (c && c.problemRate >= 45) {
       flags.push({
         t: `Contratos ${c.problemRate}% c/problema`,
@@ -12562,28 +12566,26 @@ function FocusScorecard({
       });
       score += 1;
     }
-    if (score > 0) rows.push({
+    if (score > 0) allRows.push({
       agent: a,
       score,
-      flags
+      flags,
+      serious
     });
   });
-  rows.sort((a, b) => b.score - a.score || b.flags.length - a.flags.length);
+  // LEFT = solo problemas SERIOS (frustración/sin resolver/contratos crítico). Disjoint del lado derecho.
+  const rows = allRows.filter(r => r.serious).sort((a, b) => b.score - a.score || b.flags.length - a.flags.length);
+  const seriousSet = new Set(rows.map(r => r.agent));
   const fTier = s => s >= 4 ? {
     l: 'Crítico',
     c: '#991B1B',
     bg: '#FEE2E2',
     bar: '#E8505B'
-  } : s >= 2 ? {
+  } : {
     l: 'Alto',
     c: '#92400E',
     bg: '#FEF3C7',
     bar: '#F97316'
-  } : {
-    l: 'Vigilar',
-    c: '#475569',
-    bg: '#F1F5F9',
-    bar: '#94A3B8'
   };
 
   // TOP PERFORMERS (recognition) — strong across positive signals
@@ -12638,7 +12640,8 @@ function FocusScorecard({
       });
       score += 1;
     }
-    if (score >= 2) top.push({
+    // Solo top si NO tiene un problema serio (no puede estar en ambos lados) y destaca claramente.
+    if (score >= 3 && !seriousSet.has(a)) top.push({
       agent: a,
       score,
       flags
@@ -12756,7 +12759,7 @@ function FocusScorecard({
     }
   }, /*#__PURE__*/React.createElement("li", null, "\u2022 Menci\xF3n por nombre en la junta semanal con el dato concreto (ej. \"Kate, 100% de recuperaci\xF3n en contratos\")."), /*#__PURE__*/React.createElement("li", null, "\u2022 Mensaje directo del l\xEDder agradeciendo el resultado espec\xEDfico."), /*#__PURE__*/React.createElement("li", null, "\u2022 Pedirles compartir su pr\xE1ctica: un mini-tip o mentor\xEDa a quienes est\xE1n en \"D\xF3nde enfocar\"."), /*#__PURE__*/React.createElement("li", null, "\u2022 Considerarlos para reconocimiento formal o bono del periodo."))))), /*#__PURE__*/React.createElement("p", {
     className: "text-xs text-gray-400 mt-3"
-  }, "Foco: frustraci\xF3n \u226525% \xB7 sin resolver \u226525% \xB7 contratos CR\xCDTICO \u226540%/rec<50% \xB7 respuesta \u226514min \xB7 escritura \u226464/100. Top: frustraci\xF3n \u22648% \xB7 resoluci\xF3n \u226575% \xB7 recuperaci\xF3n \u226580% \xB7 respuesta \u22645min \xB7 escritura \u226587/100. Click en una etiqueta para el detalle."));
+  }, "Cada agente aparece en ", /*#__PURE__*/React.createElement("strong", null, "un solo lado"), ": si tiene un problema serio (frustraci\xF3n \u226525% \xB7 sin resolver \u226525% \xB7 contratos CR\xCDTICO \u226540%/rec<50%) va a la izquierda; los dem\xE1s solo entran a la derecha si destacan en \u22652 se\xF1ales positivas (frustraci\xF3n \u22648% \xB7 resoluci\xF3n \u226575% \xB7 recuperaci\xF3n \u226580% \xB7 respuesta \u22645min \xB7 escritura \u226587/100). Click en una etiqueta para el detalle."));
 }
 function ExecutiveSummary({
   onJump
