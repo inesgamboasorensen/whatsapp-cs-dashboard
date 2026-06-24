@@ -12569,7 +12569,7 @@ function FocusScorecard({
     });
   });
   rows.sort((a, b) => b.score - a.score || b.flags.length - a.flags.length);
-  const tier = s => s >= 4 ? {
+  const fTier = s => s >= 4 ? {
     l: 'Crítico',
     c: '#991B1B',
     bg: '#FEE2E2',
@@ -12585,47 +12585,178 @@ function FocusScorecard({
     bg: '#F1F5F9',
     bar: '#94A3B8'
   };
-  return /*#__PURE__*/React.createElement(Section, {
-    title: "D\xF3nde Enfocar",
-    id: "focus"
-  }, /*#__PURE__*/React.createElement("p", {
-    className: "text-sm text-gray-600 mb-5 max-w-3xl"
-  }, "Prioridad por agente combinando todas las se\xF1ales (frustraci\xF3n, sin resolver, manejo de contratos, tiempo de respuesta, escritura). M\xE1s arriba = m\xE1s urgente. Es apoyo y coaching, no calificaci\xF3n \u2014 varias se\xF1ales reflejan fallas del sistema que pasan por ese agente."), /*#__PURE__*/React.createElement("div", {
-    className: "bg-white rounded-2xl shadow-sm overflow-hidden"
-  }, rows.map((r, i) => {
-    const t = tier(r.score);
+
+  // TOP PERFORMERS (recognition) — strong across positive signals
+  const grade = w => Math.max(0, Math.round(100 - w * 1.2));
+  const top = [];
+  names.forEach(a => {
+    const flags = [];
+    let score = 0;
+    const f = frust[a];
+    if (f != null && f <= 8) {
+      flags.push({
+        t: `Frustración baja ${f}%`,
+        tab: 'agents'
+      });
+      score += 2;
+    }
+    const r = res[a];
+    if (r && r.resolvedPct >= 75) {
+      flags.push({
+        t: `Resolución ${r.resolvedPct}%`,
+        tab: 'resolution'
+      });
+      score += 2;
+    }
+    const c = ch[a];
+    if (c && c.recoveryPct != null && c.recoveryPct >= 80) {
+      flags.push({
+        t: `Recuperación ${c.recoveryPct}%`,
+        tab: 'contracts'
+      });
+      score += 2;
+    } else if (c && c.problemRate <= 20) {
+      flags.push({
+        t: `Contratos ${c.problemRate}% (bajo)`,
+        tab: 'contracts'
+      });
+      score += 1;
+    }
+    const rp = resp[a];
+    if (rp != null && rp <= 5) {
+      flags.push({
+        t: `Respuesta ${rp} min`,
+        tab: 'response'
+      });
+      score += 1;
+    }
+    const w = wq[a];
+    if (w != null && grade(w) >= 87) {
+      flags.push({
+        t: `Escritura ${grade(w)}/100`,
+        tab: 'writing'
+      });
+      score += 1;
+    }
+    if (score >= 2) top.push({
+      agent: a,
+      score,
+      flags
+    });
+  });
+  top.sort((a, b) => b.score - a.score || b.flags.length - a.flags.length);
+  const tTier = s => s >= 4 ? {
+    l: 'Estrella',
+    c: '#0F6E56',
+    bg: '#D1FAE5',
+    bar: '#1D9E75'
+  } : {
+    l: 'Sólido',
+    c: '#0F6E56',
+    bg: '#E1F5EE',
+    bar: '#5DCAA5'
+  };
+  const Row = ({
+    r,
+    i,
+    tierFn,
+    chipC,
+    chipBg,
+    hiC,
+    hiBg
+  }) => {
+    const t = tierFn(r.score);
     return /*#__PURE__*/React.createElement("div", {
-      key: r.agent,
-      className: `flex items-center gap-3 px-4 py-3 ${i > 0 ? 'border-t border-gray-100' : ''}`,
+      className: `flex items-start gap-2.5 px-4 py-2.5 ${i > 0 ? 'border-t border-gray-100' : ''}`,
       style: {
         borderLeft: `4px solid ${t.bar}`
       }
     }, /*#__PURE__*/React.createElement("span", {
-      className: "text-sm font-mono text-gray-400 w-5 shrink-0"
+      className: "text-xs font-mono text-gray-400 w-4 shrink-0 mt-0.5"
     }, i + 1), /*#__PURE__*/React.createElement("div", {
-      className: "w-40 shrink-0"
+      className: "min-w-0"
     }, /*#__PURE__*/React.createElement("div", {
-      className: "text-sm font-semibold text-navy-dark truncate"
+      className: "flex items-center gap-2 flex-wrap"
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "text-sm font-semibold text-navy-dark"
     }, r.agent), /*#__PURE__*/React.createElement("span", {
-      className: "inline-block text-[10px] font-bold px-1.5 py-0.5 rounded mt-0.5",
+      className: "text-[10px] font-bold px-1.5 py-0.5 rounded",
       style: {
         color: t.c,
         background: t.bg
       }
     }, t.l)), /*#__PURE__*/React.createElement("div", {
-      className: "flex flex-wrap gap-1.5"
+      className: "flex flex-wrap gap-1.5 mt-1"
     }, r.flags.map((fl, j) => /*#__PURE__*/React.createElement("button", {
       key: j,
       onClick: () => onJump && onJump(fl.tab),
-      className: "text-[11px] font-medium px-2 py-1 rounded-md transition-transform hover:scale-105",
+      className: "text-[11px] font-medium px-1.5 py-0.5 rounded transition-transform hover:scale-105",
       style: {
-        color: fl.hi ? '#991B1B' : '#92400E',
-        background: fl.hi ? '#FEE2E2' : '#FEF3C7'
+        color: fl.hi ? hiC : chipC,
+        background: fl.hi ? hiBg : chipBg
       }
-    }, fl.t))));
-  })), /*#__PURE__*/React.createElement("p", {
+    }, fl.t)))));
+  };
+  return /*#__PURE__*/React.createElement(Section, {
+    title: "D\xF3nde Enfocar y a Qui\xE9n Reconocer",
+    id: "focus"
+  }, /*#__PURE__*/React.createElement("p", {
+    className: "text-sm text-gray-600 mb-5 max-w-3xl"
+  }, "Prioridad por agente combinando todas las se\xF1ales (frustraci\xF3n, sin resolver, contratos, respuesta, escritura). Es apoyo y reconocimiento, no calificaci\xF3n \u2014 varias se\xF1ales reflejan fallas del sistema que pasan por el agente."), /*#__PURE__*/React.createElement("div", {
+    className: "grid grid-cols-1 lg:grid-cols-2 gap-5"
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("h3", {
+    className: "text-sm font-bold text-navy-dark mb-2"
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      color: '#E8505B'
+    }
+  }, "\u25CF"), " D\xF3nde enfocar \u2014 necesitan apoyo"), /*#__PURE__*/React.createElement("div", {
+    className: "bg-white rounded-2xl shadow-sm overflow-hidden"
+  }, rows.map((r, i) => /*#__PURE__*/React.createElement(Row, {
+    key: r.agent,
+    r: r,
+    i: i,
+    tierFn: fTier,
+    chipC: "#92400E",
+    chipBg: "#FEF3C7",
+    hiC: "#991B1B",
+    hiBg: "#FEE2E2"
+  })))), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("h3", {
+    className: "text-sm font-bold text-navy-dark mb-2"
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      color: '#1D9E75'
+    }
+  }, "\u25CF"), " Reconocer su esfuerzo \u2014 top performers"), /*#__PURE__*/React.createElement("div", {
+    className: "bg-white rounded-2xl shadow-sm overflow-hidden"
+  }, top.map((r, i) => /*#__PURE__*/React.createElement(Row, {
+    key: r.agent,
+    r: r,
+    i: i,
+    tierFn: tTier,
+    chipC: "#0F6E56",
+    chipBg: "#E1F5EE",
+    hiC: "#0F6E56",
+    hiBg: "#D1FAE5"
+  }))), /*#__PURE__*/React.createElement("div", {
+    className: "mt-3 rounded-xl p-4",
+    style: {
+      background: '#E1F5EE',
+      border: '1px solid #9FE1CB'
+    }
+  }, /*#__PURE__*/React.createElement("p", {
+    className: "text-xs font-bold mb-1.5",
+    style: {
+      color: '#0F6E56'
+    }
+  }, "C\xF3mo reconocer su esfuerzo"), /*#__PURE__*/React.createElement("ul", {
+    className: "text-xs space-y-1",
+    style: {
+      color: '#085041'
+    }
+  }, /*#__PURE__*/React.createElement("li", null, "\u2022 Menci\xF3n por nombre en la junta semanal con el dato concreto (ej. \"Kate, 100% de recuperaci\xF3n en contratos\")."), /*#__PURE__*/React.createElement("li", null, "\u2022 Mensaje directo del l\xEDder agradeciendo el resultado espec\xEDfico."), /*#__PURE__*/React.createElement("li", null, "\u2022 Pedirles compartir su pr\xE1ctica: un mini-tip o mentor\xEDa a quienes est\xE1n en \"D\xF3nde enfocar\"."), /*#__PURE__*/React.createElement("li", null, "\u2022 Considerarlos para reconocimiento formal o bono del periodo."))))), /*#__PURE__*/React.createElement("p", {
     className: "text-xs text-gray-400 mt-3"
-  }, "Umbrales: frustraci\xF3n \u226525% \xB7 sin resolver \u226525% \xB7 contratos CR\xCDTICO = \u226540% con problema y <50% recuperaci\xF3n \xB7 respuesta \u226514 min \xB7 escritura \u226464/100. Click en una etiqueta para ir a su detalle. Muestra ~18 convs/agente."));
+  }, "Foco: frustraci\xF3n \u226525% \xB7 sin resolver \u226525% \xB7 contratos CR\xCDTICO \u226540%/rec<50% \xB7 respuesta \u226514min \xB7 escritura \u226464/100. Top: frustraci\xF3n \u22648% \xB7 resoluci\xF3n \u226575% \xB7 recuperaci\xF3n \u226580% \xB7 respuesta \u22645min \xB7 escritura \u226587/100. Click en una etiqueta para el detalle."));
 }
 function ExecutiveSummary({
   onJump
