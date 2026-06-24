@@ -7488,7 +7488,7 @@ const activityData = {
 
 // Manejo de Contratos — per-agent contract-change handling (deeper pull)
 const contractHandling = {
-  "generated_at": "2026-06-02",
+  "generated_at": "2026-06-23",
   "window": "deeper pull (≤70 chats/agente)",
   "note": "Denominador = conversaciones donde el cliente pidió un cambio al contrato. Causa raíz suele ser el paso legal/contratos, no el asesor.",
   "team": {
@@ -7497,6 +7497,17 @@ const contractHandling = {
     "problemRate": 35,
     "recoveryPct": 54
   },
+  "by_month": [{
+    "month": "2026-05",
+    "contractConvs": 64,
+    "problemRate": 30,
+    "recoveryPct": 63
+  }, {
+    "month": "2026-06",
+    "contractConvs": 381,
+    "problemRate": 35,
+    "recoveryPct": 54
+  }],
   "agents": [{
     "agent": "Jenifer",
     "inRoster": true,
@@ -16174,7 +16185,56 @@ function ContractHandlingSection() {
     className: "text-3xl font-extrabold text-coral"
   }, d.team.problems), /*#__PURE__*/React.createElement("div", {
     className: "text-xs text-gray-500 mt-1"
-  }, "Cambios mal aplicados / no aplicados / demorados"))), /*#__PURE__*/React.createElement("div", {
+  }, "Cambios mal aplicados / no aplicados / demorados"))), d.by_month && d.by_month.length > 1 && /*#__PURE__*/React.createElement("div", {
+    className: "bg-white rounded-xl p-5 mb-6 shadow-sm",
+    style: {
+      borderLeft: '4px solid #1B2A4A'
+    }
+  }, /*#__PURE__*/React.createElement("p", {
+    className: "text-sm font-bold text-navy-dark mb-0.5"
+  }, "Tendencia por mes (equipo)"), /*#__PURE__*/React.createElement("p", {
+    className: "text-xs text-gray-500 mb-3"
+  }, "% de contratos con problema y % de recuperaci\xF3n, por mes. Se va llenando cada corrida."), /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center gap-2 flex-wrap"
+  }, d.by_month.map((m, i) => {
+    const mn = new Date(m.month + '-01T00:00:00').toLocaleDateString('es-MX', {
+      month: 'short',
+      year: 'numeric'
+    });
+    return /*#__PURE__*/React.createElement(React.Fragment, {
+      key: m.month
+    }, i > 0 && /*#__PURE__*/React.createElement("span", {
+      className: "text-gray-300"
+    }, "\u2192"), /*#__PURE__*/React.createElement("div", {
+      className: "rounded-lg px-3 py-2",
+      style: {
+        background: '#F8FAFC',
+        border: '1px solid #E2E8F0'
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "text-[11px] text-gray-500"
+    }, mn, " \xB7 ", m.contractConvs, " convs"), /*#__PURE__*/React.createElement("div", {
+      className: "flex items-baseline gap-3 mt-0.5"
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "text-sm"
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "font-bold",
+      style: {
+        color: '#E8505B'
+      }
+    }, m.problemRate, "%"), " ", /*#__PURE__*/React.createElement("span", {
+      className: "text-[10px] text-gray-400"
+    }, "problema")), /*#__PURE__*/React.createElement("span", {
+      className: "text-sm"
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "font-bold",
+      style: {
+        color: '#2EC4B6'
+      }
+    }, m.recoveryPct, "%"), " ", /*#__PURE__*/React.createElement("span", {
+      className: "text-[10px] text-gray-400"
+    }, "recuperaci\xF3n")))));
+  }))), /*#__PURE__*/React.createElement("div", {
     className: "flex flex-wrap items-center gap-3 mb-4"
   }, /*#__PURE__*/React.createElement("span", {
     className: "text-xs text-gray-500 uppercase tracking-wide"
