@@ -327,16 +327,29 @@ function boot(D) {
     })), children));
   }
   function ReminderCard() {
-    const lastRun = new Date(runsMeta.lastRunDate);
+    // El análisis corre solo el día 1 y el 15 de cada mes. Esta tarjeta ya no
+    // le recuerda a nadie que lo corra: dice cuándo toca la próxima.
+    const lastRun = new Date(runsMeta.lastRunDate + 'T12:00:00');
     const today = new Date();
     const daysSince = Math.floor((today - lastRun) / (1000 * 60 * 60 * 24));
-    const daysUntilNext = Math.max(0, 30 - daysSince);
-    const overdue = daysUntilNext === 0;
-    const soon = daysUntilNext <= 7 && !overdue;
-    const color = overdue ? '#E8505B' : soon ? '#F97316' : '#2EC4B6';
-    const bg = overdue ? 'from-coral/10 to-coral/5' : soon ? 'from-orange-100/60 to-orange-50/30' : 'from-teal/10 to-teal/5';
-    const icon = overdue ? '🚨' : soon ? '⏰' : '📅';
-    const message = overdue ? `Han pasado ${daysSince} días desde el último análisis. Hora de correr una nueva medición.` : soon ? `En ${daysUntilNext} días toca correr el próximo análisis.` : `Próximo análisis recomendado en ${daysUntilNext} días.`;
+    const proxima = (() => {
+      const d = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+      if (d.getDate() < 15) return new Date(d.getFullYear(), d.getMonth(), 15);
+      return new Date(d.getFullYear(), d.getMonth() + 1, 1);
+    })();
+    const daysUntilNext = Math.max(0, Math.ceil((proxima - today) / (1000 * 60 * 60 * 24)));
+    const fmt = f => f.toLocaleDateString('es-MX', {
+      day: 'numeric',
+      month: 'long'
+    });
+
+    // Si pasaron más de 16 días sin corrida, la automatización falló.
+    const overdue = daysSince > 16;
+    const soon = false;
+    const color = overdue ? '#E8505B' : '#2EC4B6';
+    const bg = overdue ? 'from-coral/10 to-coral/5' : 'from-teal/10 to-teal/5';
+    const icon = overdue ? '🚨' : '🤖';
+    const message = overdue ? `Han pasado ${daysSince} días sin medición nueva. La corrida automática debió ejecutarse — revisa GitHub Actions.` : `Próxima corrida automática: ${fmt(proxima)} (en ${daysUntilNext} ${daysUntilNext === 1 ? 'día' : 'días'}).`;
     return /*#__PURE__*/React.createElement("div", {
       className: `relative overflow-hidden rounded-2xl bg-gradient-to-br ${bg} border p-5 mb-6`,
       style: {
@@ -353,7 +366,7 @@ function boot(D) {
       style: {
         color
       }
-    }, "Recordatorio mensual"), /*#__PURE__*/React.createElement("p", {
+    }, overdue ? 'Revisar' : 'Corre automáticamente'), /*#__PURE__*/React.createElement("p", {
       className: "text-sm font-semibold text-navy-dark mt-0.5"
     }, message), /*#__PURE__*/React.createElement("p", {
       className: "text-xs text-gray-500 mt-1"
@@ -374,7 +387,7 @@ function boot(D) {
         backgroundColor: color,
         color: 'white'
       }
-    }, "Ver c\xF3mo correr \u2192")));
+    }, "Ver qu\xE9 revisar \u2192")));
   }
   function HowToRunCard() {
     return /*#__PURE__*/React.createElement("div", {
@@ -382,43 +395,45 @@ function boot(D) {
       className: "rounded-2xl bg-navy-dark p-6 mb-6 mt-6"
     }, /*#__PURE__*/React.createElement("p", {
       className: "text-teal text-xs font-bold uppercase tracking-wider mb-2"
-    }, "C\xF3mo correr el an\xE1lisis"), /*#__PURE__*/React.createElement("h3", {
-      className: "text-white text-xl font-bold mb-4"
-    }, "Para la pr\xF3xima medici\xF3n"), /*#__PURE__*/React.createElement("div", {
+    }, "C\xF3mo funciona"), /*#__PURE__*/React.createElement("h3", {
+      className: "text-white text-xl font-bold mb-1"
+    }, "El an\xE1lisis corre solo"), /*#__PURE__*/React.createElement("p", {
+      className: "text-gray-400 text-sm mb-4"
+    }, "Nadie tiene que correr nada. Estos son los dos procesos autom\xE1ticos y qu\xE9 hacer si algo falla."), /*#__PURE__*/React.createElement("div", {
       className: "space-y-3 text-sm text-gray-300"
     }, /*#__PURE__*/React.createElement("div", {
       className: "flex gap-3"
     }, /*#__PURE__*/React.createElement("span", {
       className: "text-teal font-mono shrink-0"
-    }, "01"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("strong", {
+    }, "\uD83D\uDCC5"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("strong", {
       className: "text-white"
-    }, "Verificar conexiones"), " \u2014 Abrir ", /*#__PURE__*/React.createElement("a", {
+    }, "Todos los d\xEDas, 6:00 AM"), " \u2014 Se descargan las conversaciones nuevas y se guardan en la base de datos. Ah\xED queda el hist\xF3rico completo, consultable para cualquier an\xE1lisis, no solo para este dashboard.")), /*#__PURE__*/React.createElement("div", {
+      className: "flex gap-3"
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "text-teal font-mono shrink-0"
+    }, "\uD83D\uDCCA"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("strong", {
+      className: "text-white"
+    }, "El d\xEDa 1 y el 15 de cada mes, 7:00 AM"), " \u2014 Claude lee las conversaciones de la quincena y las clasifica (frustraci\xF3n, resoluci\xF3n, contratos). El dashboard se actualiza solo con la medici\xF3n nueva.")), /*#__PURE__*/React.createElement("div", {
+      className: "flex gap-3"
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "text-teal font-mono shrink-0"
+    }, "\uD83D\uDD0D"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("strong", {
+      className: "text-white"
+    }, "Si una corrida falla"), " \u2014 Casi siempre es que hay instancias de WhatsApp desconectadas. \xC1brelas en el", ' ', /*#__PURE__*/React.createElement("a", {
       href: "http://165.232.159.10:8080/manager/",
       target: "_blank",
       className: "text-teal underline"
-    }, "Evolution Manager"), " y reconectar las cuentas que est\xE9n \"close\".")), /*#__PURE__*/React.createElement("div", {
+    }, "Evolution Manager"), ", reconecta las que est\xE9n en \"close\", y vuelve a disparar la corrida desde", ' ', /*#__PURE__*/React.createElement("a", {
+      href: "https://github.com/inesgamboasorensen/whatsapp-cs-analysis/actions",
+      target: "_blank",
+      className: "text-teal underline"
+    }, "GitHub Actions"), ".")), /*#__PURE__*/React.createElement("div", {
       className: "flex gap-3"
     }, /*#__PURE__*/React.createElement("span", {
       className: "text-teal font-mono shrink-0"
-    }, "02"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("strong", {
+    }, "\uD83D\uDEE1\uFE0F"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("strong", {
       className: "text-white"
-    }, "Descargar conversaciones"), " \u2014 ", /*#__PURE__*/React.createElement("code", {
-      className: "bg-navy-card px-1.5 py-0.5 rounded text-xs text-teal"
-    }, "cd whatsapp_analysis && python3 download_conversations.py"))), /*#__PURE__*/React.createElement("div", {
-      className: "flex gap-3"
-    }, /*#__PURE__*/React.createElement("span", {
-      className: "text-teal font-mono shrink-0"
-    }, "03"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("strong", {
-      className: "text-white"
-    }, "Pedir a Claude que analice"), " \u2014 En Claude Code: \"Corre el an\xE1lisis de WhatsApp otra vez y actualiza el dashboard con los nuevos n\xFAmeros\"")), /*#__PURE__*/React.createElement("div", {
-      className: "flex gap-3"
-    }, /*#__PURE__*/React.createElement("span", {
-      className: "text-teal font-mono shrink-0"
-    }, "04"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("strong", {
-      className: "text-white"
-    }, "Subir a Netlify"), " \u2014 Arrastrar el folder ", /*#__PURE__*/React.createElement("code", {
-      className: "bg-navy-card px-1.5 py-0.5 rounded text-xs text-teal"
-    }, "whatsapp-dashboard-public"), " a tu sitio existente en Netlify."))));
+    }, "No publica datos rotos"), " \u2014 Antes de actualizar el dashboard, la corrida verifica que haya suficientes agentes y conversaciones. Si vienen a la mitad, se detiene y no publica nada."))));
   }
   function StatsCards() {
     return /*#__PURE__*/React.createElement(Section, {
