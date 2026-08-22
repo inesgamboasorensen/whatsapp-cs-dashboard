@@ -2,3 +2,8 @@
 .claude/
 index.html.backup-*
 *.zip
+
+# Dependencia solo para el build (node build.cjs) — no se versiona.
+node_modules/
+package-lock.json
+package.json

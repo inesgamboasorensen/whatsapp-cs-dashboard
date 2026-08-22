@@ -114,6 +114,32 @@
     const volumeData          = D.volumeData;
     const metricsMonthly      = D.metricsMonthly;
 
+    // ── Mediciones ──────────────────────────────────────────────────────────
+    // Antes cada medición estaba escrita a mano en el código (a.aug13, a.jul22…),
+    // así que publicar una nueva exigía editar ~40 lugares. Ahora la lista viene
+    // de data.json: agregar una medición es agregar una entrada ahí, sin tocar
+    // este archivo. mediciones[] va de la más vieja a la más reciente.
+    const MED       = D.mediciones;
+    const MED_ULT   = MED[MED.length - 1];              // la medición actual
+    const MED_1RA   = MED[0];
+    const medKeys   = MED.map(m => m.key);
+
+    // valores de un agente, en orden, sin huecos
+    const medValores = a => medKeys.map(k => a?.[k]).filter(v => v !== null && v !== undefined);
+    // su valor más reciente (la última medición en la que aparece)
+    const medUltimo  = a => { for (let i = MED.length - 1; i >= 0; i--) {
+                                const v = a?.[MED[i].key];
+                                if (v !== null && v !== undefined) return v;
+                              } return null; };
+    // ¿el agente aparece en alguna medición?
+    const medTiene   = a => medKeys.some(k => a?.[k] !== null && a?.[k] !== undefined);
+    // promedio del equipo en una medición (usa `equipo` de data.json si está)
+    const medPromedio = m => {
+      if (m.equipo !== null && m.equipo !== undefined) return m.equipo;  // texto: se muestra tal cual
+      const vs = agentRanking.map(a => a[m.key]).filter(v => v !== null && v !== undefined);
+      return vs.length ? (vs.reduce((s, v) => s + v, 0) / vs.length).toFixed(1) : null;
+    };
+
     // Presentación derivada de runsMeta — esto es código, no dato.
     const overviewStats = [
       { label: "Corridas Realizadas",       value: String(runsMeta.totalRuns),           sub: runsMeta.runsSub,                     icon: "🔁", accent: "#2EC4B6" },
@@ -304,65 +330,19 @@
     }
 
     function ComparisonSection() {
-      const agentsWithMay13 = agentRanking.filter(a => a.may13 !== null && a.may13 !== undefined);
-      const avgMay13 = (agentsWithMay13.reduce((s, a) => s + a.may13, 0) / agentsWithMay13.length).toFixed(1);
-      const agentsWithJun2 = agentRanking.filter(a => a.jun2 !== null && a.jun2 !== undefined);
-      const avgJun2 = (agentsWithJun2.reduce((s, a) => s + a.jun2, 0) / agentsWithJun2.length).toFixed(1);
-      const agentsWithJun23 = agentRanking.filter(a => a.jun23 !== null && a.jun23 !== undefined);
-      const avgJun23 = (agentsWithJun23.reduce((s, a) => s + a.jun23, 0) / agentsWithJun23.length).toFixed(1);
-      const agentsWithJul22 = agentRanking.filter(a => a.jul22 !== null && a.jul22 !== undefined);
-      const avgJul22 = (agentsWithJul22.reduce((s, a) => s + a.jul22, 0) / agentsWithJul22.length).toFixed(1);
-      const agentsWithAug13 = agentRanking.filter(a => a.aug13 !== null && a.aug13 !== undefined);
-      const avgAug13 = (agentsWithAug13.reduce((s, a) => s + a.aug13, 0) / agentsWithAug13.length).toFixed(1);
+      // un promedio por medición, calculado o tomado de data.json
       return (
-        <Section title="Evolución de Frustración (9 Mediciones)" dark id="comparison">
+        <Section title={`Evolución de Frustración (${MED.length} Mediciones)`} dark id="comparison">
           {/* Big KPI - 7 columns */}
-          <div className="grid grid-cols-2 lg:grid-cols-9 gap-4 mb-10">
-            <div className="bg-navy-card rounded-xl p-5 text-center">
-              <div className="text-gray-400 text-xs uppercase tracking-wide mb-1">Mar 11 (Baseline)</div>
-              <div className="text-3xl font-extrabold text-coral">39.7%</div>
-              <div className="text-gray-500 text-xs mt-1">14 agentes</div>
-            </div>
-            <div className="bg-navy-card rounded-xl p-5 text-center">
-              <div className="text-gray-400 text-xs uppercase tracking-wide mb-1">Mar 30</div>
-              <div className="text-3xl font-extrabold text-teal">19.6%</div>
-              <div className="text-gray-500 text-xs mt-1">7 agentes</div>
-            </div>
-            <div className="bg-navy-card rounded-xl p-5 text-center">
-              <div className="text-gray-400 text-xs uppercase tracking-wide mb-1">May 4 (mañana)</div>
-              <div className="text-3xl font-extrabold text-orange-400">23%</div>
-              <div className="text-gray-500 text-xs mt-1">6 agentes</div>
-            </div>
-            <div className="bg-navy-card rounded-xl p-5 text-center">
-              <div className="text-gray-400 text-xs uppercase tracking-wide mb-1">May 4 (tarde)</div>
-              <div className="text-3xl font-extrabold text-teal">21.4%</div>
-              <div className="text-gray-500 text-xs mt-1">7 agentes</div>
-            </div>
-            <div className="bg-navy-card rounded-xl p-5 text-center">
-              <div className="text-gray-400 text-xs uppercase tracking-wide mb-1">May 13</div>
-              <div className="text-3xl font-extrabold text-green-400">{avgMay13}%</div>
-              <div className="text-gray-500 text-xs mt-1">23 agentes</div>
-            </div>
-            <div className="bg-navy-card rounded-xl p-5 text-center">
-              <div className="text-gray-400 text-xs uppercase tracking-wide mb-1">Jun 2</div>
-              <div className="text-3xl font-extrabold text-green-400">{avgJun2}%</div>
-              <div className="text-gray-500 text-xs mt-1">21 agentes</div>
-            </div>
-            <div className="bg-navy-card rounded-xl p-5 text-center">
-              <div className="text-gray-400 text-xs uppercase tracking-wide mb-1">Jun 23</div>
-              <div className="text-3xl font-extrabold text-green-400">{avgJun23}%</div>
-              <div className="text-gray-500 text-xs mt-1">21 agentes</div>
-            </div>
-            <div className="bg-navy-card rounded-xl p-5 text-center">
-              <div className="text-gray-400 text-xs uppercase tracking-wide mb-1">Jul 22</div>
-              <div className="text-3xl font-extrabold text-green-400">{avgJul22}%</div>
-              <div className="text-gray-500 text-xs mt-1">25 agentes</div>
-            </div>
-            <div className="bg-navy-card rounded-xl p-5 text-center" style={{border: '1px solid rgba(34,197,94,0.5)'}}>
-              <div className="text-gray-400 text-xs uppercase tracking-wide mb-1">Ago 13 NUEVO</div>
-              <div className="text-3xl font-extrabold text-green-400">{avgAug13}%</div>
-              <div className="text-gray-500 text-xs mt-1">27 agentes</div>
-            </div>
+          <div className="grid grid-cols-2 gap-4 mb-10" style={{gridTemplateColumns: `repeat(${MED.length}, minmax(0, 1fr))`}}>
+            {MED.map(m => (
+              <div key={m.key} className="bg-navy-card rounded-xl p-5 text-center"
+                   style={m.key === MED_ULT.key ? {border: '1px solid rgba(34,197,94,0.5)'} : undefined}>
+                <div className="text-gray-400 text-xs uppercase tracking-wide mb-1">{m.kpi}</div>
+                <div className={`text-3xl font-extrabold ${m.clase}`}>{medPromedio(m)}%</div>
+                <div className="text-gray-500 text-xs mt-1">{m.agentes} agentes</div>
+              </div>
+            ))}
           </div>
           {/* Per-agent sparkline - clearer trajectory view */}
           <div className="bg-navy-card rounded-xl p-6 sm:p-8">
@@ -376,14 +356,11 @@
               </div>
             </div>
 
-            {/* Color legend for the 6 measurements */}
+            {/* Leyenda de colores — una entrada por medición */}
             <div className="flex flex-wrap gap-x-4 gap-y-1.5 mb-4 text-[11px] text-gray-400">
-              {[
-                { d: 'Mar 11', c: '#E8505B' }, { d: 'Mar 30', c: '#2EC4B6' }, { d: 'May 4 AM', c: '#F97316' },
-                { d: 'May 4 PM', c: '#22C55E' }, { d: 'May 13', c: '#4ADE80' }, { d: 'Jun 2', c: '#86EFAC' }, { d: 'Jun 23', c: '#BBF7D0' }, { d: 'Jul 22', c: '#DCFCE7' }, { d: 'Ago 13', c: '#ECFDF5' },
-              ].map(p => (
-                <span key={p.d} className="inline-flex items-center gap-1.5">
-                  <span className="w-2.5 h-2.5 rounded-full" style={{ background: p.c }}></span>{p.d}
+              {MED.map(m => (
+                <span key={m.key} className="inline-flex items-center gap-1.5">
+                  <span className="w-2.5 h-2.5 rounded-full" style={{ background: m.color }}></span>{m.label}
                 </span>
               ))}
               <span className="text-gray-500">· línea punteada = umbral 30% · bajo % = mejor</span>
@@ -400,21 +377,11 @@
 
             <div className="space-y-2">
               {agentRanking
-                .filter(a => a.rate !== null || a.mar30 !== null || a.may4 !== null || a.may4pm !== null || a.may13 !== null || a.jun2 !== null || a.jun23 !== null || a.jul22 !== null || a.aug13 !== null)
-                .sort((a, b) => (b.aug13 ?? b.jul22 ?? b.jun23 ?? b.jun2 ?? b.may13 ?? b.may4pm ?? b.may4 ?? b.mar30 ?? b.rate ?? -1) - (a.aug13 ?? a.jul22 ?? a.jun23 ?? a.jun2 ?? a.may13 ?? a.may4pm ?? a.may4 ?? a.mar30 ?? a.rate ?? -1))
+                .filter(medTiene)
+                .sort((a, b) => (medUltimo(b) ?? -1) - (medUltimo(a) ?? -1))
                 .map((a, i) => {
                   // Build sequence of points (with which measurement each is)
-                  const points = [
-                    { date: 'Mar 11',     value: a.rate,   color: '#E8505B' },
-                    { date: 'Mar 30',     value: a.mar30,  color: '#2EC4B6' },
-                    { date: 'May 4 AM',   value: a.may4,   color: '#F97316' },
-                    { date: 'May 4 PM',   value: a.may4pm, color: '#22C55E' },
-                    { date: 'May 13',     value: a.may13,  color: '#4ADE80' },
-                    { date: 'Jun 2',      value: a.jun2,   color: '#86EFAC' },
-                    { date: 'Jun 23',     value: a.jun23,  color: '#BBF7D0' },
-                    { date: 'Jul 22',     value: a.jul22,  color: '#DCFCE7' },
-                    { date: 'Ago 13',     value: a.aug13,  color: '#ECFDF5' },
-                  ];
+                  const points = MED.map(m => ({ date: m.label, value: a[m.key], color: m.color }));
                   const valid = points.map((p, idx) => ({...p, idx})).filter(p => p.value !== null && p.value !== undefined);
                   if (valid.length === 0) return null;
                   const start = valid[0];
@@ -525,7 +492,7 @@
     // Frustración / response time / writing come from the static analysis snapshot;
     // calls hits the live worker so the headline number stays current.
     function FocusScorecard({ onJump }) {
-      const frust = {}; agentRanking.forEach(a => { if (a.aug13 != null) frust[a.name] = a.aug13; });
+      const frust = {}; agentRanking.forEach(a => { const v = a[MED_ULT.key]; if (v != null) frust[a.name] = v; });
       const resAgents = (resolutionMonthly.by_month[resolutionMonthly.months[resolutionMonthly.months.length - 1]] || resolutionMonthly.all).agents;
       const res = {}; resAgents.forEach(a => res[a.agent] = a);
       const ch = {}; contractHandling.agents.forEach(a => ch[a.agent] = a);
@@ -627,10 +594,9 @@
 
     function ExecutiveSummary({ onJump }) {
       const avg = (key) => { const v = agentRanking.filter(a => a[key] != null).map(a => a[key]); return v.length ? Math.round(v.reduce((s, x) => s + x, 0) / v.length * 10) / 10 : null; };
-      const frustTrend = [
-        { l: 'mar 11', v: 39.7 }, { l: 'mar 30', v: 19.6 }, { l: 'may 4', v: 22 }, { l: 'may 4p', v: 21.4 },
-        { l: 'may 13', v: avg('may13') }, { l: 'jun 2', v: avg('jun2') }, { l: 'jun 23', v: avg('jun23') }, { l: 'jul 22', v: avg('jul22') }, { l: 'ago 13', v: avg('aug13') },
-      ].filter(t => t.v != null);
+      const frustTrend = MED
+        .map(m => ({ l: m.label.toLowerCase(), v: m.equipo != null ? m.equipo : avg(m.key) }))
+        .filter(t => t.v != null);
       const fMax = Math.max(...frustTrend.map(t => t.v));
       const fNow = frustTrend[frustTrend.length - 1].v, fBase = frustTrend[0].v;
       const jun = resolutionMonthly.by_month[resolutionMonthly.months[resolutionMonthly.months.length - 1]] ? resolutionMonthly.by_month[resolutionMonthly.months[resolutionMonthly.months.length - 1]].team : resolutionMonthly.all.team;
@@ -639,7 +605,7 @@
       const toGrade = (s) => Math.max(0, Math.min(100, Math.round(100 - s * 1.2)));
       const writeAvg = Math.round(writingQuality.reduce((s, w) => s + toGrade(w.score), 0) / writingQuality.length);
       const ch = contractHandling.team;
-      const fPrev = avg('jun2');
+      const fPrev = frustTrend.length > 1 ? frustTrend[frustTrend.length - 2].v : null;
       const chm = contractHandling.by_month || [];
       const chLast = chm[chm.length - 1], chPrev = chm[chm.length - 2];
       const mm = (typeof metricsMonthly !== 'undefined' && metricsMonthly.length) ? metricsMonthly : [];
@@ -1883,11 +1849,7 @@
       const getRateColor = (rate) => rate === null ? '#94A3B8' : rate >= 50 ? '#E8505B' : rate >= 35 ? '#F97316' : rate >= 20 ? '#FACC15' : '#2EC4B6';
       const getRateBg = (rate) => rate === null ? '#F1F5F9' : rate >= 50 ? '#FEE2E2' : rate >= 35 ? '#FEF3C7' : rate >= 20 ? '#FEF9C3' : '#D1FAE5';
       // Sort by latest available rate
-      const sorted = [...agentRanking].sort((a, b) => {
-        const aRate = a.jun23 ?? a.jun2 ?? a.may13 ?? a.may4pm ?? a.may4 ?? a.mar30 ?? a.rate ?? 0;
-        const bRate = b.jun23 ?? b.jun2 ?? b.may13 ?? b.may4pm ?? b.may4 ?? b.mar30 ?? b.rate ?? 0;
-        return bRate - aRate;
-      });
+      const sorted = [...agentRanking].sort((a, b) => (medUltimo(b) ?? 0) - (medUltimo(a) ?? 0));
       const renderCell = (val) => {
         if (val === null || val === undefined) return <span className="text-xs text-gray-300">—</span>;
         return <span className="inline-block text-xs font-bold px-2 py-0.5 rounded-full" style={{color: getRateColor(val), backgroundColor: getRateBg(val)}}>{val}%</span>;
@@ -1945,15 +1907,9 @@
                   <tr className="bg-navy-dark text-white">
                     <th className="py-3 px-3 text-left text-xs font-semibold w-12">#</th>
                     <th className="py-3 px-3 text-left text-xs font-semibold">Agente CS</th>
-                    <th className="py-3 px-3 text-center text-xs font-semibold">Mar 11</th>
-                    <th className="py-3 px-3 text-center text-xs font-semibold">Mar 30</th>
-                    <th className="py-3 px-3 text-center text-xs font-semibold">May 4 AM</th>
-                    <th className="py-3 px-3 text-center text-xs font-semibold">May 4 PM</th>
-                    <th className="py-3 px-3 text-center text-xs font-semibold">May 13</th>
-                    <th className="py-3 px-3 text-center text-xs font-semibold">Jun 2</th>
-                    <th className="py-3 px-3 text-center text-xs font-semibold">Jun 23</th>
-                    <th className="py-3 px-3 text-center text-xs font-semibold">Jul 22</th>
-                    <th className="py-3 px-3 text-center text-xs font-semibold bg-teal/20">Ago 13</th>
+                    {MED.map(m => (
+                      <th key={m.key} className={`py-3 px-3 text-center text-xs font-semibold ${m.key === MED_ULT.key ? 'bg-teal/20' : ''}`}>{m.label}</th>
+                    ))}
                   </tr>
                 </thead>
                 <tbody>
@@ -1964,15 +1920,9 @@
                         {a.name}
                         {a.isBrandNew && <span className="ml-2 text-xs text-teal bg-teal/10 px-2 py-0.5 rounded-full font-semibold">NUEVO</span>}
                       </td>
-                      <td className="py-3 px-3 text-center">{renderCell(a.rate)}</td>
-                      <td className="py-3 px-3 text-center">{renderCell(a.mar30)}</td>
-                      <td className="py-3 px-3 text-center">{renderCell(a.may4)}</td>
-                      <td className="py-3 px-3 text-center">{renderCell(a.may4pm)}</td>
-                      <td className="py-3 px-3 text-center">{renderCell(a.may13)}</td>
-                      <td className="py-3 px-3 text-center">{renderCell(a.jun2)}</td>
-                      <td className="py-3 px-3 text-center">{renderCell(a.jun23)}</td>
-                      <td className="py-3 px-3 text-center">{renderCell(a.jul22)}</td>
-                      <td className="py-3 px-3 text-center bg-teal/5">{renderCell(a.aug13)}</td>
+                      {MED.map(m => (
+                        <td key={m.key} className={`py-3 px-3 text-center ${m.key === MED_ULT.key ? 'bg-teal/5' : ''}`}>{renderCell(a[m.key])}</td>
+                      ))}
                     </tr>
                   ))}
                 </tbody>
@@ -2198,7 +2148,7 @@
       let trendNote = '';
 
       // === Frustration analysis ===
-      const fAll = [ranking?.rate, ranking?.mar30, ranking?.may4, ranking?.may4pm, ranking?.may13, ranking?.jun2, ranking?.jun23, ranking?.jul22, ranking?.aug13].filter(v => v !== null && v !== undefined);
+      const fAll = medValores(ranking);
       const latest = fAll[fAll.length - 1];
       const earliest = fAll[0];
       const frustHistory = fAll;
@@ -2345,7 +2295,7 @@
       const resolution = resolutionData.find(r => r.agent === agentName);
 
       // Frustration: latest available
-      const fAll = ranking ? [ranking.rate, ranking.mar30, ranking.may4, ranking.may4pm, ranking.may13, ranking.jun2, ranking.jun23, ranking.jul22, ranking.aug13].filter(v => v !== null && v !== undefined) : [];
+      const fAll = ranking ? medValores(ranking) : [];
       const frustration = fAll.length ? fAll[fAll.length - 1] : null;
 
       // Calls: aggregate from live data, matching agent first name to instance
@@ -2524,12 +2474,7 @@
         responseTimes.find(r => r.agent === a.name || r.agent === a.name.replace(/^Whats App /, ''))
         || writingQuality.find(w => w.agent === a.name)
         || resolutionData.find(r => r.agent === a.name)
-        || a.aug13 !== null
-        || a.jul22 !== null
-        || a.jun23 !== null
-        || a.jun2 !== null
-        || a.may13 !== null
-        || a.may4pm !== null
+        || medTiene(a)
       );
 
       const feedbackList = agentsWithData.map(a => {
@@ -2752,7 +2697,7 @@
 
       // Build per-agent points: only agents with frustration data
       const data = agentRanking.map(a => {
-        const fAll = [a.rate, a.mar30, a.may4, a.may4pm, a.may13, a.jun2, a.jun23, a.jul22, a.aug13].filter(v => v !== null && v !== undefined);
+        const fAll = medValores(a);
         const frust = fAll.length ? fAll[fAll.length - 1] : null;
         const resp = responseTimes.find(r => r.agent === a.name)?.median ?? null;
         const writingObj = writingQuality.find(w => w.agent === a.name);

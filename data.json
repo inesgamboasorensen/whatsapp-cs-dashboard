@@ -1,4 +1,96 @@
 {
+ "mediciones": [
+  {
+   "key": "rate",
+   "fecha": "2026-03-11",
+   "label": "Mar 11",
+   "kpi": "Mar 11 (Baseline)",
+   "color": "#E8505B",
+   "clase": "text-coral",
+   "equipo": "39.7",
+   "agentes": 14
+  },
+  {
+   "key": "mar30",
+   "fecha": "2026-03-30",
+   "label": "Mar 30",
+   "kpi": "Mar 30",
+   "color": "#2EC4B6",
+   "clase": "text-teal",
+   "equipo": "19.6",
+   "agentes": 7
+  },
+  {
+   "key": "may4",
+   "fecha": "2026-05-04",
+   "label": "May 4 AM",
+   "kpi": "May 4 (mañana)",
+   "color": "#F97316",
+   "clase": "text-orange-400",
+   "equipo": "23",
+   "agentes": 6
+  },
+  {
+   "key": "may4pm",
+   "fecha": "2026-05-04",
+   "label": "May 4 PM",
+   "kpi": "May 4 (tarde)",
+   "color": "#22C55E",
+   "clase": "text-teal",
+   "equipo": "21.4",
+   "agentes": 7
+  },
+  {
+   "key": "may13",
+   "fecha": "2026-05-13",
+   "label": "May 13",
+   "kpi": "May 13",
+   "color": "#4ADE80",
+   "clase": "text-green-400",
+   "equipo": null,
+   "agentes": 23
+  },
+  {
+   "key": "jun2",
+   "fecha": "2026-06-02",
+   "label": "Jun 2",
+   "kpi": "Jun 2",
+   "color": "#86EFAC",
+   "clase": "text-green-400",
+   "equipo": null,
+   "agentes": 21
+  },
+  {
+   "key": "jun23",
+   "fecha": "2026-06-23",
+   "label": "Jun 23",
+   "kpi": "Jun 23",
+   "color": "#BBF7D0",
+   "clase": "text-green-400",
+   "equipo": null,
+   "agentes": 21
+  },
+  {
+   "key": "jul22",
+   "fecha": "2026-07-22",
+   "label": "Jul 22",
+   "kpi": "Jul 22",
+   "color": "#DCFCE7",
+   "clase": "text-green-400",
+   "equipo": null,
+   "agentes": 25
+  },
+  {
+   "key": "aug13",
+   "fecha": "2026-08-13",
+   "label": "Ago 13",
+   "kpi": "Ago 13 NUEVO",
+   "color": "#ECFDF5",
+   "clase": "text-green-400",
+   "equipo": null,
+   "agentes": 27
+  }
+ ],
  "PERIOD": "Feb - Jun 2026",
  "PERIOD_NEW": "Actualizado Jun 2, 2026",
  "runsMeta": {
