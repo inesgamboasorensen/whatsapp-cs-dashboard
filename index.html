@@ -502,9 +502,9 @@ function boot(D) {
       className: "text-xs text-gray-500 uppercase tracking-wide text-right"
     }, "1\xAA medici\xF3n"), /*#__PURE__*/React.createElement("div", {
       className: "text-xs text-gray-500 uppercase tracking-wide text-center"
-    }, "Trayectoria de frustraci\xF3n (Mar 11 \u2192 Ago 13)"), /*#__PURE__*/React.createElement("div", {
+    }, `Trayectoria de frustración (${MED_1RA.label} → ${MED_ULT.label})`), /*#__PURE__*/React.createElement("div", {
       className: "text-xs text-gray-500 uppercase tracking-wide text-right"
-    }, "Ago 13"), /*#__PURE__*/React.createElement("div", {
+    }, MED_ULT.label), /*#__PURE__*/React.createElement("div", {
       className: "text-xs text-gray-500 uppercase tracking-wide text-right"
     }, "Cambio")), /*#__PURE__*/React.createElement("div", {
       className: "space-y-2"
@@ -2814,7 +2814,7 @@ function boot(D) {
       className: "bg-white rounded-xl p-4 mb-8 border border-navy/10"
     }, /*#__PURE__*/React.createElement("p", {
       className: "text-xs text-gray-600"
-    }, "\uD83D\uDCC5 Comparativa entre Mar 11 (baseline) y Ago 13 (corrida actual con 27 agentes \xB7 200 conversaciones analizadas). Detecta qu\xE9 se redujo, qu\xE9 desapareci\xF3, y qu\xE9 problemas nuevos surgieron.")), /*#__PURE__*/React.createElement("div", {
+    }, `📅 Comparativa entre ${MED_1RA.label} (baseline) y ${MED_ULT.label} (corrida actual con ${MED_ULT.agentes} agentes · 200 conversaciones analizadas).`, " Detecta qu\xE9 se redujo, qu\xE9 desapareci\xF3, y qu\xE9 problemas nuevos surgieron.")), /*#__PURE__*/React.createElement("div", {
       className: "grid grid-cols-1 lg:grid-cols-2 gap-6"
     }, /*#__PURE__*/React.createElement("div", {
       className: "bg-gradient-to-br from-teal/5 to-white rounded-2xl p-6 border border-teal/20"
@@ -3022,7 +3022,7 @@ function boot(D) {
       className: "text-gray-500 text-sm"
     }, "Morada Uno \u2014 An\xE1lisis de Conversaciones WhatsApp \u2014 ", PERIOD), /*#__PURE__*/React.createElement("p", {
       className: "text-gray-600 text-xs mt-1"
-    }, "9 mediciones: Mar 11 \xB7 Mar 30 \xB7 May 4 AM \xB7 May 4 PM \xB7 May 13 \xB7 Jun 2 \xB7 Jun 23 \xB7 Jul 22 \xB7 Ago 13 (200 convs \xB7 27 agentes)")));
+    }, `${MED.length} mediciones: ${MED.map(m => m.label).join(' · ')} (200 convs · ${MED_ULT.agentes} agentes)`)));
   }
 
   // ── Per-agent structured feedback (auto-generated from metrics) ─────────
