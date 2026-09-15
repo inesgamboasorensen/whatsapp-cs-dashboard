@@ -94,20 +94,30 @@
    "key": "sep126",
    "fecha": "2026-09-01",
    "label": "Sep 1",
-   "kpi": "Sep 1 NUEVO",
+   "kpi": "Sep 1",
    "color": "#ECFDF5",
    "clase": "text-green-400",
    "equipo": null,
    "agentes": 23
+  },
+  {
+   "key": "sep1526",
+   "fecha": "2026-09-15",
+   "label": "Sep 15",
+   "kpi": "Sep 15 NUEVO",
+   "color": "#ECFDF5",
+   "clase": "text-green-400",
+   "equipo": null,
+   "agentes": 25
   }
  ],
  "PERIOD": "Feb - Jun 2026",
  "PERIOD_NEW": "Actualizado Jun 2, 2026",
  "runsMeta": {
-  "totalRuns": 10,
-  "lastRunDate": "2026-09-01",
-  "lastRunLabel": "1 sep 2026",
-  "agentsLastRun": 23,
+  "totalRuns": 11,
+  "lastRunDate": "2026-09-15",
+  "lastRunLabel": "15 sep 2026",
+  "agentsLastRun": 25,
   "totalAgentsAnalyzed": 28,
   "runsSub": "Mar 11 → … → Jun 23 → Jul 22 → Ago 13",
   "lastRunSub": "837 conversaciones · 51k mensajes"
@@ -238,7 +248,8 @@
    "aug13": 18,
    "hasNew": true,
    "lastSeen": "2026-08-13",
-   "sep126": 56
+   "sep126": 56,
+   "sep1526": 56
   },
   {
    "name": "Cesar",
@@ -253,7 +264,8 @@
    "aug13": 20,
    "hasNew": true,
    "lastSeen": "2026-08-13",
-   "sep126": 39
+   "sep126": 39,
+   "sep1526": 39
   },
   {
    "name": "Elizabeth Castro",
@@ -268,7 +280,8 @@
    "aug13": 14,
    "hasNew": true,
    "lastSeen": "2026-08-13",
-   "sep126": 39
+   "sep126": 39,
+   "sep1526": 44
   },
   {
    "name": "Eduardo",
@@ -283,7 +296,8 @@
    "aug13": 0,
    "hasNew": true,
    "lastSeen": "2026-08-13",
-   "sep126": 50
+   "sep126": 50,
+   "sep1526": 37
   },
   {
    "name": "Itzel Alarcón",
@@ -296,9 +310,10 @@
    "jun23": 20,
    "jul22": 44,
    "aug13": 22,
-   "hasNew": false,
+   "hasNew": true,
    "lastSeen": "2026-08-13",
-   "sep126": null
+   "sep126": null,
+   "sep1526": 67
   },
   {
    "name": "Iran",
@@ -313,7 +328,8 @@
    "aug13": 33,
    "hasNew": true,
    "lastSeen": "2026-08-13",
-   "sep126": 50
+   "sep126": 50,
+   "sep1526": 61
   },
   {
    "name": "Elvia",
@@ -328,7 +344,8 @@
    "aug13": 11,
    "hasNew": true,
    "lastSeen": "2026-08-13",
-   "sep126": 11
+   "sep126": 11,
+   "sep1526": 22
   },
   {
    "name": "Paola Viveros",
@@ -343,7 +360,8 @@
    "aug13": 21,
    "hasNew": true,
    "lastSeen": "2026-08-13",
-   "sep126": 61
+   "sep126": 61,
+   "sep1526": 56
   },
   {
    "name": "Daniel Luna",
@@ -358,7 +376,8 @@
    "aug13": 0,
    "hasNew": true,
    "lastSeen": "2026-08-13",
-   "sep126": 33
+   "sep126": 33,
+   "sep1526": 39
   },
   {
    "name": "Horacio Gómez",
@@ -373,7 +392,8 @@
    "aug13": 14,
    "hasNew": false,
    "lastSeen": "2026-08-13",
-   "sep126": null
+   "sep126": null,
+   "sep1526": null
   },
   {
    "name": "Gabriel García",
@@ -388,7 +408,8 @@
    "aug13": 25,
    "hasNew": true,
    "lastSeen": "2026-08-13",
-   "sep126": 33
+   "sep126": 33,
+   "sep1526": 39
   },
   {
    "name": "Carlos",
@@ -403,7 +424,8 @@
    "aug13": 57,
    "hasNew": true,
    "lastSeen": "2026-08-13",
-   "sep126": 50
+   "sep126": 50,
+   "sep1526": 50
   },
   {
    "name": "Dylan Arellano",
@@ -418,7 +440,8 @@
    "aug13": 0,
    "hasNew": true,
    "lastSeen": "2026-08-13",
-   "sep126": 44
+   "sep126": 44,
+   "sep1526": 54
   },
   {
    "name": "Elizabeth Bustos",
@@ -433,7 +456,8 @@
    "aug13": 0,
    "hasNew": true,
    "lastSeen": "2026-08-13",
-   "sep126": 42
+   "sep126": 42,
+   "sep1526": 50
   },
   {
    "name": "Hugo",
@@ -448,7 +472,8 @@
    "aug13": 20,
    "hasNew": true,
    "lastSeen": "2026-08-13",
-   "sep126": 50
+   "sep126": 50,
+   "sep1526": 56
   },
   {
    "name": "Fernanda Figueroa",
@@ -463,7 +488,8 @@
    "aug13": 17,
    "hasNew": true,
    "lastSeen": "2026-08-13",
-   "sep126": 39
+   "sep126": 39,
+   "sep1526": 44
   },
   {
    "name": "Jenifer",
@@ -478,7 +504,8 @@
    "aug13": null,
    "hasNew": false,
    "lastSeen": "2026-06-23",
-   "sep126": null
+   "sep126": null,
+   "sep1526": null
   },
   {
    "name": "Kate González",
@@ -491,9 +518,10 @@
    "jun23": 8,
    "jul22": 14,
    "aug13": 33,
-   "hasNew": false,
+   "hasNew": true,
    "lastSeen": "2026-08-13",
-   "sep126": null
+   "sep126": null,
+   "sep1526": 44
   },
   {
    "name": "Dana Lugo",
@@ -508,7 +536,8 @@
    "aug13": 0,
    "hasNew": false,
    "lastSeen": "2026-08-13",
-   "sep126": null
+   "sep126": null,
+   "sep1526": null
   },
   {
    "name": "Karen Pérez",
@@ -523,7 +552,8 @@
    "aug13": 0,
    "hasNew": true,
    "lastSeen": "2026-08-13",
-   "sep126": 22
+   "sep126": 22,
+   "sep1526": 28
   },
   {
    "name": "Lorena Domínguez",
@@ -538,7 +568,8 @@
    "aug13": 25,
    "hasNew": true,
    "lastSeen": "2026-08-13",
-   "sep126": 44
+   "sep126": 44,
+   "sep1526": 61
   },
   {
    "name": "Xel Xanat",
@@ -553,7 +584,8 @@
    "aug13": 0,
    "hasNew": false,
    "lastSeen": "2026-08-13",
-   "sep126": null
+   "sep126": null,
+   "sep1526": null
   },
   {
    "name": "Diego Cedillo",
@@ -568,7 +600,8 @@
    "aug13": 0,
    "hasNew": true,
    "lastSeen": "2026-08-13",
-   "sep126": 39
+   "sep126": 39,
+   "sep1526": 39
   },
   {
    "name": "Elsa Hernández",
@@ -583,7 +616,8 @@
    "aug13": 40,
    "hasNew": true,
    "lastSeen": "2026-08-13",
-   "sep126": 44
+   "sep126": 44,
+   "sep1526": 56
   },
   {
    "name": "Alfonso",
@@ -598,7 +632,8 @@
    "aug13": 17,
    "hasNew": true,
    "lastSeen": "2026-08-13",
-   "sep126": 56
+   "sep126": 56,
+   "sep1526": 56
   },
   {
    "name": "Cesar Iram Enriquez",
@@ -613,7 +648,8 @@
    "aug13": 0,
    "hasNew": true,
    "lastSeen": "2026-08-13",
-   "sep126": 56
+   "sep126": 56,
+   "sep1526": 56
   },
   {
    "name": "Saúl",
@@ -629,7 +665,8 @@
    "isBrandNew": true,
    "hasNew": true,
    "lastSeen": "2026-08-13",
-   "sep126": 44
+   "sep126": 44,
+   "sep1526": 44
   },
   {
    "name": "Horace \"el bueno\"",
@@ -645,7 +682,8 @@
    "isBrandNew": true,
    "hasNew": true,
    "lastSeen": "2026-08-13",
-   "sep126": 22
+   "sep126": 22,
+   "sep1526": 28
   },
   {
    "name": "Gael Santiago",
@@ -661,7 +699,8 @@
    "jun23": null,
    "jul22": null,
    "aug13": null,
-   "sep126": 80
+   "sep126": 80,
+   "sep1526": 72
   }
  ],
  "resolutionData": [
@@ -1457,21 +1496,6 @@
    }
   },
   {
-   "agent": "Gael Santiago",
-   "msgs": 753,
-   "avgLen": 36,
-   "typos": 1.2,
-   "missingAccents": 11.3,
-   "capsAbuse": 0.6,
-   "emojiPerMsg": 0.03,
-   "lowerStart": 4,
-   "score": 12.3,
-   "examples": {
-    "good": [],
-    "bad": []
-   }
-  },
-  {
    "agent": "Paola Viveros",
    "msgs": 844,
    "avgLen": 62,
@@ -1562,6 +1586,21 @@
    }
   },
   {
+   "agent": "Gael Santiago",
+   "msgs": 747,
+   "avgLen": 38,
+   "typos": 4.6,
+   "missingAccents": 10.4,
+   "capsAbuse": 1.1,
+   "emojiPerMsg": 0.02,
+   "lowerStart": 5,
+   "score": 17.3,
+   "examples": {
+    "good": [],
+    "bad": []
+   }
+  },
+  {
    "agent": "Saúl",
    "msgs": 618,
    "avgLen": 96,
@@ -1578,14 +1617,14 @@
   },
   {
    "agent": "Elizabeth Bustos",
-   "msgs": 1258,
-   "avgLen": 98,
-   "typos": 4.8,
-   "missingAccents": 11.4,
-   "capsAbuse": 1.6,
+   "msgs": 1285,
+   "avgLen": 89,
+   "typos": 5.1,
+   "missingAccents": 11.0,
+   "capsAbuse": 2.5,
    "emojiPerMsg": 0.08,
    "lowerStart": 5,
-   "score": 18.6,
+   "score": 19.2,
    "examples": {
     "good": [],
     "bad": []
@@ -1792,6 +1831,14 @@
    "under30": 93
   },
   {
+   "agent": "Gael Santiago",
+   "avg": 19.3,
+   "median": 3.2,
+   "pairs": 138,
+   "under5": 55,
+   "under30": 79
+  },
+  {
    "agent": "Horacio Gómez",
    "avg": 10.9,
    "median": 3.4,
@@ -1840,12 +1887,12 @@
    "under30": 86
   },
   {
-   "agent": "Gael Santiago",
-   "avg": 19.3,
-   "median": 6.5,
-   "pairs": 135,
-   "under5": 44,
-   "under30": 82
+   "agent": "Elizabeth Bustos",
+   "avg": 17.1,
+   "median": 6.6,
+   "pairs": 327,
+   "under5": 42,
+   "under30": 85
   },
   {
    "agent": "Itzel Alarcón",
@@ -1854,14 +1901,6 @@
    "pairs": 127,
    "under5": 43,
    "under30": 84
-  },
-  {
-   "agent": "Elizabeth Bustos",
-   "avg": 20.1,
-   "median": 8.8,
-   "pairs": 274,
-   "under5": 39,
-   "under30": 82
   },
   {
    "agent": "Eduardo",
@@ -2306,10 +2345,10 @@
   }
  ],
  "activityData": {
-  "generated_at": "2026-09-01T17:27:18.484966",
+  "generated_at": "2026-09-15T17:48:23.966863",
   "window_days": 90,
-  "start_date": "2026-06-03",
-  "end_date": "2026-09-01",
+  "start_date": "2026-06-17",
+  "end_date": "2026-09-15",
   "tz_note": "Mexico City local time (timestamps as returned by Evolution API). Mon-Fri only — weekends excluded.",
   "by_agent_day": {
    "Carlos": {
@@ -2489,81 +2528,11 @@
      "last": "23:52"
     },
     "2026-06-17": {
-     "coverage": 23.77,
-     "engaged": 10,
-     "msgs": 192,
-     "first": "00:10",
-     "last": "23:56"
-    },
-    "2026-06-16": {
-     "coverage": 23.75,
-     "engaged": 10,
-     "msgs": 187,
-     "first": "00:14",
-     "last": "23:59"
-    },
-    "2026-06-15": {
-     "coverage": 8.32,
-     "engaged": 8,
-     "msgs": 189,
-     "first": "15:11",
-     "last": "23:30"
-    },
-    "2026-06-12": {
-     "coverage": 23.67,
-     "engaged": 12,
-     "msgs": 123,
-     "first": "00:12",
-     "last": "23:52"
-    },
-    "2026-06-11": {
-     "coverage": 23.87,
-     "engaged": 9,
-     "msgs": 184,
-     "first": "00:04",
-     "last": "23:56"
-    },
-    "2026-06-10": {
-     "coverage": 23.09,
-     "engaged": 9,
-     "msgs": 138,
-     "first": "00:22",
-     "last": "23:27"
-    },
-    "2026-06-09": {
-     "coverage": 23.84,
-     "engaged": 10,
-     "msgs": 192,
-     "first": "00:00",
-     "last": "23:50"
-    },
-    "2026-06-08": {
-     "coverage": 8.76,
-     "engaged": 8,
-     "msgs": 189,
-     "first": "15:10",
-     "last": "23:56"
-    },
-    "2026-06-05": {
-     "coverage": 23.84,
-     "engaged": 9,
-     "msgs": 135,
-     "first": "00:01",
-     "last": "23:52"
-    },
-    "2026-06-04": {
-     "coverage": 23.96,
-     "engaged": 11,
-     "msgs": 154,
-     "first": "00:01",
-     "last": "23:58"
-    },
-    "2026-06-03": {
-     "coverage": 6.51,
+     "coverage": 6.05,
      "engaged": 7,
-     "msgs": 100,
-     "first": "17:29",
-     "last": "23:59"
+     "msgs": 127,
+     "first": "17:53",
+     "last": "23:56"
     }
    },
    "Iran": {
@@ -2743,81 +2712,11 @@
      "last": "23:46"
     },
     "2026-06-17": {
-     "coverage": 23.88,
-     "engaged": 12,
-     "msgs": 337,
-     "first": "00:01",
-     "last": "23:54"
-    },
-    "2026-06-16": {
-     "coverage": 23.63,
-     "engaged": 11,
-     "msgs": 586,
-     "first": "00:17",
-     "last": "23:55"
-    },
-    "2026-06-15": {
-     "coverage": 8.85,
-     "engaged": 9,
-     "msgs": 588,
-     "first": "15:06",
-     "last": "23:57"
-    },
-    "2026-06-12": {
-     "coverage": 23.99,
-     "engaged": 11,
-     "msgs": 676,
-     "first": "00:00",
-     "last": "23:59"
-    },
-    "2026-06-11": {
-     "coverage": 23.95,
-     "engaged": 11,
-     "msgs": 430,
-     "first": "00:02",
-     "last": "23:59"
-    },
-    "2026-06-10": {
-     "coverage": 23.99,
-     "engaged": 11,
-     "msgs": 668,
-     "first": "00:00",
-     "last": "23:59"
-    },
-    "2026-06-09": {
-     "coverage": 23.92,
-     "engaged": 11,
-     "msgs": 604,
-     "first": "00:02",
-     "last": "23:58"
-    },
-    "2026-06-08": {
-     "coverage": 8.83,
-     "engaged": 8,
-     "msgs": 618,
-     "first": "15:08",
-     "last": "23:58"
-    },
-    "2026-06-05": {
-     "coverage": 23.84,
-     "engaged": 11,
-     "msgs": 420,
-     "first": "00:09",
-     "last": "23:59"
-    },
-    "2026-06-04": {
-     "coverage": 22.62,
-     "engaged": 11,
-     "msgs": 541,
-     "first": "00:35",
-     "last": "23:12"
-    },
-    "2026-06-03": {
-     "coverage": 6.49,
+     "coverage": 6.1,
      "engaged": 7,
-     "msgs": 387,
-     "first": "17:29",
-     "last": "23:58"
+     "msgs": 169,
+     "first": "17:48",
+     "last": "23:54"
     }
    },
    "Lorena Domínguez": {
@@ -2997,81 +2896,11 @@
      "last": "23:52"
     },
     "2026-06-17": {
-     "coverage": 23.4,
-     "engaged": 11,
-     "msgs": 172,
-     "first": "00:03",
-     "last": "23:27"
-    },
-    "2026-06-16": {
-     "coverage": 23.74,
-     "engaged": 10,
-     "msgs": 185,
-     "first": "00:03",
-     "last": "23:48"
-    },
-    "2026-06-15": {
-     "coverage": 21.83,
-     "engaged": 10,
-     "msgs": 239,
-     "first": "01:58",
-     "last": "23:48"
-    },
-    "2026-06-12": {
-     "coverage": 8.49,
-     "engaged": 8,
-     "msgs": 201,
-     "first": "15:19",
-     "last": "23:48"
-    },
-    "2026-06-11": {
-     "coverage": 23.85,
-     "engaged": 10,
-     "msgs": 106,
-     "first": "00:01",
-     "last": "23:52"
-    },
-    "2026-06-10": {
-     "coverage": 23.67,
-     "engaged": 10,
-     "msgs": 228,
-     "first": "00:01",
-     "last": "23:41"
-    },
-    "2026-06-09": {
-     "coverage": 23.98,
-     "engaged": 9,
-     "msgs": 243,
-     "first": "00:00",
-     "last": "23:59"
-    },
-    "2026-06-08": {
-     "coverage": 22.22,
-     "engaged": 9,
-     "msgs": 320,
-     "first": "01:45",
-     "last": "23:58"
-    },
-    "2026-06-05": {
-     "coverage": 23.29,
-     "engaged": 11,
-     "msgs": 318,
-     "first": "00:23",
-     "last": "23:40"
-    },
-    "2026-06-04": {
-     "coverage": 23.64,
-     "engaged": 10,
-     "msgs": 201,
-     "first": "00:05",
-     "last": "23:43"
-    },
-    "2026-06-03": {
-     "coverage": 6.19,
+     "coverage": 5.6,
      "engaged": 7,
-     "msgs": 191,
-     "first": "17:47",
-     "last": "23:58"
+     "msgs": 106,
+     "first": "17:51",
+     "last": "23:27"
     }
    },
    "Zayret Cornejo": {
@@ -3309,81 +3138,11 @@
      "last": "23:57"
     },
     "2026-06-17": {
-     "coverage": 23.86,
-     "engaged": 10,
-     "msgs": 95,
-     "first": "00:00",
-     "last": "23:51"
-    },
-    "2026-06-16": {
-     "coverage": 23.59,
-     "engaged": 10,
-     "msgs": 123,
-     "first": "00:14",
-     "last": "23:50"
-    },
-    "2026-06-15": {
-     "coverage": 10.18,
-     "engaged": 11,
-     "msgs": 147,
-     "first": "13:40",
-     "last": "23:51"
-    },
-    "2026-06-12": {
-     "coverage": 23.96,
-     "engaged": 11,
-     "msgs": 164,
-     "first": "00:00",
-     "last": "23:58"
-    },
-    "2026-06-11": {
-     "coverage": 23.8,
-     "engaged": 11,
-     "msgs": 173,
-     "first": "00:10",
-     "last": "23:58"
-    },
-    "2026-06-10": {
-     "coverage": 23.94,
-     "engaged": 10,
-     "msgs": 121,
-     "first": "00:01",
-     "last": "23:58"
-    },
-    "2026-06-09": {
-     "coverage": 23.72,
-     "engaged": 9,
-     "msgs": 51,
-     "first": "00:03",
-     "last": "23:46"
-    },
-    "2026-06-08": {
-     "coverage": 8.76,
-     "engaged": 9,
-     "msgs": 116,
-     "first": "15:07",
-     "last": "23:52"
-    },
-    "2026-06-05": {
-     "coverage": 23.58,
-     "engaged": 10,
-     "msgs": 135,
-     "first": "00:14",
-     "last": "23:49"
-    },
-    "2026-06-04": {
-     "coverage": 23.03,
-     "engaged": 10,
-     "msgs": 98,
-     "first": "00:04",
-     "last": "23:06"
-    },
-    "2026-06-03": {
-     "coverage": 6.51,
+     "coverage": 5.95,
      "engaged": 7,
-     "msgs": 141,
-     "first": "17:27",
-     "last": "23:57"
+     "msgs": 62,
+     "first": "17:54",
+     "last": "23:51"
     }
    },
    "Elvia": {
@@ -3563,90 +3322,90 @@
      "last": "23:59"
     },
     "2026-06-17": {
-     "coverage": 23.96,
-     "engaged": 10,
-     "msgs": 473,
-     "first": "00:01",
-     "last": "23:59"
-    },
-    "2026-06-16": {
-     "coverage": 23.97,
-     "engaged": 10,
-     "msgs": 671,
-     "first": "00:01",
-     "last": "23:59"
-    },
-    "2026-06-15": {
-     "coverage": 8.79,
-     "engaged": 9,
-     "msgs": 428,
-     "first": "15:10",
-     "last": "23:58"
-    },
-    "2026-06-12": {
-     "coverage": 23.75,
-     "engaged": 11,
-     "msgs": 557,
-     "first": "00:11",
-     "last": "23:55"
-    },
-    "2026-06-11": {
-     "coverage": 23.92,
-     "engaged": 10,
-     "msgs": 708,
-     "first": "00:00",
-     "last": "23:55"
-    },
-    "2026-06-10": {
-     "coverage": 23.81,
-     "engaged": 11,
-     "msgs": 487,
-     "first": "00:08",
-     "last": "23:57"
-    },
-    "2026-06-09": {
-     "coverage": 23.36,
-     "engaged": 10,
-     "msgs": 501,
-     "first": "00:08",
-     "last": "23:29"
-    },
-    "2026-06-08": {
-     "coverage": 8.69,
-     "engaged": 8,
-     "msgs": 500,
-     "first": "15:14",
-     "last": "23:56"
-    },
-    "2026-06-05": {
-     "coverage": 23.61,
-     "engaged": 12,
-     "msgs": 589,
-     "first": "00:15",
-     "last": "23:51"
-    },
-    "2026-06-04": {
-     "coverage": 23.87,
-     "engaged": 10,
-     "msgs": 881,
-     "first": "00:00",
-     "last": "23:52"
-    },
-    "2026-06-03": {
-     "coverage": 6.48,
+     "coverage": 6.09,
      "engaged": 7,
-     "msgs": 219,
-     "first": "17:31",
+     "msgs": 293,
+     "first": "17:53",
      "last": "23:59"
     }
    },
    "Elizabeth Bustos": {
-    "2026-09-01": {
-     "coverage": 17.28,
+    "2026-09-15": {
+     "coverage": 17.61,
      "engaged": 4,
-     "msgs": 73,
+     "msgs": 30,
+     "first": "00:10",
+     "last": "17:46"
+    },
+    "2026-09-14": {
+     "coverage": 8.48,
+     "engaged": 8,
+     "msgs": 118,
+     "first": "15:09",
+     "last": "23:38"
+    },
+    "2026-09-11": {
+     "coverage": 23.61,
+     "engaged": 10,
+     "msgs": 86,
+     "first": "00:07",
+     "last": "23:44"
+    },
+    "2026-09-10": {
+     "coverage": 23.8,
+     "engaged": 9,
+     "msgs": 96,
+     "first": "00:06",
+     "last": "23:54"
+    },
+    "2026-09-09": {
+     "coverage": 8.83,
+     "engaged": 9,
+     "msgs": 156,
+     "first": "15:08",
+     "last": "23:58"
+    },
+    "2026-09-08": {
+     "coverage": 23.19,
+     "engaged": 9,
+     "msgs": 82,
+     "first": "00:15",
+     "last": "23:26"
+    },
+    "2026-09-07": {
+     "coverage": 8.55,
+     "engaged": 9,
+     "msgs": 142,
+     "first": "15:15",
+     "last": "23:48"
+    },
+    "2026-09-04": {
+     "coverage": 23.77,
+     "engaged": 9,
+     "msgs": 95,
+     "first": "00:02",
+     "last": "23:48"
+    },
+    "2026-09-03": {
+     "coverage": 23.53,
+     "engaged": 10,
+     "msgs": 82,
+     "first": "00:20",
+     "last": "23:52"
+    },
+    "2026-09-02": {
+     "coverage": 23.45,
+     "engaged": 10,
+     "msgs": 98,
+     "first": "00:17",
+     "last": "23:45"
+    },
+    "2026-09-01": {
+     "coverage": 23.9,
+     "engaged": 10,
+     "msgs": 125,
      "first": "00:04",
-     "last": "17:20"
+     "last": "23:57"
     },
     "2026-08-31": {
      "coverage": 8.49,
@@ -4020,81 +3779,11 @@
      "last": "23:56"
     },
     "2026-06-17": {
-     "coverage": 23.96,
-     "engaged": 9,
-     "msgs": 627,
-     "first": "00:01",
-     "last": "23:59"
-    },
-    "2026-06-16": {
-     "coverage": 23.98,
-     "engaged": 11,
-     "msgs": 677,
-     "first": "00:00",
-     "last": "23:59"
-    },
-    "2026-06-15": {
-     "coverage": 6.5,
+     "coverage": 6.03,
      "engaged": 6,
-     "msgs": 391,
-     "first": "17:28",
-     "last": "23:58"
-    },
-    "2026-06-12": {
-     "coverage": 23.95,
-     "engaged": 9,
-     "msgs": 449,
-     "first": "00:01",
-     "last": "23:58"
-    },
-    "2026-06-11": {
-     "coverage": 23.32,
-     "engaged": 8,
-     "msgs": 234,
-     "first": "00:00",
-     "last": "23:19"
-    },
-    "2026-06-10": {
-     "coverage": 23.72,
-     "engaged": 10,
-     "msgs": 640,
-     "first": "00:15",
+     "msgs": 393,
+     "first": "17:57",
      "last": "23:59"
-    },
-    "2026-06-09": {
-     "coverage": 23.25,
-     "engaged": 9,
-     "msgs": 693,
-     "first": "00:05",
-     "last": "23:20"
-    },
-    "2026-06-08": {
-     "coverage": 7.91,
-     "engaged": 7,
-     "msgs": 592,
-     "first": "16:00",
-     "last": "23:55"
-    },
-    "2026-06-05": {
-     "coverage": 23.86,
-     "engaged": 8,
-     "msgs": 535,
-     "first": "00:03",
-     "last": "23:54"
-    },
-    "2026-06-04": {
-     "coverage": 23.84,
-     "engaged": 12,
-     "msgs": 493,
-     "first": "00:08",
-     "last": "23:58"
-    },
-    "2026-06-03": {
-     "coverage": 3.82,
-     "engaged": 4,
-     "msgs": 482,
-     "first": "19:00",
-     "last": "22:49"
     }
    },
    "Gabriel García": {
@@ -4246,81 +3935,11 @@
      "last": "23:39"
     },
     "2026-06-17": {
-     "coverage": 23.66,
-     "engaged": 10,
-     "msgs": 352,
-     "first": "00:18",
-     "last": "23:57"
-    },
-    "2026-06-16": {
-     "coverage": 23.6,
-     "engaged": 10,
-     "msgs": 318,
-     "first": "00:12",
-     "last": "23:48"
-    },
-    "2026-06-15": {
-     "coverage": 8.66,
-     "engaged": 9,
-     "msgs": 326,
-     "first": "15:07",
-     "last": "23:47"
-    },
-    "2026-06-12": {
-     "coverage": 23.91,
-     "engaged": 11,
-     "msgs": 210,
-     "first": "00:02",
-     "last": "23:56"
-    },
-    "2026-06-11": {
-     "coverage": 23.78,
-     "engaged": 9,
-     "msgs": 119,
-     "first": "00:01",
-     "last": "23:47"
-    },
-    "2026-06-10": {
-     "coverage": 23.93,
-     "engaged": 12,
-     "msgs": 167,
-     "first": "00:03",
-     "last": "23:59"
-    },
-    "2026-06-09": {
-     "coverage": 23.92,
-     "engaged": 10,
-     "msgs": 187,
-     "first": "00:03",
-     "last": "23:58"
-    },
-    "2026-06-08": {
-     "coverage": 8.77,
-     "engaged": 9,
-     "msgs": 311,
-     "first": "15:11",
-     "last": "23:57"
-    },
-    "2026-06-05": {
-     "coverage": 23.14,
-     "engaged": 8,
-     "msgs": 144,
-     "first": "00:50",
-     "last": "23:58"
-    },
-    "2026-06-04": {
-     "coverage": 23.03,
-     "engaged": 10,
-     "msgs": 226,
-     "first": "00:48",
-     "last": "23:50"
-    },
-    "2026-06-03": {
-     "coverage": 6.36,
+     "coverage": 6.07,
      "engaged": 7,
-     "msgs": 159,
-     "first": "17:36",
-     "last": "23:58"
+     "msgs": 227,
+     "first": "17:53",
+     "last": "23:57"
     }
    },
    "Saúl": {
@@ -4558,90 +4177,90 @@
      "last": "23:59"
     },
     "2026-06-17": {
-     "coverage": 23.79,
-     "engaged": 10,
-     "msgs": 103,
-     "first": "00:06",
-     "last": "23:53"
-    },
-    "2026-06-16": {
-     "coverage": 23.8,
-     "engaged": 11,
-     "msgs": 149,
-     "first": "00:02",
-     "last": "23:50"
-    },
-    "2026-06-15": {
-     "coverage": 8.36,
-     "engaged": 9,
-     "msgs": 129,
-     "first": "15:10",
-     "last": "23:31"
-    },
-    "2026-06-12": {
-     "coverage": 23.37,
-     "engaged": 9,
-     "msgs": 184,
-     "first": "00:37",
-     "last": "23:59"
-    },
-    "2026-06-11": {
-     "coverage": 23.71,
-     "engaged": 8,
-     "msgs": 74,
-     "first": "00:02",
-     "last": "23:44"
-    },
-    "2026-06-10": {
-     "coverage": 23.96,
-     "engaged": 10,
-     "msgs": 160,
-     "first": "00:01",
-     "last": "23:58"
-    },
-    "2026-06-09": {
-     "coverage": 23.59,
-     "engaged": 11,
-     "msgs": 130,
-     "first": "00:17",
-     "last": "23:52"
-    },
-    "2026-06-08": {
-     "coverage": 8.51,
-     "engaged": 8,
-     "msgs": 149,
-     "first": "15:20",
-     "last": "23:51"
-    },
-    "2026-06-05": {
-     "coverage": 23.84,
-     "engaged": 11,
-     "msgs": 252,
-     "first": "00:07",
-     "last": "23:58"
-    },
-    "2026-06-04": {
-     "coverage": 23.84,
-     "engaged": 10,
-     "msgs": 170,
-     "first": "00:09",
-     "last": "23:59"
-    },
-    "2026-06-03": {
-     "coverage": 6.38,
+     "coverage": 5.42,
      "engaged": 6,
-     "msgs": 85,
-     "first": "17:29",
-     "last": "23:52"
+     "msgs": 63,
+     "first": "18:28",
+     "last": "23:53"
     }
    },
    "Gael Santiago": {
+    "2026-09-15": {
+     "coverage": 17.76,
+     "engaged": 5,
+     "msgs": 77,
+     "first": "00:00",
+     "last": "17:46"
+    },
+    "2026-09-14": {
+     "coverage": 8.42,
+     "engaged": 9,
+     "msgs": 127,
+     "first": "15:34",
+     "last": "23:59"
+    },
+    "2026-09-11": {
+     "coverage": 23.49,
+     "engaged": 7,
+     "msgs": 119,
+     "first": "00:21",
+     "last": "23:50"
+    },
+    "2026-09-10": {
+     "coverage": 8.11,
+     "engaged": 9,
+     "msgs": 169,
+     "first": "15:31",
+     "last": "23:37"
+    },
+    "2026-09-09": {
+     "coverage": 7.66,
+     "engaged": 8,
+     "msgs": 130,
+     "first": "16:08",
+     "last": "23:48"
+    },
+    "2026-09-08": {
+     "coverage": 22.97,
+     "engaged": 9,
+     "msgs": 124,
+     "first": "00:43",
+     "last": "23:41"
+    },
+    "2026-09-07": {
+     "coverage": 7.68,
+     "engaged": 9,
+     "msgs": 156,
+     "first": "15:56",
+     "last": "23:36"
+    },
+    "2026-09-04": {
+     "coverage": 23.7,
+     "engaged": 8,
+     "msgs": 107,
+     "first": "00:14",
+     "last": "23:56"
+    },
+    "2026-09-03": {
+     "coverage": 8.14,
+     "engaged": 9,
+     "msgs": 155,
+     "first": "15:25",
+     "last": "23:34"
+    },
+    "2026-09-02": {
+     "coverage": 6.97,
+     "engaged": 7,
+     "msgs": 113,
+     "first": "16:54",
+     "last": "23:52"
+    },
     "2026-09-01": {
-     "coverage": 0.76,
-     "engaged": 2,
-     "msgs": 20,
+     "coverage": 7.63,
+     "engaged": 8,
+     "msgs": 121,
      "first": "15:50",
-     "last": "16:36"
+     "last": "23:28"
     },
     "2026-08-31": {
      "coverage": 8.03,
@@ -5015,97 +4634,11 @@
      "last": "19:23"
     },
     "2026-06-17": {
-     "coverage": 1.37,
+     "coverage": 0.72,
      "engaged": 2,
-     "msgs": 16,
-     "first": "17:17",
+     "msgs": 11,
+     "first": "17:56",
      "last": "18:39"
-    },
-    "2026-06-16": {
-     "coverage": 0.77,
-     "engaged": 2,
-     "msgs": 15,
-     "first": "22:38",
-     "last": "23:25"
-    }
-   },
-   "Kate González": {
-    "2026-06-17": {
-     "coverage": 16.8,
-     "engaged": 3,
-     "msgs": 67,
-     "first": "00:03",
-     "last": "16:51"
-    },
-    "2026-06-16": {
-     "coverage": 23.93,
-     "engaged": 10,
-     "msgs": 267,
-     "first": "00:01",
-     "last": "23:57"
-    },
-    "2026-06-15": {
-     "coverage": 8.27,
-     "engaged": 8,
-     "msgs": 503,
-     "first": "15:15",
-     "last": "23:32"
-    },
-    "2026-06-12": {
-     "coverage": 23.91,
-     "engaged": 11,
-     "msgs": 377,
-     "first": "00:03",
-     "last": "23:58"
-    },
-    "2026-06-11": {
-     "coverage": 23.01,
-     "engaged": 10,
-     "msgs": 292,
-     "first": "00:00",
-     "last": "23:01"
-    },
-    "2026-06-10": {
-     "coverage": 23.67,
-     "engaged": 10,
-     "msgs": 279,
-     "first": "00:17",
-     "last": "23:57"
-    },
-    "2026-06-09": {
-     "coverage": 23.85,
-     "engaged": 9,
-     "msgs": 302,
-     "first": "00:03",
-     "last": "23:54"
-    },
-    "2026-06-08": {
-     "coverage": 8.72,
-     "engaged": 9,
-     "msgs": 330,
-     "first": "15:16",
-     "last": "23:59"
-    },
-    "2026-06-05": {
-     "coverage": 23.95,
-     "engaged": 10,
-     "msgs": 217,
-     "first": "00:02",
-     "last": "23:59"
-    },
-    "2026-06-04": {
-     "coverage": 23.97,
-     "engaged": 10,
-     "msgs": 297,
-     "first": "00:00",
-     "last": "23:58"
-    },
-    "2026-06-03": {
-     "coverage": 6.35,
-     "engaged": 7,
-     "msgs": 166,
-     "first": "17:35",
-     "last": "23:56"
     }
    },
    "Daniel Luna": {
@@ -5285,81 +4818,11 @@
      "last": "23:59"
     },
     "2026-06-17": {
-     "coverage": 23.69,
-     "engaged": 14,
-     "msgs": 412,
-     "first": "00:12",
-     "last": "23:53"
-    },
-    "2026-06-16": {
-     "coverage": 23.43,
-     "engaged": 13,
-     "msgs": 369,
-     "first": "00:28",
-     "last": "23:54"
-    },
-    "2026-06-15": {
-     "coverage": 10.0,
-     "engaged": 10,
-     "msgs": 332,
-     "first": "13:28",
-     "last": "23:28"
-    },
-    "2026-06-12": {
-     "coverage": 23.43,
-     "engaged": 11,
-     "msgs": 307,
-     "first": "00:28",
-     "last": "23:53"
-    },
-    "2026-06-11": {
-     "coverage": 22.52,
-     "engaged": 8,
-     "msgs": 190,
-     "first": "00:06",
-     "last": "22:37"
-    },
-    "2026-06-10": {
-     "coverage": 23.51,
-     "engaged": 10,
-     "msgs": 307,
-     "first": "00:18",
-     "last": "23:48"
-    },
-    "2026-06-09": {
-     "coverage": 23.75,
-     "engaged": 9,
-     "msgs": 312,
-     "first": "00:09",
-     "last": "23:54"
-    },
-    "2026-06-08": {
-     "coverage": 8.43,
-     "engaged": 9,
-     "msgs": 334,
-     "first": "15:33",
-     "last": "23:59"
-    },
-    "2026-06-05": {
-     "coverage": 23.02,
-     "engaged": 10,
-     "msgs": 220,
-     "first": "00:50",
-     "last": "23:51"
-    },
-    "2026-06-04": {
-     "coverage": 23.75,
-     "engaged": 12,
-     "msgs": 299,
-     "first": "00:04",
-     "last": "23:49"
-    },
-    "2026-06-03": {
-     "coverage": 6.08,
+     "coverage": 6.06,
      "engaged": 7,
-     "msgs": 172,
-     "first": "17:51",
-     "last": "23:56"
+     "msgs": 154,
+     "first": "17:50",
+     "last": "23:53"
     }
    },
    "Cesar": {
@@ -5539,81 +5002,11 @@
      "last": "23:56"
     },
     "2026-06-17": {
-     "coverage": 24.0,
-     "engaged": 10,
-     "msgs": 183,
-     "first": "00:00",
-     "last": "23:59"
-    },
-    "2026-06-16": {
-     "coverage": 23.96,
-     "engaged": 10,
-     "msgs": 176,
-     "first": "00:02",
-     "last": "23:59"
-    },
-    "2026-06-15": {
-     "coverage": 8.75,
-     "engaged": 9,
-     "msgs": 167,
-     "first": "15:14",
-     "last": "23:59"
-    },
-    "2026-06-12": {
-     "coverage": 23.64,
-     "engaged": 11,
-     "msgs": 161,
-     "first": "00:10",
-     "last": "23:49"
-    },
-    "2026-06-11": {
-     "coverage": 23.61,
-     "engaged": 11,
-     "msgs": 88,
-     "first": "00:19",
-     "last": "23:56"
-    },
-    "2026-06-10": {
-     "coverage": 23.71,
-     "engaged": 10,
-     "msgs": 104,
-     "first": "00:15",
-     "last": "23:58"
-    },
-    "2026-06-09": {
-     "coverage": 23.65,
-     "engaged": 9,
-     "msgs": 127,
-     "first": "00:16",
-     "last": "23:55"
-    },
-    "2026-06-08": {
-     "coverage": 8.72,
-     "engaged": 9,
-     "msgs": 149,
-     "first": "15:07",
-     "last": "23:50"
-    },
-    "2026-06-05": {
-     "coverage": 23.66,
-     "engaged": 11,
-     "msgs": 127,
-     "first": "00:20",
-     "last": "23:59"
-    },
-    "2026-06-04": {
-     "coverage": 23.91,
-     "engaged": 10,
-     "msgs": 170,
-     "first": "00:02",
-     "last": "23:56"
-    },
-    "2026-06-03": {
-     "coverage": 6.4,
+     "coverage": 6.01,
      "engaged": 7,
-     "msgs": 115,
-     "first": "17:29",
-     "last": "23:52"
+     "msgs": 122,
+     "first": "17:58",
+     "last": "23:59"
     }
    },
    "Eduardo": {
@@ -5793,81 +5186,11 @@
      "last": "22:49"
     },
     "2026-06-17": {
-     "coverage": 22.26,
-     "engaged": 7,
-     "msgs": 49,
-     "first": "00:11",
+     "coverage": 4.11,
+     "engaged": 3,
+     "msgs": 15,
+     "first": "18:20",
      "last": "22:27"
-    },
-    "2026-06-16": {
-     "coverage": 23.84,
-     "engaged": 10,
-     "msgs": 137,
-     "first": "00:08",
-     "last": "23:58"
-    },
-    "2026-06-15": {
-     "coverage": 8.81,
-     "engaged": 9,
-     "msgs": 107,
-     "first": "15:04",
-     "last": "23:52"
-    },
-    "2026-06-12": {
-     "coverage": 8.46,
-     "engaged": 7,
-     "msgs": 62,
-     "first": "15:17",
-     "last": "23:45"
-    },
-    "2026-06-11": {
-     "coverage": 23.18,
-     "engaged": 10,
-     "msgs": 81,
-     "first": "00:27",
-     "last": "23:38"
-    },
-    "2026-06-10": {
-     "coverage": 9.74,
-     "engaged": 9,
-     "msgs": 119,
-     "first": "14:06",
-     "last": "23:50"
-    },
-    "2026-06-09": {
-     "coverage": 23.26,
-     "engaged": 9,
-     "msgs": 111,
-     "first": "00:33",
-     "last": "23:49"
-    },
-    "2026-06-08": {
-     "coverage": 9.02,
-     "engaged": 9,
-     "msgs": 164,
-     "first": "14:54",
-     "last": "23:55"
-    },
-    "2026-06-05": {
-     "coverage": 23.18,
-     "engaged": 11,
-     "msgs": 137,
-     "first": "00:23",
-     "last": "23:34"
-    },
-    "2026-06-04": {
-     "coverage": 23.81,
-     "engaged": 11,
-     "msgs": 162,
-     "first": "00:09",
-     "last": "23:58"
-    },
-    "2026-06-03": {
-     "coverage": 6.31,
-     "engaged": 7,
-     "msgs": 98,
-     "first": "17:34",
-     "last": "23:53"
     }
    },
    "Cesar Iram Enriquez": {
@@ -6047,81 +5370,11 @@
      "last": "23:20"
     },
     "2026-06-17": {
-     "coverage": 23.77,
-     "engaged": 10,
-     "msgs": 147,
-     "first": "00:10",
+     "coverage": 5.84,
+     "engaged": 6,
+     "msgs": 101,
+     "first": "18:05",
      "last": "23:56"
-    },
-    "2026-06-16": {
-     "coverage": 22.94,
-     "engaged": 10,
-     "msgs": 121,
-     "first": "00:47",
-     "last": "23:43"
-    },
-    "2026-06-15": {
-     "coverage": 8.96,
-     "engaged": 10,
-     "msgs": 160,
-     "first": "14:59",
-     "last": "23:57"
-    },
-    "2026-06-12": {
-     "coverage": 23.89,
-     "engaged": 10,
-     "msgs": 153,
-     "first": "00:03",
-     "last": "23:57"
-    },
-    "2026-06-11": {
-     "coverage": 23.95,
-     "engaged": 10,
-     "msgs": 119,
-     "first": "00:02",
-     "last": "23:59"
-    },
-    "2026-06-10": {
-     "coverage": 23.9,
-     "engaged": 10,
-     "msgs": 110,
-     "first": "00:04",
-     "last": "23:58"
-    },
-    "2026-06-09": {
-     "coverage": 23.99,
-     "engaged": 11,
-     "msgs": 153,
-     "first": "00:00",
-     "last": "23:59"
-    },
-    "2026-06-08": {
-     "coverage": 8.59,
-     "engaged": 9,
-     "msgs": 120,
-     "first": "15:24",
-     "last": "23:59"
-    },
-    "2026-06-05": {
-     "coverage": 23.65,
-     "engaged": 10,
-     "msgs": 121,
-     "first": "00:00",
-     "last": "23:39"
-    },
-    "2026-06-04": {
-     "coverage": 8.63,
-     "engaged": 9,
-     "msgs": 121,
-     "first": "15:21",
-     "last": "23:59"
-    },
-    "2026-06-03": {
-     "coverage": 5.79,
-     "engaged": 7,
-     "msgs": 63,
-     "first": "17:27",
-     "last": "23:15"
     }
    },
    "Elizabeth Castro": {
@@ -6301,81 +5554,11 @@
      "last": "23:43"
     },
     "2026-06-17": {
-     "coverage": 23.59,
-     "engaged": 10,
-     "msgs": 169,
-     "first": "00:23",
+     "coverage": 5.93,
+     "engaged": 5,
+     "msgs": 100,
+     "first": "18:03",
      "last": "23:59"
-    },
-    "2026-06-16": {
-     "coverage": 23.69,
-     "engaged": 11,
-     "msgs": 182,
-     "first": "00:18",
-     "last": "23:59"
-    },
-    "2026-06-15": {
-     "coverage": 8.77,
-     "engaged": 10,
-     "msgs": 184,
-     "first": "14:59",
-     "last": "23:46"
-    },
-    "2026-06-12": {
-     "coverage": 23.94,
-     "engaged": 10,
-     "msgs": 220,
-     "first": "00:02",
-     "last": "23:58"
-    },
-    "2026-06-11": {
-     "coverage": 23.66,
-     "engaged": 10,
-     "msgs": 153,
-     "first": "00:01",
-     "last": "23:41"
-    },
-    "2026-06-10": {
-     "coverage": 22.24,
-     "engaged": 9,
-     "msgs": 109,
-     "first": "00:48",
-     "last": "23:02"
-    },
-    "2026-06-09": {
-     "coverage": 23.79,
-     "engaged": 10,
-     "msgs": 215,
-     "first": "00:09",
-     "last": "23:56"
-    },
-    "2026-06-08": {
-     "coverage": 8.28,
-     "engaged": 9,
-     "msgs": 209,
-     "first": "15:18",
-     "last": "23:35"
-    },
-    "2026-06-05": {
-     "coverage": 22.17,
-     "engaged": 9,
-     "msgs": 172,
-     "first": "00:32",
-     "last": "22:42"
-    },
-    "2026-06-04": {
-     "coverage": 23.72,
-     "engaged": 11,
-     "msgs": 215,
-     "first": "00:11",
-     "last": "23:55"
-    },
-    "2026-06-03": {
-     "coverage": 5.79,
-     "engaged": 7,
-     "msgs": 139,
-     "first": "17:28",
-     "last": "23:16"
     }
    },
    "Diego Cedillo": {
@@ -6697,81 +5880,11 @@
      "last": "23:58"
     },
     "2026-06-17": {
-     "coverage": 23.93,
-     "engaged": 10,
-     "msgs": 195,
-     "first": "00:03",
+     "coverage": 6.17,
+     "engaged": 6,
+     "msgs": 136,
+     "first": "17:49",
      "last": "23:59"
-    },
-    "2026-06-16": {
-     "coverage": 23.94,
-     "engaged": 9,
-     "msgs": 177,
-     "first": "00:01",
-     "last": "23:57"
-    },
-    "2026-06-15": {
-     "coverage": 10.3,
-     "engaged": 10,
-     "msgs": 142,
-     "first": "13:33",
-     "last": "23:51"
-    },
-    "2026-06-12": {
-     "coverage": 23.92,
-     "engaged": 11,
-     "msgs": 185,
-     "first": "00:04",
-     "last": "23:59"
-    },
-    "2026-06-11": {
-     "coverage": 23.95,
-     "engaged": 10,
-     "msgs": 94,
-     "first": "00:01",
-     "last": "23:58"
-    },
-    "2026-06-10": {
-     "coverage": 23.86,
-     "engaged": 12,
-     "msgs": 252,
-     "first": "00:02",
-     "last": "23:54"
-    },
-    "2026-06-09": {
-     "coverage": 23.95,
-     "engaged": 10,
-     "msgs": 212,
-     "first": "00:00",
-     "last": "23:57"
-    },
-    "2026-06-08": {
-     "coverage": 23.13,
-     "engaged": 10,
-     "msgs": 162,
-     "first": "00:50",
-     "last": "23:58"
-    },
-    "2026-06-05": {
-     "coverage": 23.35,
-     "engaged": 10,
-     "msgs": 204,
-     "first": "00:28",
-     "last": "23:49"
-    },
-    "2026-06-04": {
-     "coverage": 23.79,
-     "engaged": 10,
-     "msgs": 172,
-     "first": "00:01",
-     "last": "23:48"
-    },
-    "2026-06-03": {
-     "coverage": 6.46,
-     "engaged": 7,
-     "msgs": 110,
-     "first": "17:30",
-     "last": "23:57"
     }
    },
    "Karen Pérez": {
@@ -6951,81 +6064,11 @@
      "last": "23:11"
     },
     "2026-06-17": {
-     "coverage": 23.5,
-     "engaged": 9,
-     "msgs": 683,
-     "first": "00:11",
+     "coverage": 5.84,
+     "engaged": 6,
+     "msgs": 252,
+     "first": "17:50",
      "last": "23:41"
-    },
-    "2026-06-16": {
-     "coverage": 23.98,
-     "engaged": 9,
-     "msgs": 456,
-     "first": "00:01",
-     "last": "23:59"
-    },
-    "2026-06-15": {
-     "coverage": 8.88,
-     "engaged": 8,
-     "msgs": 720,
-     "first": "15:02",
-     "last": "23:55"
-    },
-    "2026-06-12": {
-     "coverage": 8.33,
-     "engaged": 8,
-     "msgs": 449,
-     "first": "15:21",
-     "last": "23:40"
-    },
-    "2026-06-11": {
-     "coverage": 23.19,
-     "engaged": 8,
-     "msgs": 223,
-     "first": "00:00",
-     "last": "23:12"
-    },
-    "2026-06-10": {
-     "coverage": 23.98,
-     "engaged": 10,
-     "msgs": 535,
-     "first": "00:00",
-     "last": "23:59"
-    },
-    "2026-06-09": {
-     "coverage": 23.94,
-     "engaged": 11,
-     "msgs": 819,
-     "first": "00:03",
-     "last": "23:59"
-    },
-    "2026-06-08": {
-     "coverage": 8.36,
-     "engaged": 9,
-     "msgs": 650,
-     "first": "15:28",
-     "last": "23:50"
-    },
-    "2026-06-05": {
-     "coverage": 23.87,
-     "engaged": 10,
-     "msgs": 659,
-     "first": "00:04",
-     "last": "23:56"
-    },
-    "2026-06-04": {
-     "coverage": 23.81,
-     "engaged": 10,
-     "msgs": 672,
-     "first": "00:11",
-     "last": "23:59"
-    },
-    "2026-06-03": {
-     "coverage": 6.26,
-     "engaged": 7,
-     "msgs": 320,
-     "first": "17:43",
-     "last": "23:58"
     }
    },
    "Dylan Arellano": {
@@ -7100,81 +6143,11 @@
      "last": "23:43"
     },
     "2026-06-17": {
-     "coverage": 23.95,
-     "engaged": 10,
-     "msgs": 206,
-     "first": "00:00",
+     "coverage": 6.12,
+     "engaged": 7,
+     "msgs": 95,
+     "first": "17:50",
      "last": "23:57"
-    },
-    "2026-06-16": {
-     "coverage": 23.97,
-     "engaged": 10,
-     "msgs": 116,
-     "first": "00:01",
-     "last": "23:59"
-    },
-    "2026-06-15": {
-     "coverage": 8.54,
-     "engaged": 9,
-     "msgs": 201,
-     "first": "15:10",
-     "last": "23:43"
-    },
-    "2026-06-12": {
-     "coverage": 8.5,
-     "engaged": 9,
-     "msgs": 192,
-     "first": "15:06",
-     "last": "23:36"
-    },
-    "2026-06-11": {
-     "coverage": 23.21,
-     "engaged": 10,
-     "msgs": 76,
-     "first": "00:00",
-     "last": "23:12"
-    },
-    "2026-06-10": {
-     "coverage": 8.53,
-     "engaged": 9,
-     "msgs": 190,
-     "first": "15:27",
-     "last": "23:59"
-    },
-    "2026-06-09": {
-     "coverage": 22.85,
-     "engaged": 10,
-     "msgs": 195,
-     "first": "00:37",
-     "last": "23:28"
-    },
-    "2026-06-08": {
-     "coverage": 8.42,
-     "engaged": 9,
-     "msgs": 161,
-     "first": "15:10",
-     "last": "23:35"
-    },
-    "2026-06-05": {
-     "coverage": 23.72,
-     "engaged": 9,
-     "msgs": 168,
-     "first": "00:07",
-     "last": "23:50"
-    },
-    "2026-06-04": {
-     "coverage": 23.82,
-     "engaged": 10,
-     "msgs": 149,
-     "first": "00:08",
-     "last": "23:58"
-    },
-    "2026-06-03": {
-     "coverage": 6.38,
-     "engaged": 6,
-     "msgs": 88,
-     "first": "17:29",
-     "last": "23:51"
     }
    },
    "Elsa Hernández": {
@@ -7354,81 +6327,11 @@
      "last": "23:52"
     },
     "2026-06-17": {
-     "coverage": 23.86,
-     "engaged": 14,
-     "msgs": 312,
-     "first": "00:01",
+     "coverage": 5.82,
+     "engaged": 6,
+     "msgs": 137,
+     "first": "18:03",
      "last": "23:52"
-    },
-    "2026-06-16": {
-     "coverage": 23.67,
-     "engaged": 12,
-     "msgs": 537,
-     "first": "00:13",
-     "last": "23:54"
-    },
-    "2026-06-15": {
-     "coverage": 8.91,
-     "engaged": 9,
-     "msgs": 579,
-     "first": "15:02",
-     "last": "23:57"
-    },
-    "2026-06-12": {
-     "coverage": 23.83,
-     "engaged": 13,
-     "msgs": 419,
-     "first": "00:05",
-     "last": "23:54"
-    },
-    "2026-06-11": {
-     "coverage": 23.74,
-     "engaged": 12,
-     "msgs": 355,
-     "first": "00:03",
-     "last": "23:47"
-    },
-    "2026-06-10": {
-     "coverage": 23.87,
-     "engaged": 13,
-     "msgs": 496,
-     "first": "00:06",
-     "last": "23:58"
-    },
-    "2026-06-09": {
-     "coverage": 23.92,
-     "engaged": 15,
-     "msgs": 512,
-     "first": "00:02",
-     "last": "23:58"
-    },
-    "2026-06-08": {
-     "coverage": 8.74,
-     "engaged": 9,
-     "msgs": 452,
-     "first": "15:11",
-     "last": "23:56"
-    },
-    "2026-06-05": {
-     "coverage": 23.49,
-     "engaged": 11,
-     "msgs": 318,
-     "first": "00:30",
-     "last": "23:59"
-    },
-    "2026-06-04": {
-     "coverage": 23.87,
-     "engaged": 14,
-     "msgs": 414,
-     "first": "00:03",
-     "last": "23:55"
-    },
-    "2026-06-03": {
-     "coverage": 6.23,
-     "engaged": 7,
-     "msgs": 150,
-     "first": "17:42",
-     "last": "23:55"
     }
    },
    "Horace \"el bueno\"": {
@@ -7601,81 +6504,11 @@
      "last": "23:55"
     },
     "2026-06-17": {
-     "coverage": 23.34,
-     "engaged": 3,
-     "msgs": 6,
-     "first": "00:21",
-     "last": "23:42"
-    },
-    "2026-06-16": {
-     "coverage": 17.7,
-     "engaged": 4,
-     "msgs": 4,
-     "first": "00:48",
-     "last": "18:30"
-    },
-    "2026-06-15": {
-     "coverage": 2.97,
-     "engaged": 2,
-     "msgs": 4,
-     "first": "20:29",
-     "last": "23:27"
-    },
-    "2026-06-12": {
-     "coverage": 2.33,
-     "engaged": 2,
-     "msgs": 4,
-     "first": "17:08",
-     "last": "19:28"
-    },
-    "2026-06-11": {
-     "coverage": 7.47,
-     "engaged": 3,
-     "msgs": 3,
-     "first": "15:38",
-     "last": "23:06"
-    },
-    "2026-06-10": {
-     "coverage": 0.0,
-     "engaged": 1,
-     "msgs": 1,
-     "first": "18:04",
-     "last": "18:04"
-    },
-    "2026-06-09": {
-     "coverage": 4.94,
-     "engaged": 4,
-     "msgs": 5,
-     "first": "18:30",
-     "last": "23:26"
-    },
-    "2026-06-08": {
-     "coverage": 5.87,
-     "engaged": 4,
-     "msgs": 7,
-     "first": "17:31",
-     "last": "23:23"
-    },
-    "2026-06-05": {
-     "coverage": 15.88,
+     "coverage": 2.02,
      "engaged": 2,
      "msgs": 2,
-     "first": "00:45",
-     "last": "16:37"
-    },
-    "2026-06-04": {
-     "coverage": 17.47,
-     "engaged": 5,
-     "msgs": 143,
-     "first": "00:01",
-     "last": "17:29"
-    },
-    "2026-06-03": {
-     "coverage": 6.36,
-     "engaged": 7,
-     "msgs": 164,
-     "first": "17:32",
-     "last": "23:54"
+     "first": "21:41",
+     "last": "23:42"
     }
    },
    "Itzel Alarcón": {
@@ -7736,81 +6569,11 @@
      "last": "23:56"
     },
     "2026-06-17": {
-     "coverage": 23.93,
-     "engaged": 10,
-     "msgs": 245,
-     "first": "00:03",
-     "last": "23:59"
-    },
-    "2026-06-16": {
-     "coverage": 23.81,
-     "engaged": 10,
-     "msgs": 184,
-     "first": "00:07",
-     "last": "23:55"
-    },
-    "2026-06-15": {
-     "coverage": 8.85,
-     "engaged": 9,
-     "msgs": 265,
-     "first": "15:08",
-     "last": "23:59"
-    },
-    "2026-06-12": {
-     "coverage": 23.7,
-     "engaged": 10,
-     "msgs": 202,
-     "first": "00:15",
-     "last": "23:57"
-    },
-    "2026-06-11": {
-     "coverage": 23.96,
-     "engaged": 10,
-     "msgs": 108,
-     "first": "00:00",
-     "last": "23:57"
-    },
-    "2026-06-10": {
-     "coverage": 23.96,
-     "engaged": 9,
-     "msgs": 163,
-     "first": "00:02",
-     "last": "23:59"
-    },
-    "2026-06-09": {
-     "coverage": 7.29,
+     "coverage": 6.14,
      "engaged": 7,
-     "msgs": 112,
-     "first": "16:27",
-     "last": "23:44"
-    },
-    "2026-06-08": {
-     "coverage": 3.6,
-     "engaged": 4,
-     "msgs": 78,
-     "first": "15:02",
-     "last": "18:38"
-    },
-    "2026-06-05": {
-     "coverage": 23.76,
-     "engaged": 10,
-     "msgs": 269,
-     "first": "00:00",
-     "last": "23:45"
-    },
-    "2026-06-04": {
-     "coverage": 23.91,
-     "engaged": 10,
-     "msgs": 252,
-     "first": "00:05",
+     "msgs": 162,
+     "first": "17:51",
      "last": "23:59"
-    },
-    "2026-06-03": {
-     "coverage": 6.47,
-     "engaged": 7,
-     "msgs": 205,
-     "first": "17:28",
-     "last": "23:56"
     }
    },
    "Paola Viveros": {
@@ -7990,81 +6753,11 @@
      "last": "23:57"
     },
     "2026-06-17": {
-     "coverage": 23.95,
-     "engaged": 10,
-     "msgs": 303,
-     "first": "00:02",
-     "last": "23:59"
-    },
-    "2026-06-16": {
-     "coverage": 23.58,
-     "engaged": 10,
-     "msgs": 285,
-     "first": "00:08",
-     "last": "23:43"
-    },
-    "2026-06-15": {
-     "coverage": 8.89,
-     "engaged": 9,
-     "msgs": 240,
-     "first": "15:05",
-     "last": "23:58"
-    },
-    "2026-06-12": {
-     "coverage": 23.85,
-     "engaged": 10,
-     "msgs": 246,
-     "first": "00:00",
-     "last": "23:51"
-    },
-    "2026-06-11": {
-     "coverage": 23.85,
-     "engaged": 11,
-     "msgs": 157,
-     "first": "00:07",
-     "last": "23:58"
-    },
-    "2026-06-10": {
-     "coverage": 23.81,
-     "engaged": 9,
-     "msgs": 252,
-     "first": "00:01",
-     "last": "23:49"
-    },
-    "2026-06-09": {
-     "coverage": 23.95,
-     "engaged": 10,
-     "msgs": 275,
-     "first": "00:02",
-     "last": "23:59"
-    },
-    "2026-06-08": {
-     "coverage": 8.87,
-     "engaged": 9,
-     "msgs": 284,
-     "first": "15:06",
-     "last": "23:58"
-    },
-    "2026-06-05": {
-     "coverage": 23.67,
-     "engaged": 11,
-     "msgs": 217,
-     "first": "00:07",
-     "last": "23:47"
-    },
-    "2026-06-04": {
-     "coverage": 23.64,
-     "engaged": 10,
-     "msgs": 212,
-     "first": "00:15",
-     "last": "23:53"
-    },
-    "2026-06-03": {
-     "coverage": 6.32,
+     "coverage": 6.09,
      "engaged": 7,
-     "msgs": 208,
-     "first": "17:28",
-     "last": "23:47"
+     "msgs": 172,
+     "first": "17:53",
+     "last": "23:59"
     }
    }
   }
@@ -8384,10 +7077,10 @@
   ]
  },
  "volumeData": {
-  "generated_at": "2026-09-01T17:33:11.877126",
+  "generated_at": "2026-09-15T17:53:12.671639",
   "window_days": 90,
-  "start_date": "2026-06-03",
-  "end_date": "2026-09-01",
+  "start_date": "2026-06-17",
+  "end_date": "2026-09-15",
   "tz_note": "CDMX local, Mon-Fri only, auto-replies excluded from sent.",
   "by_agent_day": {
    "Carlos": {
@@ -8517,59 +7210,9 @@
      "total": 205
     },
     "2026-06-17": {
-     "sent": 192,
-     "received": 288,
-     "total": 480
-    },
-    "2026-06-16": {
-     "sent": 187,
-     "received": 301,
-     "total": 488
-    },
-    "2026-06-15": {
-     "sent": 189,
-     "received": 323,
-     "total": 512
-    },
-    "2026-06-12": {
-     "sent": 123,
-     "received": 216,
-     "total": 339
-    },
-    "2026-06-11": {
-     "sent": 184,
-     "received": 215,
-     "total": 399
-    },
-    "2026-06-10": {
-     "sent": 138,
-     "received": 245,
-     "total": 383
-    },
-    "2026-06-09": {
-     "sent": 192,
-     "received": 320,
-     "total": 512
-    },
-    "2026-06-08": {
-     "sent": 189,
-     "received": 266,
-     "total": 455
-    },
-    "2026-06-05": {
-     "sent": 135,
-     "received": 188,
-     "total": 323
-    },
-    "2026-06-04": {
-     "sent": 154,
-     "received": 260,
-     "total": 414
-    },
-    "2026-06-03": {
-     "sent": 96,
-     "received": 180,
-     "total": 276
+     "sent": 127,
+     "received": 155,
+     "total": 282
     }
    },
    "Iran": {
@@ -8699,59 +7342,9 @@
      "total": 616
     },
     "2026-06-17": {
-     "sent": 337,
-     "received": 548,
-     "total": 885
-    },
-    "2026-06-16": {
-     "sent": 586,
-     "received": 914,
-     "total": 1500
-    },
-    "2026-06-15": {
-     "sent": 588,
-     "received": 712,
-     "total": 1300
-    },
-    "2026-06-12": {
-     "sent": 676,
-     "received": 769,
-     "total": 1445
-    },
-    "2026-06-11": {
-     "sent": 430,
-     "received": 458,
-     "total": 888
-    },
-    "2026-06-10": {
-     "sent": 668,
-     "received": 950,
-     "total": 1618
-    },
-    "2026-06-09": {
-     "sent": 604,
-     "received": 769,
-     "total": 1373
-    },
-    "2026-06-08": {
-     "sent": 618,
-     "received": 582,
-     "total": 1200
-    },
-    "2026-06-05": {
-     "sent": 420,
-     "received": 467,
-     "total": 887
-    },
-    "2026-06-04": {
-     "sent": 541,
-     "received": 574,
-     "total": 1115
-    },
-    "2026-06-03": {
-     "sent": 353,
-     "received": 357,
-     "total": 710
+     "sent": 167,
+     "received": 264,
+     "total": 431
     }
    },
    "Lorena Domínguez": {
@@ -8881,59 +7474,9 @@
      "total": 533
     },
     "2026-06-17": {
-     "sent": 172,
-     "received": 314,
-     "total": 486
-    },
-    "2026-06-16": {
-     "sent": 185,
-     "received": 305,
-     "total": 490
-    },
-    "2026-06-15": {
-     "sent": 239,
-     "received": 331,
-     "total": 570
-    },
-    "2026-06-12": {
-     "sent": 201,
-     "received": 350,
-     "total": 551
-    },
-    "2026-06-11": {
-     "sent": 106,
-     "received": 158,
-     "total": 264
-    },
-    "2026-06-10": {
-     "sent": 229,
-     "received": 548,
-     "total": 777
-    },
-    "2026-06-09": {
-     "sent": 243,
-     "received": 418,
-     "total": 661
-    },
-    "2026-06-08": {
-     "sent": 320,
-     "received": 400,
-     "total": 720
-    },
-    "2026-06-05": {
-     "sent": 318,
-     "received": 409,
-     "total": 727
-    },
-    "2026-06-04": {
-     "sent": 201,
-     "received": 229,
-     "total": 430
-    },
-    "2026-06-03": {
-     "sent": 191,
-     "received": 217,
-     "total": 408
+     "sent": 100,
+     "received": 166,
+     "total": 266
     }
    },
    "Zayret Cornejo": {
@@ -9105,59 +7648,9 @@
      "total": 334
     },
     "2026-06-17": {
-     "sent": 95,
-     "received": 268,
-     "total": 363
-    },
-    "2026-06-16": {
-     "sent": 123,
-     "received": 240,
-     "total": 363
-    },
-    "2026-06-15": {
-     "sent": 147,
-     "received": 267,
-     "total": 414
-    },
-    "2026-06-12": {
-     "sent": 164,
-     "received": 311,
-     "total": 475
-    },
-    "2026-06-11": {
-     "sent": 173,
-     "received": 279,
-     "total": 452
-    },
-    "2026-06-10": {
-     "sent": 121,
-     "received": 247,
-     "total": 368
-    },
-    "2026-06-09": {
-     "sent": 51,
-     "received": 158,
-     "total": 209
-    },
-    "2026-06-08": {
-     "sent": 116,
-     "received": 154,
-     "total": 270
-    },
-    "2026-06-05": {
-     "sent": 135,
-     "received": 154,
-     "total": 289
-    },
-    "2026-06-04": {
-     "sent": 98,
-     "received": 121,
-     "total": 219
-    },
-    "2026-06-03": {
-     "sent": 138,
-     "received": 186,
-     "total": 324
+     "sent": 62,
+     "received": 114,
+     "total": 176
     }
    },
    "Elvia": {
@@ -9287,66 +7780,66 @@
      "total": 1622
     },
     "2026-06-17": {
-     "sent": 473,
-     "received": 748,
-     "total": 1221
-    },
-    "2026-06-16": {
-     "sent": 671,
-     "received": 1029,
-     "total": 1700
-    },
-    "2026-06-15": {
-     "sent": 428,
-     "received": 874,
-     "total": 1302
-    },
-    "2026-06-12": {
-     "sent": 557,
-     "received": 892,
-     "total": 1449
-    },
-    "2026-06-11": {
-     "sent": 708,
-     "received": 1024,
-     "total": 1732
-    },
-    "2026-06-10": {
-     "sent": 487,
-     "received": 870,
-     "total": 1357
-    },
-    "2026-06-09": {
-     "sent": 501,
-     "received": 925,
-     "total": 1426
-    },
-    "2026-06-08": {
-     "sent": 500,
-     "received": 984,
-     "total": 1484
-    },
-    "2026-06-05": {
-     "sent": 589,
-     "received": 942,
-     "total": 1531
-    },
-    "2026-06-04": {
-     "sent": 881,
-     "received": 1218,
-     "total": 2099
-    },
-    "2026-06-03": {
-     "sent": 210,
-     "received": 467,
-     "total": 677
+     "sent": 293,
+     "received": 431,
+     "total": 724
     }
    },
    "Elizabeth Bustos": {
+    "2026-09-15": {
+     "sent": 30,
+     "received": 66,
+     "total": 96
+    },
+    "2026-09-14": {
+     "sent": 118,
+     "received": 163,
+     "total": 281
+    },
+    "2026-09-11": {
+     "sent": 86,
+     "received": 163,
+     "total": 249
+    },
+    "2026-09-10": {
+     "sent": 96,
+     "received": 157,
+     "total": 253
+    },
+    "2026-09-09": {
+     "sent": 156,
+     "received": 257,
+     "total": 413
+    },
+    "2026-09-08": {
+     "sent": 82,
+     "received": 232,
+     "total": 314
+    },
+    "2026-09-07": {
+     "sent": 142,
+     "received": 276,
+     "total": 418
+    },
+    "2026-09-04": {
+     "sent": 95,
+     "received": 147,
+     "total": 242
+    },
+    "2026-09-03": {
+     "sent": 82,
+     "received": 122,
+     "total": 204
+    },
+    "2026-09-02": {
+     "sent": 98,
+     "received": 188,
+     "total": 286
+    },
     "2026-09-01": {
-     "sent": 77,
-     "received": 110,
-     "total": 187
+     "sent": 125,
+     "received": 199,
+     "total": 324
     },
     "2026-08-31": {
      "sent": 114,
@@ -9614,59 +8107,9 @@
      "total": 1289
     },
     "2026-06-17": {
-     "sent": 627,
-     "received": 1284,
-     "total": 1911
-    },
-    "2026-06-16": {
-     "sent": 677,
-     "received": 1427,
-     "total": 2104
-    },
-    "2026-06-15": {
-     "sent": 391,
-     "received": 755,
-     "total": 1146
-    },
-    "2026-06-12": {
-     "sent": 449,
-     "received": 833,
-     "total": 1282
-    },
-    "2026-06-11": {
-     "sent": 234,
-     "received": 411,
-     "total": 645
-    },
-    "2026-06-10": {
-     "sent": 640,
-     "received": 1047,
-     "total": 1687
-    },
-    "2026-06-09": {
-     "sent": 693,
-     "received": 1084,
-     "total": 1777
-    },
-    "2026-06-08": {
-     "sent": 592,
-     "received": 1249,
-     "total": 1841
-    },
-    "2026-06-05": {
-     "sent": 535,
-     "received": 1016,
-     "total": 1551
-    },
-    "2026-06-04": {
-     "sent": 493,
-     "received": 897,
-     "total": 1390
-    },
-    "2026-06-03": {
-     "sent": 482,
-     "received": 845,
-     "total": 1327
+     "sent": 393,
+     "received": 729,
+     "total": 1122
     }
    },
    "Xel Xanat": {},
@@ -9777,59 +8220,9 @@
      "total": 641
     },
     "2026-06-17": {
-     "sent": 352,
-     "received": 426,
-     "total": 778
-    },
-    "2026-06-16": {
-     "sent": 318,
-     "received": 399,
-     "total": 717
-    },
-    "2026-06-15": {
-     "sent": 326,
-     "received": 420,
-     "total": 746
-    },
-    "2026-06-12": {
-     "sent": 210,
-     "received": 248,
+     "sent": 227,
+     "received": 231,
      "total": 458
-    },
-    "2026-06-11": {
-     "sent": 119,
-     "received": 178,
-     "total": 297
-    },
-    "2026-06-10": {
-     "sent": 167,
-     "received": 281,
-     "total": 448
-    },
-    "2026-06-09": {
-     "sent": 187,
-     "received": 335,
-     "total": 522
-    },
-    "2026-06-08": {
-     "sent": 311,
-     "received": 397,
-     "total": 708
-    },
-    "2026-06-05": {
-     "sent": 144,
-     "received": 261,
-     "total": 405
-    },
-    "2026-06-04": {
-     "sent": 226,
-     "received": 225,
-     "total": 451
-    },
-    "2026-06-03": {
-     "sent": 159,
-     "received": 169,
-     "total": 328
     }
    },
    "Saúl": {
@@ -10016,66 +8409,66 @@
      "total": 437
     },
     "2026-06-17": {
-     "sent": 103,
-     "received": 286,
-     "total": 389
-    },
-    "2026-06-16": {
-     "sent": 149,
-     "received": 340,
-     "total": 489
-    },
-    "2026-06-15": {
-     "sent": 129,
-     "received": 304,
-     "total": 433
-    },
-    "2026-06-12": {
-     "sent": 184,
-     "received": 320,
-     "total": 504
-    },
-    "2026-06-11": {
-     "sent": 74,
-     "received": 151,
-     "total": 225
-    },
-    "2026-06-10": {
-     "sent": 160,
-     "received": 381,
-     "total": 541
-    },
-    "2026-06-09": {
-     "sent": 130,
-     "received": 372,
-     "total": 502
-    },
-    "2026-06-08": {
-     "sent": 149,
-     "received": 282,
-     "total": 431
-    },
-    "2026-06-05": {
-     "sent": 252,
-     "received": 472,
-     "total": 724
-    },
-    "2026-06-04": {
-     "sent": 170,
-     "received": 383,
-     "total": 553
-    },
-    "2026-06-03": {
-     "sent": 84,
-     "received": 161,
-     "total": 245
+     "sent": 63,
+     "received": 157,
+     "total": 220
     }
    },
    "Gael Santiago": {
+    "2026-09-15": {
+     "sent": 77,
+     "received": 175,
+     "total": 252
+    },
+    "2026-09-14": {
+     "sent": 127,
+     "received": 286,
+     "total": 413
+    },
+    "2026-09-11": {
+     "sent": 119,
+     "received": 323,
+     "total": 442
+    },
+    "2026-09-10": {
+     "sent": 169,
+     "received": 308,
+     "total": 477
+    },
+    "2026-09-09": {
+     "sent": 130,
+     "received": 310,
+     "total": 440
+    },
+    "2026-09-08": {
+     "sent": 124,
+     "received": 355,
+     "total": 479
+    },
+    "2026-09-07": {
+     "sent": 156,
+     "received": 273,
+     "total": 429
+    },
+    "2026-09-04": {
+     "sent": 107,
+     "received": 275,
+     "total": 382
+    },
+    "2026-09-03": {
+     "sent": 155,
+     "received": 302,
+     "total": 457
+    },
+    "2026-09-02": {
+     "sent": 113,
+     "received": 281,
+     "total": 394
+    },
     "2026-09-01": {
-     "sent": 20,
-     "received": 81,
-     "total": 101
+     "sent": 121,
+     "received": 255,
+     "total": 376
     },
     "2026-08-31": {
      "sent": 180,
@@ -10343,73 +8736,12 @@
      "total": 88
     },
     "2026-06-17": {
-     "sent": 16,
-     "received": 38,
-     "total": 54
-    },
-    "2026-06-16": {
-     "sent": 15,
-     "received": 38,
-     "total": 53
+     "sent": 11,
+     "received": 21,
+     "total": 32
     }
    },
-   "Kate González": {
-    "2026-06-17": {
-     "sent": 67,
-     "received": 92,
-     "total": 159
-    },
-    "2026-06-16": {
-     "sent": 267,
-     "received": 274,
-     "total": 541
-    },
-    "2026-06-15": {
-     "sent": 503,
-     "received": 598,
-     "total": 1101
-    },
-    "2026-06-12": {
-     "sent": 377,
-     "received": 501,
-     "total": 878
-    },
-    "2026-06-11": {
-     "sent": 292,
-     "received": 379,
-     "total": 671
-    },
-    "2026-06-10": {
-     "sent": 279,
-     "received": 323,
-     "total": 602
-    },
-    "2026-06-09": {
-     "sent": 302,
-     "received": 388,
-     "total": 690
-    },
-    "2026-06-08": {
-     "sent": 330,
-     "received": 356,
-     "total": 686
-    },
-    "2026-06-05": {
-     "sent": 217,
-     "received": 361,
-     "total": 578
-    },
-    "2026-06-04": {
-     "sent": 297,
-     "received": 288,
-     "total": 585
-    },
-    "2026-06-03": {
-     "sent": 166,
-     "received": 180,
-     "total": 346
-    }
-   },
+   "Kate González": {},
    "Daniel Luna": {
     "2026-07-22": {
      "sent": 218,
@@ -10537,59 +8869,9 @@
      "total": 922
     },
     "2026-06-17": {
-     "sent": 412,
-     "received": 749,
-     "total": 1161
-    },
-    "2026-06-16": {
-     "sent": 369,
-     "received": 685,
-     "total": 1054
-    },
-    "2026-06-15": {
-     "sent": 332,
-     "received": 614,
-     "total": 946
-    },
-    "2026-06-12": {
-     "sent": 307,
-     "received": 585,
-     "total": 892
-    },
-    "2026-06-11": {
-     "sent": 190,
-     "received": 270,
-     "total": 460
-    },
-    "2026-06-10": {
-     "sent": 307,
-     "received": 628,
-     "total": 935
-    },
-    "2026-06-09": {
-     "sent": 312,
-     "received": 661,
-     "total": 973
-    },
-    "2026-06-08": {
-     "sent": 334,
-     "received": 495,
-     "total": 829
-    },
-    "2026-06-05": {
-     "sent": 220,
-     "received": 417,
-     "total": 637
-    },
-    "2026-06-04": {
-     "sent": 299,
-     "received": 427,
-     "total": 726
-    },
-    "2026-06-03": {
-     "sent": 172,
-     "received": 341,
-     "total": 513
+     "sent": 150,
+     "received": 396,
+     "total": 546
     }
    },
    "Dana Lugo": {},
@@ -10720,59 +9002,9 @@
      "total": 572
     },
     "2026-06-17": {
-     "sent": 183,
-     "received": 291,
-     "total": 474
-    },
-    "2026-06-16": {
-     "sent": 176,
-     "received": 235,
-     "total": 411
-    },
-    "2026-06-15": {
-     "sent": 167,
-     "received": 330,
-     "total": 497
-    },
-    "2026-06-12": {
-     "sent": 161,
-     "received": 279,
-     "total": 440
-    },
-    "2026-06-11": {
-     "sent": 88,
-     "received": 188,
-     "total": 276
-    },
-    "2026-06-10": {
-     "sent": 104,
-     "received": 163,
-     "total": 267
-    },
-    "2026-06-09": {
-     "sent": 127,
-     "received": 226,
-     "total": 353
-    },
-    "2026-06-08": {
-     "sent": 149,
-     "received": 195,
-     "total": 344
-    },
-    "2026-06-05": {
-     "sent": 127,
-     "received": 174,
-     "total": 301
-    },
-    "2026-06-04": {
-     "sent": 170,
-     "received": 253,
-     "total": 423
-    },
-    "2026-06-03": {
-     "sent": 114,
-     "received": 127,
-     "total": 241
+     "sent": 122,
+     "received": 192,
+     "total": 314
     }
    },
    "Eduardo": {
@@ -10902,59 +9134,9 @@
      "total": 236
     },
     "2026-06-17": {
-     "sent": 49,
-     "received": 116,
-     "total": 165
-    },
-    "2026-06-16": {
-     "sent": 137,
-     "received": 266,
-     "total": 403
-    },
-    "2026-06-15": {
-     "sent": 107,
-     "received": 232,
-     "total": 339
-    },
-    "2026-06-12": {
-     "sent": 62,
-     "received": 169,
-     "total": 231
-    },
-    "2026-06-11": {
-     "sent": 81,
-     "received": 113,
-     "total": 194
-    },
-    "2026-06-10": {
-     "sent": 119,
-     "received": 271,
-     "total": 390
-    },
-    "2026-06-09": {
-     "sent": 111,
-     "received": 263,
-     "total": 374
-    },
-    "2026-06-08": {
-     "sent": 164,
-     "received": 249,
-     "total": 413
-    },
-    "2026-06-05": {
-     "sent": 137,
-     "received": 199,
-     "total": 336
-    },
-    "2026-06-04": {
-     "sent": 162,
-     "received": 244,
-     "total": 406
-    },
-    "2026-06-03": {
-     "sent": 98,
-     "received": 157,
-     "total": 255
+     "sent": 15,
+     "received": 54,
+     "total": 69
     }
    },
    "Cesar Iram Enriquez": {
@@ -11084,59 +9266,9 @@
      "total": 223
     },
     "2026-06-17": {
-     "sent": 147,
-     "received": 224,
-     "total": 371
-    },
-    "2026-06-16": {
-     "sent": 121,
-     "received": 201,
-     "total": 322
-    },
-    "2026-06-15": {
-     "sent": 160,
-     "received": 229,
-     "total": 389
-    },
-    "2026-06-12": {
-     "sent": 153,
-     "received": 259,
-     "total": 412
-    },
-    "2026-06-11": {
-     "sent": 119,
-     "received": 185,
-     "total": 304
-    },
-    "2026-06-10": {
-     "sent": 110,
-     "received": 214,
-     "total": 324
-    },
-    "2026-06-09": {
-     "sent": 153,
-     "received": 257,
-     "total": 410
-    },
-    "2026-06-08": {
-     "sent": 120,
-     "received": 183,
-     "total": 303
-    },
-    "2026-06-05": {
-     "sent": 121,
-     "received": 186,
-     "total": 307
-    },
-    "2026-06-04": {
-     "sent": 121,
-     "received": 235,
-     "total": 356
-    },
-    "2026-06-03": {
-     "sent": 61,
-     "received": 62,
-     "total": 123
+     "sent": 101,
+     "received": 146,
+     "total": 247
     }
    },
    "Elizabeth Castro": {
@@ -11266,59 +9398,9 @@
      "total": 388
     },
     "2026-06-17": {
-     "sent": 169,
-     "received": 217,
-     "total": 386
-    },
-    "2026-06-16": {
-     "sent": 182,
-     "received": 243,
-     "total": 425
-    },
-    "2026-06-15": {
-     "sent": 184,
-     "received": 311,
-     "total": 495
-    },
-    "2026-06-12": {
-     "sent": 220,
-     "received": 289,
-     "total": 509
-    },
-    "2026-06-11": {
-     "sent": 153,
-     "received": 146,
-     "total": 299
-    },
-    "2026-06-10": {
-     "sent": 109,
-     "received": 177,
-     "total": 286
-    },
-    "2026-06-09": {
-     "sent": 215,
-     "received": 269,
-     "total": 484
-    },
-    "2026-06-08": {
-     "sent": 209,
-     "received": 257,
-     "total": 466
-    },
-    "2026-06-05": {
-     "sent": 172,
-     "received": 188,
-     "total": 360
-    },
-    "2026-06-04": {
-     "sent": 215,
-     "received": 207,
-     "total": 422
-    },
-    "2026-06-03": {
-     "sent": 135,
-     "received": 166,
-     "total": 301
+     "sent": 100,
+     "received": 123,
+     "total": 223
     }
    },
    "Horacio Gómez": {},
@@ -11551,59 +9633,9 @@
      "total": 550
     },
     "2026-06-17": {
-     "sent": 195,
-     "received": 319,
-     "total": 514
-    },
-    "2026-06-16": {
-     "sent": 177,
-     "received": 270,
-     "total": 447
-    },
-    "2026-06-15": {
-     "sent": 142,
-     "received": 225,
-     "total": 367
-    },
-    "2026-06-12": {
-     "sent": 185,
-     "received": 368,
-     "total": 553
-    },
-    "2026-06-11": {
-     "sent": 94,
-     "received": 181,
-     "total": 275
-    },
-    "2026-06-10": {
-     "sent": 252,
-     "received": 453,
-     "total": 705
-    },
-    "2026-06-09": {
-     "sent": 212,
-     "received": 376,
-     "total": 588
-    },
-    "2026-06-08": {
-     "sent": 162,
-     "received": 222,
-     "total": 384
-    },
-    "2026-06-05": {
-     "sent": 204,
-     "received": 165,
-     "total": 369
-    },
-    "2026-06-04": {
-     "sent": 172,
-     "received": 156,
-     "total": 328
-    },
-    "2026-06-03": {
-     "sent": 108,
-     "received": 176,
-     "total": 284
+     "sent": 135,
+     "received": 161,
+     "total": 296
     }
    },
    "Karen Pérez": {
@@ -11733,59 +9765,9 @@
      "total": 880
     },
     "2026-06-17": {
-     "sent": 683,
-     "received": 1065,
-     "total": 1748
-    },
-    "2026-06-16": {
-     "sent": 456,
-     "received": 797,
-     "total": 1253
-    },
-    "2026-06-15": {
-     "sent": 720,
-     "received": 872,
-     "total": 1592
-    },
-    "2026-06-12": {
-     "sent": 449,
-     "received": 752,
-     "total": 1201
-    },
-    "2026-06-11": {
-     "sent": 223,
-     "received": 250,
-     "total": 473
-    },
-    "2026-06-10": {
-     "sent": 535,
-     "received": 746,
-     "total": 1281
-    },
-    "2026-06-09": {
-     "sent": 819,
-     "received": 1078,
-     "total": 1897
-    },
-    "2026-06-08": {
-     "sent": 650,
-     "received": 863,
-     "total": 1513
-    },
-    "2026-06-05": {
-     "sent": 659,
-     "received": 801,
-     "total": 1460
-    },
-    "2026-06-04": {
-     "sent": 672,
-     "received": 710,
-     "total": 1382
-    },
-    "2026-06-03": {
-     "sent": 320,
-     "received": 393,
-     "total": 713
+     "sent": 248,
+     "received": 522,
+     "total": 770
     }
    },
    "Dylan Arellano": {
@@ -11840,59 +9822,9 @@
      "total": 529
     },
     "2026-06-17": {
-     "sent": 206,
-     "received": 284,
-     "total": 490
-    },
-    "2026-06-16": {
-     "sent": 116,
-     "received": 155,
-     "total": 271
-    },
-    "2026-06-15": {
-     "sent": 201,
-     "received": 302,
-     "total": 503
-    },
-    "2026-06-12": {
-     "sent": 192,
-     "received": 290,
-     "total": 482
-    },
-    "2026-06-11": {
-     "sent": 76,
-     "received": 140,
-     "total": 216
-    },
-    "2026-06-10": {
-     "sent": 190,
-     "received": 254,
-     "total": 444
-    },
-    "2026-06-09": {
-     "sent": 195,
-     "received": 310,
-     "total": 505
-    },
-    "2026-06-08": {
-     "sent": 161,
-     "received": 213,
-     "total": 374
-    },
-    "2026-06-05": {
-     "sent": 168,
-     "received": 228,
-     "total": 396
-    },
-    "2026-06-04": {
-     "sent": 149,
-     "received": 166,
-     "total": 315
-    },
-    "2026-06-03": {
-     "sent": 87,
-     "received": 77,
-     "total": 164
+     "sent": 94,
+     "received": 119,
+     "total": 213
     }
    },
    "Elsa Hernández": {
@@ -12022,59 +9954,9 @@
      "total": 1163
     },
     "2026-06-17": {
-     "sent": 312,
-     "received": 545,
-     "total": 857
-    },
-    "2026-06-16": {
-     "sent": 537,
-     "received": 890,
-     "total": 1427
-    },
-    "2026-06-15": {
-     "sent": 579,
-     "received": 713,
-     "total": 1292
-    },
-    "2026-06-12": {
-     "sent": 419,
-     "received": 694,
-     "total": 1113
-    },
-    "2026-06-11": {
-     "sent": 355,
-     "received": 510,
-     "total": 865
-    },
-    "2026-06-10": {
-     "sent": 496,
-     "received": 821,
-     "total": 1317
-    },
-    "2026-06-09": {
-     "sent": 512,
-     "received": 787,
-     "total": 1299
-    },
-    "2026-06-08": {
-     "sent": 452,
-     "received": 754,
-     "total": 1206
-    },
-    "2026-06-05": {
-     "sent": 318,
-     "received": 494,
-     "total": 812
-    },
-    "2026-06-04": {
-     "sent": 414,
-     "received": 586,
-     "total": 1000
-    },
-    "2026-06-03": {
-     "sent": 150,
-     "received": 217,
-     "total": 367
+     "sent": 137,
+     "received": 273,
+     "total": 410
     }
    },
    "Horace \"el bueno\"": {
@@ -12204,59 +10086,9 @@
      "total": 8
     },
     "2026-06-17": {
-     "sent": 6,
-     "received": 0,
-     "total": 6
-    },
-    "2026-06-16": {
-     "sent": 4,
-     "received": 3,
-     "total": 7
-    },
-    "2026-06-15": {
-     "sent": 4,
-     "received": 0,
-     "total": 4
-    },
-    "2026-06-12": {
-     "sent": 4,
-     "received": 0,
-     "total": 4
-    },
-    "2026-06-11": {
-     "sent": 3,
-     "received": 0,
-     "total": 3
-    },
-    "2026-06-10": {
-     "sent": 1,
-     "received": 0,
-     "total": 1
-    },
-    "2026-06-09": {
-     "sent": 5,
-     "received": 1,
-     "total": 6
-    },
-    "2026-06-08": {
-     "sent": 7,
-     "received": 1,
-     "total": 8
-    },
-    "2026-06-05": {
      "sent": 2,
-     "received": 1,
-     "total": 3
-    },
-    "2026-06-04": {
-     "sent": 143,
-     "received": 245,
-     "total": 388
-    },
-    "2026-06-03": {
-     "sent": 163,
-     "received": 199,
-     "total": 362
+     "received": 0,
+     "total": 2
     }
    },
    "Itzel Alarcón": {
@@ -12301,59 +10133,9 @@
      "total": 680
     },
     "2026-06-17": {
-     "sent": 245,
-     "received": 376,
-     "total": 621
-    },
-    "2026-06-16": {
-     "sent": 184,
-     "received": 360,
-     "total": 544
-    },
-    "2026-06-15": {
-     "sent": 265,
-     "received": 335,
-     "total": 600
-    },
-    "2026-06-12": {
-     "sent": 202,
-     "received": 348,
-     "total": 550
-    },
-    "2026-06-11": {
-     "sent": 108,
-     "received": 205,
-     "total": 313
-    },
-    "2026-06-10": {
-     "sent": 163,
-     "received": 225,
-     "total": 388
-    },
-    "2026-06-09": {
-     "sent": 112,
-     "received": 286,
-     "total": 398
-    },
-    "2026-06-08": {
-     "sent": 78,
-     "received": 154,
-     "total": 232
-    },
-    "2026-06-05": {
-     "sent": 269,
-     "received": 436,
-     "total": 705
-    },
-    "2026-06-04": {
-     "sent": 252,
-     "received": 374,
-     "total": 626
-    },
-    "2026-06-03": {
-     "sent": 203,
-     "received": 236,
-     "total": 439
+     "sent": 159,
+     "received": 226,
+     "total": 385
     }
    },
    "Paola Viveros": {
@@ -12483,59 +10265,9 @@
      "total": 957
     },
     "2026-06-17": {
-     "sent": 303,
-     "received": 549,
-     "total": 852
-    },
-    "2026-06-16": {
-     "sent": 285,
-     "received": 498,
-     "total": 783
-    },
-    "2026-06-15": {
-     "sent": 240,
-     "received": 520,
-     "total": 760
-    },
-    "2026-06-12": {
-     "sent": 246,
-     "received": 478,
-     "total": 724
-    },
-    "2026-06-11": {
-     "sent": 157,
-     "received": 250,
-     "total": 407
-    },
-    "2026-06-10": {
-     "sent": 252,
-     "received": 981,
-     "total": 1233
-    },
-    "2026-06-09": {
-     "sent": 275,
-     "received": 728,
-     "total": 1003
-    },
-    "2026-06-08": {
-     "sent": 284,
-     "received": 420,
-     "total": 704
-    },
-    "2026-06-05": {
-     "sent": 217,
-     "received": 440,
-     "total": 657
-    },
-    "2026-06-04": {
-     "sent": 212,
-     "received": 350,
-     "total": 562
-    },
-    "2026-06-03": {
-     "sent": 206,
-     "received": 257,
-     "total": 463
+     "sent": 172,
+     "received": 326,
+     "total": 498
     }
    }
   }
@@ -12544,56 +10276,65 @@
   {
    "month": "2026-02",
    "response_median_min": 8.8,
-   "response_under5_pct": 32,
-   "response_pairs": 62,
-   "writing_score": 22.2,
-   "writing_grade": 73,
-   "broker_msgs": 377
+   "response_under5_pct": 33,
+   "response_pairs": 66,
+   "writing_score": 21.6,
+   "writing_grade": 74,
+   "broker_msgs": 405
   },
   {
    "month": "2026-03",
-   "response_median_min": 5.9,
-   "response_under5_pct": 48,
-   "response_pairs": 93,
-   "writing_score": 23.3,
+   "response_median_min": 6.0,
+   "response_under5_pct": 49,
+   "response_pairs": 88,
+   "writing_score": 23.2,
    "writing_grade": 72,
-   "broker_msgs": 940
+   "broker_msgs": 896
   },
   {
    "month": "2026-05",
-   "response_median_min": 7.2,
-   "response_under5_pct": 43,
-   "response_pairs": 466,
-   "writing_score": 23.2,
+   "response_median_min": 7.0,
+   "response_under5_pct": 44,
+   "response_pairs": 463,
+   "writing_score": 23.5,
    "writing_grade": 72,
-   "broker_msgs": 2057
+   "broker_msgs": 2018
   },
   {
    "month": "2026-06",
-   "response_median_min": 6.8,
-   "response_under5_pct": 45,
-   "response_pairs": 838,
-   "writing_score": 19.5,
+   "response_median_min": 6.9,
+   "response_under5_pct": 44,
+   "response_pairs": 863,
+   "writing_score": 19.4,
    "writing_grade": 77,
-   "broker_msgs": 4340
+   "broker_msgs": 4467
   },
   {
    "month": "2026-07",
    "response_median_min": 5.5,
    "response_under5_pct": 48,
-   "response_pairs": 2551,
+   "response_pairs": 2532,
    "writing_score": 16.6,
    "writing_grade": 80,
-   "broker_msgs": 11813
+   "broker_msgs": 11728
   },
   {
    "month": "2026-08",
-   "response_median_min": 6.3,
-   "response_under5_pct": 43,
-   "response_pairs": 205,
+   "response_median_min": 7.2,
+   "response_under5_pct": 41,
+   "response_pairs": 82,
+   "writing_score": 19.7,
+   "writing_grade": 76,
+   "broker_msgs": 373
+  },
+  {
+   "month": "2026-09",
+   "response_median_min": 3.3,
+   "response_under5_pct": 58,
+   "response_pairs": 198,
    "writing_score": 14.8,
    "writing_grade": 82,
-   "broker_msgs": 999
+   "broker_msgs": 811
   }
  ]
 }
