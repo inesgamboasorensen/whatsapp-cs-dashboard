@@ -4486,7 +4486,8 @@ function boot(D) {
     // CRÍTICO = alto % con problema (>=40) Y baja recuperación (<50%) — donde deben enfocarse los managers
     // en una corrida la muestra por agente es chica: sin n suficiente no se marca a nadie
     // todos los cambios de la quincena (no una muestra): con 10 casos ya se puede leer al agente
-    const todos = !!(d.metodo && d.metodo.startsWith('Todos'));
+    // la lectura del 23 oct y la corrida quincenal nueva miden todos los chats de contrato (sin convsTotal de muestra)
+    const todos = !!(d.corrida && (d.metodo && d.metodo.startsWith('Todos') || d.team.convsTotal == null));
     const minN = todos ? 10 : RES_MIN_N;
     const isCritical = a => a.problemRate >= 40 && a.recoveryPct != null && a.recoveryPct < 50 && (!d.corrida || a.contractConvs >= minN);
     const critical = agents.filter(isCritical).sort((a, b) => b.problemRate - a.problemRate);
