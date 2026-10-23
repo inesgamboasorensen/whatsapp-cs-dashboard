@@ -521,13 +521,13 @@
       );
     }
 
-    // Metas acordadas con Inés (23 oct 2026) y tolerancia por agente: somos humanos,
+    // Metas acordadas con Inés (23 oct 2026; primera respuesta relajada el mismo día) y tolerancia por agente: somos humanos,
     // nadie tiene que ser perfecto. Un agente solo se señala si está FUERA de la tolerancia
     // (más o menos el doble de la meta), no por no llegar a ella.
     const REF = {
       over24h:   { bien: 2,  atencion: 3,    tol: 5,   menosMejor: true,  txt: '≤ 2%',       tolTxt: '5%' },
-      primera:   { bien: 15, atencion: 22.5, tol: 30,  menosMejor: true,  txt: '≤ 15 min',   tolTxt: '30 min' },
-      p90:       { bien: 60, atencion: 90,   tol: 120, menosMejor: true,  txt: '≤ 1 h hábil', tolTxt: '2 h' },
+      primera:   { bien: 20, atencion: 30,   tol: 45,  menosMejor: true,  txt: '≤ 20 min',   tolTxt: '45 min' },
+      p90:       { bien: 90, atencion: 135,  tol: 180, menosMejor: true,  txt: '≤ 1.5 h hábiles', tolTxt: '3 h' },
       resueltas: { bien: 80, atencion: 70,   tol: 65,  menosMejor: false, txt: '≥ 80%',      tolTxt: '65%' },
       frust:     { bien: 10, atencion: 15,   tol: 20,  menosMejor: true,  txt: '≤ 10%',      tolTxt: '20%' },
       contratos: { bien: 20, atencion: 30,   tol: 35,  menosMejor: true,  txt: '≤ 20%',      tolTxt: '35%' },
@@ -782,7 +782,7 @@
       const q25 = (k) => { const v = conMuestra.map(a => a[k]).filter(x => x != null).sort((a, b) => a - b); return v.length ? v[Math.floor((v.length - 1) * 0.25)] : null; };
       const porQue = [
         ['Sin respuesta >24 h', REF.over24h.txt, `El mejor 25% de los agentes ya está en ${q25('over24hPct') === 0 ? '0%' : `${q25('over24hPct') ?? '—'}% o menos`}, y de lunes a viernes el equipo completo ronda el 2%. El problema está concentrado en el fin de semana, así que es alcanzable.`],
-        ['Primera respuesta', `${REF.primera.txt} · p90 ${REF.p90.txt}`, `El mejor 25% contesta en ${fmtMin(q25('medianMin'))} o menos (mediana) y su 10% más lento en ${fmtMin(q25('p90Min'))}. La mediana dice cómo le va al broker típico; el p90, al que más espera.`],
+        ['Primera respuesta', `${REF.primera.txt} · p90 ${REF.p90.txt}`, `El equipo ya contesta en ${fmtMin(T ? T.medianMin : null)} (mediana): la meta deja margen para días pesados sin bajar el estándar, y el mejor 25% está en ${fmtMin(q25('medianMin'))}. La mediana dice cómo le va al broker típico; el p90, al que más espera.`],
         ['Resueltas', REF.resueltas.txt, 'Históricamente 73–75%. La meta pide 5 puntos más: que 4 de cada 5 brokers terminen con su tema atendido.'],
         ['Frustración', REF.frust.txt, `Empezó en ${MED_1RA.equipo || '39.7'}% (${MED_1RA.label.toLowerCase()}) y la mejor medición es la actual. La meta es seguir bajando hasta 1 de cada 10 conversaciones.`],
         ['Contrato con problema', REF.contratos.txt, 'Hoy falla 1 de cada 3 cambios a contrato; en mayo fue 22%. La meta es volver a ese nivel y bajarlo.'],
