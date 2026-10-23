@@ -35,6 +35,7 @@ Claude leyendo conversaciones y no son scriptables.
 | `contractLatest` | juicio | `agregar_medicion.py` desde `clasificacion.json` (prompt v2+): `{fecha, key, prompt_version, team, agents[]}`; `team` y cada agente: `n` (= `contractConvs`), `convsTotal`, `problems`, `problemRate`, `problemsUnresolved`, `recoveryPct`, `resolvedPct`. Si existe, el Resumen y Manejo de Contratos lo prefieren sobre `contractHandling` (julio), cuyo `by_month` se sigue mostrando como histórico |
 | `resolutionMonthly` | mecánico | `resolution_monthly.json` |
 | `firstResponse` | mecánico | `first_response.json` (`compute_first_response.py`, lee Postgres: últimas 4 semanas) |
+| `contractCasesRecent` | lectura puntual | agregado sin PII de la lectura de cambios a contrato del 23 oct 2026 (11 sep–23 oct); el detalle por caso vive en un Excel interno. Se reemplaza cuando la corrida quincenal publique `contractLatest` |
 | `agentRanking` | juicio | % de frustración por agente y por corrida |
 | `resolutionData` | juicio | resolución por agente (acumulado) |
 | `topRequests` | juicio | temas más pedidos |

@@ -14017,5 +14017,153 @@
    }
   ],
   "internalLinesExcluded": 30
+ },
+ "contractCasesRecent": {
+  "fecha": "2026-10-23",
+  "from": "2026-09-11",
+  "to": "2026-10-23",
+  "semanas": 6,
+  "metodo": "Lectura puntual con IA de los chats que piden cambiar el contrato (no es la corrida quincenal). El detalle por caso está en un Excel interno, no aquí.",
+  "cambios": 583,
+  "porTipo": {
+   "sin_falla": 228,
+   "no_se_sabe": 122,
+   "mal_aplicado": 53,
+   "parcial": 49,
+   "tardado": 90,
+   "no_aplicado": 36,
+   "rechazado_por_politica": 5
+  },
+  "fallas": 138,
+  "siguenMal": 36,
+  "dondeSeAtora": {
+   "asesor": 38,
+   "no_claro": 22,
+   "legal_contratos": 68,
+   "broker_u_otra_parte": 3,
+   "sistema_plataforma": 7
+  },
+  "porAgente": [
+   {
+    "agent": "Elsa Hernández",
+    "cambios": 53,
+    "fallas": 14
+   },
+   {
+    "agent": "Daniel Luna",
+    "cambios": 27,
+    "fallas": 14
+   },
+   {
+    "agent": "Cesar Quijano",
+    "cambios": 40,
+    "fallas": 12
+   },
+   {
+    "agent": "Gabriel García",
+    "cambios": 33,
+    "fallas": 11
+   },
+   {
+    "agent": "Tania Balderas",
+    "cambios": 39,
+    "fallas": 10
+   },
+   {
+    "agent": "Paola Viveros",
+    "cambios": 22,
+    "fallas": 10
+   },
+   {
+    "agent": "Xel Xanat",
+    "cambios": 42,
+    "fallas": 10
+   },
+   {
+    "agent": "Elvia",
+    "cambios": 23,
+    "fallas": 6
+   },
+   {
+    "agent": "Hugo",
+    "cambios": 14,
+    "fallas": 6
+   },
+   {
+    "agent": "Zayret Cornejo",
+    "cambios": 28,
+    "fallas": 6
+   },
+   {
+    "agent": "Elizabeth Bustos",
+    "cambios": 23,
+    "fallas": 6
+   },
+   {
+    "agent": "Saúl",
+    "cambios": 36,
+    "fallas": 5
+   },
+   {
+    "agent": "Gael Santiago",
+    "cambios": 19,
+    "fallas": 5
+   },
+   {
+    "agent": "Diego Cedillo",
+    "cambios": 27,
+    "fallas": 4
+   },
+   {
+    "agent": "Angeles Espinoza",
+    "cambios": 19,
+    "fallas": 3
+   },
+   {
+    "agent": "Carlos",
+    "cambios": 16,
+    "fallas": 3
+   },
+   {
+    "agent": "Karen Pérez",
+    "cambios": 18,
+    "fallas": 3
+   },
+   {
+    "agent": "Alex",
+    "cambios": 5,
+    "fallas": 2
+   },
+   {
+    "agent": "Horace \"el bueno\"",
+    "cambios": 21,
+    "fallas": 2
+   },
+   {
+    "agent": "Lorena Domínguez",
+    "cambios": 13,
+    "fallas": 2
+   },
+   {
+    "agent": "Dana",
+    "cambios": 12,
+    "fallas": 1
+   },
+   {
+    "agent": "Dylan Arellano",
+    "cambios": 8,
+    "fallas": 1
+   },
+   {
+    "agent": "Kate González",
+    "cambios": 11,
+    "fallas": 1
+   },
+   {
+    "agent": "Iran",
+    "cambios": 11,
+    "fallas": 1
+   }
+  ]
  }
 }
