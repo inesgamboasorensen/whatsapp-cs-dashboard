@@ -521,6 +521,44 @@
       );
     }
 
+    // Referencias para decir "bien / atención / mejorar". Son un punto de partida para
+    // leer el tablero, no metas acordadas: ajústalas aquí cuando el equipo las defina.
+    const REF = {
+      over24h:   { bien: 2,  atencion: 5,  menosMejor: true,  txt: 'menos de 2%' },
+      primera:   { bien: 15, atencion: 30, menosMejor: true,  txt: 'menos de 15 min' },
+      resueltas: { bien: 80, atencion: 70, menosMejor: false, txt: '80% o más' },
+      frust:     { bien: 10, atencion: 15, menosMejor: true,  txt: 'menos de 10%' },
+      contratos: { bien: 20, atencion: 30, menosMejor: true,  txt: 'menos de 20%' },
+    };
+    const nivel = (v, r) => v == null ? null
+      : (r.menosMejor ? v <= r.bien : v >= r.bien) ? 'bien'
+      : (r.menosMejor ? v <= r.atencion : v >= r.atencion) ? 'atencion' : 'mejorar';
+    const NIVEL = {
+      bien:     { txt: 'Bien',     c: '#0F6E56', bg: '#E1F5EE' },
+      atencion: { txt: 'Atención', c: '#92400E', bg: '#FEF3C7' },
+      mejorar:  { txt: 'Mejorar',  c: '#991B1B', bg: '#FEE2E2' },
+    };
+    // El análisis quincenal corre el día 1 y el 15
+    const proximaCorrida = (() => {
+      const h = new Date(), d = h.getDate() < 15 ? new Date(h.getFullYear(), h.getMonth(), 15) : new Date(h.getFullYear(), h.getMonth() + 1, 1);
+      return d.toLocaleDateString('es-MX', { day: 'numeric', month: 'short' });
+    })();
+    const DIAS = ['lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado', 'domingo'];
+
+    function Spark({ valores, muted }) {
+      const v = valores.filter(x => x != null);
+      if (v.length < 2) return <span className="text-[11px] text-gray-300">sin historia</span>;
+      const W = 112, H = 30, min = Math.min(...v), max = Math.max(...v), span = max - min || 1;
+      const pts = v.map((x, i) => [i * W / (v.length - 1), H - 3 - (x - min) / span * (H - 6)]);
+      const color = muted ? '#CBD5E1' : '#1B2A4A';
+      return (
+        <svg width={W} height={H} className="overflow-visible" aria-hidden="true">
+          <polyline points={pts.map(p => p.join(',')).join(' ')} fill="none" stroke={color} strokeWidth="1.5" strokeLinejoin="round" />
+          <circle cx={pts[pts.length - 1][0]} cy={pts[pts.length - 1][1]} r="2.5" fill={color} />
+        </svg>
+      );
+    }
+
     function Resumen({ onJump }) {
       const F = firstResponse;
       const R = resolucionActual;
@@ -541,62 +579,102 @@
         return () => { vivo = false; };
       }, []);
 
-      // tendencias: semana más reciente vs la anterior (1–2); medición válida anterior (4)
+      const viejo = (ref) => diasDesde(ref) > DIAS_VIEJO;
+      const pct = v => `${v}%`;
       const W = F ? F.total.weeks : [];
       const wl = W[W.length - 1], wp = W[W.length - 2];
-      const frustAct = Number(medPromedio(MED_ULT));
+      const frustSerie = MED.map(m => Number(medPromedio(m)));
+      const frustAct = frustSerie[frustSerie.length - 1];
       const MED_ANT = MED[MED.length - 2];
-      const frustAnt = MED_ANT ? Number(medPromedio(MED_ANT)) : null;
+      const resSerie = [...resolutionMonthly.months.map(k => resolutionMonthly.by_month[k].team.resolvedPct), ...(D.resolutionLatest ? [D.resolutionLatest.team.resolvedPct] : [])];
+      const chSerie = [...contractHandling.by_month.filter(m => m.contractConvs >= 40).map(m => m.problemRate), ...(C.corrida ? [CH.problemRate] : [])];
 
+      // tendencia contra el punto anterior de la misma serie
       const tend = (act, ant, menosMejor, fmt, contra) => {
         if (act == null || ant == null) return null;
         const d = act - ant;
-        if (Math.abs(d) < 0.05) return { txt: `= igual que ${contra}`, color: '#94A3B8' };
+        if (Math.abs(d) < 0.05) return { txt: `igual que ${contra}`, color: '#94A3B8' };
         const bien = menosMejor ? d < 0 : d > 0;
         return { txt: `${d < 0 ? '↓' : '↑'} desde ${fmt(ant)} ${contra}`, color: bien ? '#1D9E75' : '#E8505B' };
       };
-      const pct = v => `${v}%`;
 
-      const viejo = (ref) => diasDesde(ref) > DIAS_VIEJO;
-      const tarjetas = [
-        {
-          tab: 'response', pregunta: '¿Le contestaron?',
-          valor: F ? `${F.total.over24hPct}%` : '—', metrica: 'conversaciones sin respuesta en más de 24 h',
-          sub: F ? `${F.total.over24h} de ${F.total.threads.toLocaleString('es-MX')}` + (llamadas && llamadas.total ? ` · llamadas perdidas ${Math.round(100 * llamadas.perdidas / llamadas.total)}%` : '') : null,
-          tend: wp ? tend(wl.over24hPct, wp.over24hPct, true, pct, 'la semana anterior') : null,
-          fuente: 'Todas las conversaciones · últimas 4 semanas',
-        },
-        {
-          tab: 'response', pregunta: '¿Qué tan rápido?',
-          valor: F ? fmtMin(F.total.medianMin) : '—', metrica: 'primera respuesta (mediana, horario laboral)',
-          sub: F ? `El 10% más lento espera más de ${fmtMin(F.total.p90Min)}` : null,
-          tend: wp ? tend(wl.medianMin, wp.medianMin, true, fmtMin, 'la semana anterior') : null,
-          fuente: 'Todas las conversaciones · últimas 4 semanas',
-        },
-        {
-          tab: 'resolution', pregunta: '¿Le resolvieron?',
-          valor: `${R.team.resolvedPct}%`, metrica: 'conversaciones resueltas',
-          sub: `${R.team.unresolvedPct}% quedó sin resolver`,
-          fuente: `Muestra de ${R.team.total} conversaciones · ${R.periodo}`,
-          viejo: viejo(R.fechaRef),
-        },
-        {
-          tab: 'agents', pregunta: '¿Cómo se sintió?',
-          valor: `${frustAct}%`, metrica: 'conversaciones con frustración moderada o severa',
-          tend: tend(frustAct, frustAnt, true, pct, `el ${MED_ANT ? MED_ANT.label.toLowerCase() : ''}`),
-          fuente: `Muestra · ${MED_ULT.label.toLowerCase()} · ${MED_ULT.agentes} agentes`,
-          viejo: viejo(MED_ULT.fecha),
-        },
-        {
-          tab: 'contracts', pregunta: '¿Su contrato salió bien?',
-          valor: CH.problemRate == null ? '—' : `${CH.problemRate}%`, metrica: 'conversaciones de contrato con un problema',
-          sub: CH.recoveryPct == null ? null : `Se recuperó el ${CH.recoveryPct}%`,
-          fuente: `Muestra de ${CH.contractConvs} conversaciones · ${C.periodo}`,
-          viejo: viejo(C.fechaRef),
-        },
+      // ── 1. Cómo vamos ───────────────────────────────────────────────────
+      const filasEstado = [
+        { tab: 'response', pregunta: '¿Le contestaron?', metrica: 'sin respuesta en más de 24 h', ref: REF.over24h,
+          v: F?.total.over24hPct, valor: F ? `${F.total.over24hPct}%` : '—', serie: W.map(w => w.over24hPct),
+          tend: wp && tend(wl.over24hPct, wp.over24hPct, true, pct, 'la semana anterior'),
+          fuente: `Todas las conversaciones · 4 semanas` + (llamadas && llamadas.total ? ` · llamadas perdidas ${Math.round(100 * llamadas.perdidas / llamadas.total)}%` : '') },
+        { tab: 'response', pregunta: '¿Qué tan rápido?', metrica: 'primera respuesta (mediana, horario laboral)', ref: REF.primera,
+          v: F?.total.medianMin, valor: F ? fmtMin(F.total.medianMin) : '—', serie: W.map(w => w.medianMin),
+          tend: wp && tend(wl.medianMin, wp.medianMin, true, fmtMin, 'la semana anterior'),
+          fuente: F ? `El 10% más lento espera más de ${fmtMin(F.total.p90Min)}` : '' },
+        { tab: 'resolution', pregunta: '¿Le resolvieron?', metrica: 'conversaciones resueltas', ref: REF.resueltas,
+          v: R.team.resolvedPct, valor: `${R.team.resolvedPct}%`, serie: resSerie, viejo: viejo(R.fechaRef), periodo: R.periodo,
+          tend: resSerie.length > 1 && tend(resSerie[resSerie.length - 1], resSerie[resSerie.length - 2], false, pct, 'el periodo anterior'),
+          fuente: `Muestra de ${R.team.total} conversaciones · ${R.periodo}` },
+        { tab: 'agents', pregunta: '¿Cómo se sintió?', metrica: 'con frustración moderada o severa', ref: REF.frust,
+          v: frustAct, valor: `${frustAct}%`, serie: frustSerie, viejo: viejo(MED_ULT.fecha), periodo: MED_ULT.label.toLowerCase(),
+          tend: MED_ANT && tend(frustAct, frustSerie[frustSerie.length - 2], true, pct, `el ${MED_ANT.label.toLowerCase()}`),
+          fuente: `Muestra · ${MED_ULT.label.toLowerCase()} · ${MED_ULT.agentes} agentes` },
+        { tab: 'contracts', pregunta: '¿Su contrato salió bien?', metrica: 'conversaciones de contrato con un problema', ref: REF.contratos,
+          v: CH.problemRate, valor: `${CH.problemRate}%`, serie: chSerie, viejo: viejo(C.fechaRef), periodo: C.periodo,
+          tend: chSerie.length > 1 && tend(chSerie[chSerie.length - 1], chSerie[chSerie.length - 2], true, pct, 'el mes anterior'),
+          fuente: `Muestra de ${CH.contractConvs} conversaciones · ${C.periodo} · se recuperó el ${CH.recoveryPct}%` },
       ];
 
-      // ── tabla por agente: el padrón son los agentes activos en las últimas 4 semanas ──
+      // ── 2. Qué va bien / qué mejorar ────────────────────────────────────
+      const bien = [], mejorar = [];
+      const conMuestra = (F ? F.agents : []).filter(a => a.threads >= RES_MIN_N);
+      if (F) {
+        const L = F.late;
+        const tasa = (dias) => {
+          const late = dias.reduce((s, d) => s + L.byWeekday[d], 0), abiertas = dias.reduce((s, d) => s + L.openedByWeekday[d], 0);
+          return { late, abiertas, pct: abiertas ? Math.round(1000 * late / abiertas) / 10 : null };
+        };
+        const semana = tasa([0, 1, 2, 3, 4]), sab = tasa([5]);
+        if (sab.pct != null && semana.pct != null && sab.pct >= 2 * semana.pct && sab.late >= 10) {
+          mejorar.push({ peso: sab.late, tab: 'response',
+            titulo: `Sábado: ${sab.pct}% se queda sin respuesta más de 24 h`,
+            detalle: `Entre semana es ${semana.pct}%. ${sab.late} de los ${F.total.over24h} casos >24 h empezaron en sábado.`,
+            accion: 'Definir quién cubre los sábados de 9 a 15 h y que la respuesta automática diga quién atiende y cuándo.' });
+        } else if (semana.pct != null && semana.pct <= REF.over24h.bien) {
+          bien.push({ tab: 'response', titulo: `Entre semana casi nadie se queda sin respuesta: ${semana.pct}%`, detalle: `${semana.abiertas.toLocaleString('es-MX')} conversaciones de lunes a viernes.` });
+        }
+        if (semana.pct != null && semana.pct <= REF.over24h.atencion && sab.pct >= 2 * semana.pct) {
+          bien.push({ tab: 'response', titulo: `De lunes a viernes, ${(100 - semana.pct).toFixed(1)}% recibe respuesta en menos de 24 h`, detalle: `${semana.abiertas.toLocaleString('es-MX')} conversaciones · el problema se concentra en el fin de semana.` });
+        }
+        conMuestra.filter(a => a.over24hPct >= 10).forEach(a => mejorar.push({ peso: a.over24h, tab: 'feedback', quien: a.agent,
+          titulo: `${a.agent}: ${a.over24hPct}% sin respuesta más de 24 h`,
+          detalle: `${a.over24h} de ${a.threads} conversaciones · primera respuesta ${fmtMin(a.medianMin)} · el equipo está en ${F.total.over24hPct}%`,
+          accion: 'Revisar con su Lead la carga y la cobertura de su línea; usar su feedback individual.' }));
+        conMuestra.filter(a => a.over24hPct < 10 && a.medianMin > 45).forEach(a => mejorar.push({ peso: a.threads / 10, tab: 'schedule', quien: a.agent,
+          titulo: `${a.agent}: primera respuesta de ${fmtMin(a.medianMin)}`,
+          detalle: `Contesta, pero tarde: ${a.under60Pct}% antes de 1 h · la mediana del equipo es ${fmtMin(F.total.medianMin)}`,
+          accion: 'Ver en Horarios en qué momento del día se le acumulan los mensajes.' }));
+        if (L.neverAnswered >= 20) mejorar.push({ peso: L.neverAnswered / 2, tab: 'response',
+          titulo: `${L.neverAnswered} conversaciones nunca recibieron respuesta`,
+          detalle: 'En las últimas 4 semanas, sin contar mensajes automáticos.',
+          accion: 'Que cada Lead revise con su equipo los chats sin contestar en WhatsApp.' });
+        if (F.total.under60Pct >= 80) bien.push({ tab: 'response', titulo: `${F.total.under60Pct}% de las primeras respuestas llegan en menos de 1 h hábil`, detalle: `Mediana de ${fmtMin(F.total.medianMin)}.` });
+        const estrellas = conMuestra.filter(a => a.over24hPct <= 1 && a.medianMin <= 10);
+        if (estrellas.length) bien.push({ tab: 'feedback',
+          titulo: `Reconocer: ${estrellas.map(a => a.agent).join(', ')}`,
+          detalle: 'Contestan casi todo (≤1% sin respuesta >24 h) y rápido (mediana de 10 min o menos).',
+          accion: 'Mencionarlos en la junta con el dato y pedirles compartir cómo organizan su bandeja.' });
+      }
+      if (!viejo(MED_ULT.fecha) && frustSerie.length > 1) {
+        if (frustAct <= Math.min(...frustSerie.slice(0, -1))) bien.push({ tab: 'agents', titulo: `Frustración en su nivel más bajo: ${frustAct}%`, detalle: `Empezó en ${frustSerie[0]}% (${MED_1RA.label.toLowerCase()}).` });
+        else if (frustAct > frustSerie[frustSerie.length - 2] + 2) mejorar.push({ peso: 20, tab: 'agents', titulo: `La frustración subió a ${frustAct}%`, detalle: `Era ${frustSerie[frustSerie.length - 2]}% el ${MED_ANT.label.toLowerCase()}.`, accion: 'Ver las causas en Insights y Mejoras.' });
+      }
+      if (nivel(CH.problemRate, REF.contratos) === 'mejorar') mejorar.push({ peso: 25, tab: 'contracts', viejo: viejo(C.fechaRef),
+        titulo: `1 de cada ${Math.round(100 / CH.problemRate)} conversaciones de contrato tiene un problema (${CH.problemRate}%)`,
+        detalle: `Se recupera el ${CH.recoveryPct}%. Dato de ${C.periodo}.`,
+        accion: 'Revisar con Legal en qué paso fallan los cambios, y aprender de quién recupera mejor (pestaña Contratos).' });
+      if (nivel(R.team.resolvedPct, REF.resueltas) === 'bien' && !viejo(R.fechaRef)) bien.push({ tab: 'resolution', titulo: `${R.team.resolvedPct}% de las conversaciones se resuelve`, detalle: `Muestra de ${R.team.total} · ${R.periodo}.` });
+      if (R.team.unresolvedPct >= 15) mejorar.push({ peso: 15, tab: 'resolution', viejo: viejo(R.fechaRef), titulo: `${R.team.unresolvedPct}% termina sin resolver`, detalle: `Dato de ${R.periodo}.`, accion: 'Ver qué agentes y qué temas concentran los casos sin resolver.' });
+      mejorar.sort((a, b) => b.peso - a.peso);
+
+      // ── 3. tabla por agente (padrón = activos en las últimas 4 semanas) ──
       const idx = (arr, k = 'agent') => Object.fromEntries((arr || []).map(a => [a[k], a]));
       const fr = idx(F && F.agents), rs = idx(R.agents), chA = idx(C.agents);
       const fn = idx(D.frustrationLatest && D.frustrationLatest.key === MED_ULT.key ? D.frustrationLatest.agents : null);
@@ -617,16 +695,12 @@
         if (va == null) return 1; if (vb == null) return -1;
         return mayorPeor[orden] ? vb - va : va - vb;
       });
-
-      // colores: referencias iniciales para leer la tabla, no metas
-      const semaforo = (v, verde, ambar, menosMejor = true) => v == null ? '#CBD5E1'
-        : (menosMejor ? v <= verde : v >= verde) ? '#1D9E75'
-        : (menosMejor ? v <= ambar : v >= ambar) ? '#D97706' : '#E8505B';
-      const Celda = ({ v, txt, color, n, viejoCol }) => {
-        const debil = viejoCol || (n != null && n < RES_MIN_N);
+      const colorNivel = (v, r) => ({ bien: '#1D9E75', atencion: '#D97706', mejorar: '#E8505B' })[nivel(v, r)] || '#CBD5E1';
+      const Celda = ({ v, txt, r, n, gris }) => {
+        const debil = gris || (n != null && n < RES_MIN_N);
         return (
           <td className="py-2.5 px-3 text-right tabular-nums whitespace-nowrap">
-            <span className="text-sm font-semibold" style={{ color: v == null ? '#CBD5E1' : debil ? '#94A3B8' : color }}>{v == null ? '—' : txt}</span>
+            <span className="text-sm font-semibold" style={{ color: v == null ? '#CBD5E1' : debil ? '#94A3B8' : colorNivel(v, r) }}>{v == null ? '—' : txt}</span>
             {v != null && n != null && <span className="text-[10px] text-gray-400 ml-1">n={n}</span>}
           </td>
         );
@@ -639,40 +713,82 @@
         </th>
       );
       const resViejo = viejo(R.fechaRef), chViejo = viejo(C.fechaRef);
+      const pocos = (a) => a.threads != null && a.threads < RES_MIN_N;
+
+      const Hallazgo = ({ h, tono }) => (
+        <button onClick={() => onJump && onJump(h.tab)}
+          className="w-full text-left px-4 py-3.5 border-t border-gray-100 first:border-0 hover:bg-gray-50 transition-colors">
+          <div className="flex items-start gap-2.5">
+            <span className="mt-1.5 w-2 h-2 rounded-full shrink-0" style={{ background: tono }}></span>
+            <div className="min-w-0">
+              <div className="text-sm font-semibold text-navy-dark">{h.titulo}{h.viejo && <span className="ml-2 text-[10px] font-normal text-gray-400">dato anterior</span>}</div>
+              <div className="text-xs text-gray-500 mt-0.5">{h.detalle}</div>
+              {h.accion && <div className="text-xs text-navy-dark mt-1.5"><span className="font-semibold">Qué hacer:</span> {h.accion}</div>}
+            </div>
+          </div>
+        </button>
+      );
 
       return (
         <Section title="Experiencia del Broker" id="resumen">
-          {/* qué tan frescos están los datos — antes de leer cualquier número */}
-          <div className="flex flex-wrap gap-x-5 gap-y-1.5 text-xs text-gray-500 mb-6 pb-4 border-b border-gray-200">
-            {F && <span><span className="text-gray-400">Conversaciones al</span> <strong className="text-navy-dark">{fechaCorta(F.generatedAt)}</strong></span>}
-            <span><span className="text-gray-400">Última muestra leída por IA</span> <strong className="text-navy-dark">{MED_ULT.label}</strong> · {MED_ULT.agentes} agentes</span>
-            {(resViejo || chViejo) && (
-              <span className="text-amber-700">⚠ {[resViejo && `resolución de ${R.periodo}`, chViejo && `contratos de ${C.periodo}`].filter(Boolean).join(' y ')}: desactualizados</span>
-            )}
+          <p className="text-sm text-gray-600 -mt-4 mb-8 max-w-3xl">
+            Cómo va el servicio de Customer Success con los brokers, qué está funcionando y dónde actuar.
+            {F && <> Conversaciones al <strong>{fechaCorta(F.generatedAt)}</strong>.</>} Próxima medición de la IA: <strong>{proximaCorrida}</strong>.
+          </p>
+
+          {/* 1 · Cómo vamos */}
+          <h3 className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3">1 · Cómo vamos</h3>
+          <div className="bg-white border border-gray-200 rounded-xl mb-10 divide-y divide-gray-100">
+            {filasEstado.map((f, i) => {
+              const nv = nivel(f.v, f.ref), N = nv && NIVEL[nv];
+              return (
+                <button key={i} onClick={() => onJump && onJump(f.tab)}
+                  className="w-full text-left px-4 sm:px-5 py-4 grid grid-cols-[1fr_auto] lg:grid-cols-[minmax(0,2.2fr)_110px_130px_minmax(0,1.6fr)_96px] gap-x-4 gap-y-1.5 items-center hover:bg-gray-50 transition-colors">
+                  <div className="min-w-0">
+                    <div className="text-[11px] font-semibold uppercase tracking-wide text-gray-400">{i + 1}. {f.pregunta}</div>
+                    <div className="text-sm text-gray-700">{f.metrica}</div>
+                  </div>
+                  <div className={`text-2xl sm:text-3xl font-extrabold tracking-tight text-right lg:text-left tabular-nums ${f.viejo ? 'text-gray-400' : 'text-navy-dark'}`}>{f.valor}</div>
+                  <div className="hidden lg:block"><Spark valores={f.serie} muted={f.viejo} /></div>
+                  <div className="text-xs min-w-0">
+                    {f.viejo
+                      ? <span className="text-gray-500">Dato de {f.periodo} · llega uno nuevo el <strong>{proximaCorrida}</strong></span>
+                      : f.tend ? <span className="font-semibold" style={{ color: f.tend.color }}>{f.tend.txt}</span> : <span className="text-gray-400">sin punto anterior</span>}
+                    <div className="text-[11px] text-gray-400 mt-0.5">{f.fuente}</div>
+                  </div>
+                  <div className="lg:text-right" title={`Referencia: ${f.ref.txt}`}>
+                    {N && <span className="inline-block text-[11px] font-semibold rounded px-2 py-0.5" style={{ color: f.viejo ? '#94A3B8' : N.c, background: f.viejo ? '#F1F5F9' : N.bg }}>{N.txt}</span>}
+                    <div className="text-[10px] text-gray-400 mt-0.5 hidden lg:block">ref. {f.ref.txt}</div>
+                  </div>
+                </button>
+              );
+            })}
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-10">
-            {tarjetas.map((t, i) => (
-              <button key={i} onClick={() => onJump && onJump(t.tab)}
-                className="text-left bg-white border border-gray-200 rounded-xl p-5 hover:border-navy-dark/30 hover:shadow-md transition-all flex flex-col focus:outline-none focus:ring-2 focus:ring-teal/40">
-                <div className="flex items-center justify-between gap-2">
-                  <span className="text-[11px] font-semibold uppercase tracking-wide text-gray-400">{i + 1}. {t.pregunta}</span>
-                  {t.viejo && <span className="text-[10px] font-semibold text-amber-700 bg-amber-50 border border-amber-200 rounded px-1.5 py-0.5 shrink-0">desactualizado</span>}
-                </div>
-                <div className={`text-4xl font-extrabold tracking-tight mt-3 ${t.viejo ? 'text-gray-400' : 'text-navy-dark'}`}>{t.valor}</div>
-                <div className="text-sm text-gray-600 mt-1 leading-snug">{t.metrica}</div>
-                {t.sub && <div className="text-xs text-gray-500 mt-2">{t.sub}</div>}
-                {t.tend && <div className="text-xs font-semibold mt-1" style={{ color: t.tend.color }}>{t.tend.txt}</div>}
-                <div className="text-[11px] text-gray-400 mt-auto pt-3">{t.fuente}</div>
-              </button>
-            ))}
-          </div>
-
-          <div className="bg-white border border-gray-200 rounded-xl p-5 sm:p-6">
-            <div className="flex items-baseline justify-between flex-wrap gap-2 mb-3">
-              <h3 className="text-navy-dark text-lg font-bold">Por agente</h3>
-              <button onClick={() => onJump && onJump('feedback')} className="text-xs font-semibold text-teal hover:underline">Feedback por agente →</button>
+          {/* 2 · Qué va bien / qué mejorar */}
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-5 mb-10">
+            <div className="lg:col-span-3">
+              <h3 className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3">2 · Qué mejorar y dónde actuar</h3>
+              <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+                {mejorar.length ? mejorar.slice(0, 6).map((h, i) => <Hallazgo key={i} h={h} tono="#E8505B" />)
+                  : <p className="px-4 py-4 text-sm text-gray-500">Nada fuera de referencia en este periodo.</p>}
+              </div>
             </div>
+            <div className="lg:col-span-2">
+              <h3 className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3">3 · Qué va bien</h3>
+              <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+                {bien.length ? bien.slice(0, 5).map((h, i) => <Hallazgo key={i} h={h} tono="#1D9E75" />)
+                  : <p className="px-4 py-4 text-sm text-gray-500">Sin señales destacadas en este periodo.</p>}
+              </div>
+            </div>
+          </div>
+
+          {/* 4 · Por agente */}
+          <div className="flex items-baseline justify-between flex-wrap gap-2 mb-3">
+            <h3 className="text-xs font-semibold uppercase tracking-widest text-gray-400">4 · Por agente</h3>
+            <button onClick={() => onJump && onJump('feedback')} className="text-xs font-semibold text-teal hover:underline">Feedback individual por agente →</button>
+          </div>
+          <div className="bg-white border border-gray-200 rounded-xl p-4 sm:p-5">
             <div className="overflow-x-auto -mx-1">
               <table className="w-full min-w-[820px]">
                 <thead>
@@ -691,21 +807,20 @@
                     <tr key={r.agent} className="border-b border-gray-100 last:border-0">
                       <td className="py-2.5 px-3 text-sm font-medium text-navy-dark whitespace-nowrap">{r.agent}</td>
                       <td className="py-2.5 px-3 text-right text-sm text-gray-500 tabular-nums">{r.threads ?? '—'}</td>
-                      <Celda v={r.over24hPct} txt={`${r.over24hPct}%`} color={semaforo(r.over24hPct, 2, 5)} n={null} viejoCol={r.threads != null && r.threads < RES_MIN_N} />
-                      <Celda v={r.medianMin} txt={fmtMin(r.medianMin)} color={semaforo(r.medianMin, 30, 60)} n={null} viejoCol={r.threads != null && r.threads < RES_MIN_N} />
-                      <Celda v={r.resolvedPct} txt={`${r.resolvedPct}%`} color={semaforo(r.resolvedPct, 75, 60, false)} n={r.resN} viejoCol={resViejo} />
-                      <Celda v={r.frust} txt={`${r.frust}%`} color={semaforo(r.frust, 10, 20)} n={r.frustN} viejoCol={viejo(MED_ULT.fecha)} />
-                      <Celda v={r.problemRate} txt={`${r.problemRate}%`} color={semaforo(r.problemRate, 25, 40)} n={r.chN} viejoCol={chViejo} />
+                      <Celda v={r.over24hPct} txt={`${r.over24hPct}%`} r={REF.over24h} n={null} gris={pocos(r)} />
+                      <Celda v={r.medianMin} txt={fmtMin(r.medianMin)} r={REF.primera} n={null} gris={pocos(r)} />
+                      <Celda v={r.resolvedPct} txt={`${r.resolvedPct}%`} r={REF.resueltas} n={r.resN} gris={resViejo} />
+                      <Celda v={r.frust} txt={`${r.frust}%`} r={REF.frust} n={r.frustN} gris={viejo(MED_ULT.fecha)} />
+                      <Celda v={r.problemRate} txt={`${r.problemRate}%`} r={REF.contratos} n={r.chN} gris={chViejo} />
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
             <div className="mt-4 text-xs text-gray-500 space-y-1">
-              <p>Clic en una columna para ordenar. Agentes activos en las últimas 4 semanas.</p>
-              <p><span className="text-gray-400 font-semibold">En gris</span>: menos de {RES_MIN_N} conversaciones o dato desactualizado. Úsalo como pista, no para comparar agentes.</p>
-              <p>1–2 se calculan sobre todas las conversaciones. 3–5 salen de una muestra que lee la IA: sirven para la tendencia del equipo; por agente, solo con muestra suficiente.</p>
-              <p>Colores: referencias iniciales para leer la tabla, no metas acordadas.</p>
+              <p>Clic en una columna para ordenar. Agentes activos en las últimas 4 semanas. Mismos colores que las referencias de arriba.</p>
+              <p><span className="text-gray-400 font-semibold">En gris</span>: menos de {RES_MIN_N} conversaciones o dato anterior a {DIAS_VIEJO} días. Úsalo como pista, no para comparar agentes.</p>
+              <p>1–2 se calculan sobre todas las conversaciones; 3–5 salen de una muestra que lee la IA cada quincena.</p>
             </div>
           </div>
         </Section>
