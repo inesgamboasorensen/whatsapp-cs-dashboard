@@ -240,83 +240,11 @@ function boot(D) {
       className: "flex items-center gap-3 shrink-0"
     }, /*#__PURE__*/React.createElement("span", {
       className: "hidden md:inline text-[10px] font-mono text-gray-500 tracking-widest"
-    }, PERIOD.toUpperCase()), /*#__PURE__*/React.createElement("span", {
+    }, (firstResponse ? `Datos al ${fechaCorta(firstResponse.generatedAt)}` : PERIOD).toUpperCase()), /*#__PURE__*/React.createElement("span", {
       className: "flex items-center gap-1.5 text-[10px] font-mono text-teal/80 bg-teal/10 border border-teal/20 rounded-full px-2.5 py-1"
     }, /*#__PURE__*/React.createElement("span", {
       className: "w-1.5 h-1.5 rounded-full bg-teal animate-pulse"
     }), "LIVE"))));
-  }
-  function Hero() {
-    const lastFrust = 16; // Aug 13 run — across 200 conversations, 27 agents
-    const baselineFrust = 39.7;
-    const improvement = (baselineFrust - lastFrust).toFixed(1);
-    return /*#__PURE__*/React.createElement("section", {
-      className: "hero-bg relative overflow-hidden border-b border-gray-200/60"
-    }, /*#__PURE__*/React.createElement("div", {
-      className: "absolute inset-0 grid-decoration opacity-60"
-    }), /*#__PURE__*/React.createElement("div", {
-      className: "relative max-w-7xl mx-auto px-4 sm:px-8 pt-16 pb-20 sm:pt-24 sm:pb-28"
-    }, /*#__PURE__*/React.createElement("div", {
-      className: "hidden sm:flex absolute top-8 left-8 right-8 justify-between coords"
-    }, /*#__PURE__*/React.createElement("span", null, "19.4326\xB0 N \xB7 99.1332\xB0 W"), /*#__PURE__*/React.createElement("span", null, "CDMX \xB7 MX")), /*#__PURE__*/React.createElement("div", {
-      className: "text-center max-w-4xl mx-auto"
-    }, /*#__PURE__*/React.createElement("div", {
-      className: "animate-blur-in inline-flex items-center gap-2 bg-white/60 backdrop-blur border border-gray-200/60 rounded-full px-3 py-1 text-xs text-gray-700 mb-6",
-      style: {
-        animationDelay: '0.05s'
-      }
-    }, /*#__PURE__*/React.createElement("span", {
-      className: "w-1.5 h-1.5 rounded-full bg-teal"
-    }), /*#__PURE__*/React.createElement("span", {
-      className: "font-medium"
-    }, runsMeta.totalRuns, " mediciones \xB7 \xFAltima ", runsMeta.lastRunLabel)), /*#__PURE__*/React.createElement("h2", {
-      className: "animate-blur-in hero-number text-5xl sm:text-7xl lg:text-8xl font-extrabold text-navy-dark",
-      style: {
-        animationDelay: '0.15s'
-      }
-    }, "Tu equipo de CS,", /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("span", {
-      className: "bg-gradient-to-r from-coral via-coral to-orange-500 bg-clip-text text-transparent"
-    }, "en evoluci\xF3n.")), /*#__PURE__*/React.createElement("p", {
-      className: "animate-blur-in mt-6 text-base sm:text-lg text-gray-500 max-w-2xl mx-auto leading-relaxed",
-      style: {
-        animationDelay: '0.3s'
-      }
-    }, "An\xE1lisis autom\xE1tico de conversaciones de WhatsApp para medir frustraci\xF3n de brokers, tiempo de respuesta, calidad de escritura y resoluci\xF3n de problemas \u2014 por agente, en el tiempo."), /*#__PURE__*/React.createElement("div", {
-      className: "animate-blur-in mt-12 grid grid-cols-3 gap-4 sm:gap-8 max-w-3xl mx-auto",
-      style: {
-        animationDelay: '0.45s'
-      }
-    }, /*#__PURE__*/React.createElement("div", {
-      className: "text-center"
-    }, /*#__PURE__*/React.createElement("div", {
-      className: "hero-number text-4xl sm:text-6xl font-extrabold text-coral"
-    }, baselineFrust, /*#__PURE__*/React.createElement("span", {
-      className: "text-2xl sm:text-3xl"
-    }, "%")), /*#__PURE__*/React.createElement("div", {
-      className: "coords mt-2"
-    }, "FRUSTRACI\xD3N BASELINE"), /*#__PURE__*/React.createElement("div", {
-      className: "text-xs text-gray-400 mt-1"
-    }, "Mar 11, 2026")), /*#__PURE__*/React.createElement("div", {
-      className: "text-center border-x border-gray-200/80"
-    }, /*#__PURE__*/React.createElement("div", {
-      className: "hero-number text-4xl sm:text-6xl font-extrabold text-teal"
-    }, "\u2193 ", improvement, /*#__PURE__*/React.createElement("span", {
-      className: "text-2xl sm:text-3xl"
-    }, " pts")), /*#__PURE__*/React.createElement("div", {
-      className: "coords mt-2"
-    }, "REDUCCI\xD3N"), /*#__PURE__*/React.createElement("div", {
-      className: "text-xs text-gray-400 mt-1"
-    }, "en 8 semanas")), /*#__PURE__*/React.createElement("div", {
-      className: "text-center"
-    }, /*#__PURE__*/React.createElement("div", {
-      className: "hero-number text-4xl sm:text-6xl font-extrabold text-navy-dark"
-    }, lastFrust, /*#__PURE__*/React.createElement("span", {
-      className: "text-2xl sm:text-3xl"
-    }, "%")), /*#__PURE__*/React.createElement("div", {
-      className: "coords mt-2"
-    }, "FRUSTRACI\xD3N ACTUAL"), /*#__PURE__*/React.createElement("div", {
-      className: "text-xs text-gray-400 mt-1"
-    }, runsMeta.lastRunLabel))))));
   }
   function Section({
     title,
@@ -682,616 +610,330 @@ function boot(D) {
   // High-level summary of the four pillar metrics for the Resumen tab.
   // Frustración / response time / writing come from the static analysis snapshot;
   // calls hits the live worker so the headline number stays current.
-  function FocusScorecard({
-    onJump
-  }) {
-    const frust = {};
-    agentRanking.forEach(a => {
-      const v = a[MED_ULT.key];
-      if (v != null) frust[a.name] = v;
-    });
-    const resAgents = (resolutionMonthly.by_month[resolutionMonthly.months[resolutionMonthly.months.length - 1]] || resolutionMonthly.all).agents;
-    const res = {};
-    resAgents.forEach(a => res[a.agent] = a);
-    const ch = {};
-    contractHandling.agents.forEach(a => ch[a.agent] = a);
-    const resp = {};
-    responseTimes.forEach(r => resp[r.agent] = r.median);
-    const wq = {};
-    writingQuality.forEach(w => wq[w.agent] = w.score);
-    const names = new Set([...Object.keys(frust), ...Object.keys(res), ...Object.keys(ch), ...Object.keys(resp)]);
-    const allRows = [];
-    names.forEach(a => {
-      const flags = [];
-      let score = 0;
-      let serious = false;
-      const f = frust[a];
-      if (f != null && f >= 25) {
-        flags.push({
-          t: `Frustración ${f}%`,
-          tab: 'agents',
-          hi: true
-        });
-        score += 2;
-        serious = true;
-      }
-      const r = res[a];
-      if (r && r.unresolvedPct >= 25) {
-        flags.push({
-          t: `Sin resolver ${r.unresolvedPct}%`,
-          tab: 'resolution',
-          hi: true
-        });
-        score += 2;
-        serious = true;
-      }
-      const c = ch[a];
-      if (c && c.problemRate >= 40 && c.recoveryPct != null && c.recoveryPct < 50) {
-        flags.push({
-          t: `Contratos ${c.problemRate}% · rec ${c.recoveryPct}%`,
-          tab: 'contracts',
-          hi: true
-        });
-        score += 3;
-        serious = true;
-      } else if (c && c.problemRate >= 45) {
-        flags.push({
-          t: `Contratos ${c.problemRate}% c/problema`,
-          tab: 'contracts',
-          hi: false
-        });
-        score += 1;
-      }
-      const rp = resp[a];
-      if (rp != null && rp >= 14) {
-        flags.push({
-          t: `Respuesta ${rp} min`,
-          tab: 'response',
-          hi: false
-        });
-        score += 1;
-      }
-      const w = wq[a];
-      if (w != null && w >= 30) {
-        flags.push({
-          t: `Escritura ${Math.max(0, Math.round(100 - w * 1.2))}/100`,
-          tab: 'writing',
-          hi: false
-        });
-        score += 1;
-      }
-      if (score > 0) allRows.push({
-        agent: a,
-        score,
-        flags,
-        serious
-      });
-    });
-    // LEFT = solo problemas SERIOS (frustración/sin resolver/contratos crítico). Disjoint del lado derecho.
-    const rows = allRows.filter(r => r.serious).sort((a, b) => b.score - a.score || b.flags.length - a.flags.length);
-    const seriousSet = new Set(rows.map(r => r.agent));
-    const fTier = s => s >= 4 ? {
-      l: 'Crítico',
-      c: '#991B1B',
-      bg: '#FEE2E2',
-      bar: '#E8505B'
-    } : {
-      l: 'Alto',
-      c: '#92400E',
-      bg: '#FEF3C7',
-      bar: '#F97316'
-    };
+  // ─── RESUMEN ───
+  // Cinco métricas, una por pregunta del broker. Lo demás vive en "Diagnóstico":
+  // sirve para explicar por qué se movió una de estas, no para seguir la experiencia.
+  //   1–2 salen de TODAS las conversaciones (Postgres, compute_first_response.py)
+  //   3–4 salen de una muestra leída por Claude (classify.py) → frágiles: ver nota de sep
+  //   5   todavía no la mide ninguna corrida automática
+  const RES_MIN_N = 30; // por debajo, el % de un agente se mueve mucho con 1–2 casos
+  const DIAS_VIEJO = 45; // un dato más viejo que esto se marca como desactualizado
 
-    // TOP PERFORMERS (recognition) — strong across positive signals
-    const grade = w => Math.max(0, Math.round(100 - w * 1.2));
-    const top = [];
-    names.forEach(a => {
-      const flags = [];
-      let score = 0;
-      const f = frust[a];
-      if (f != null && f <= 8) {
-        flags.push({
-          t: `Frustración baja ${f}%`,
-          tab: 'agents'
-        });
-        score += 2;
-      }
-      const r = res[a];
-      if (r && r.resolvedPct >= 75) {
-        flags.push({
-          t: `Resolución ${r.resolvedPct}%`,
-          tab: 'resolution'
-        });
-        score += 2;
-      }
-      const c = ch[a];
-      if (c && c.recoveryPct != null && c.recoveryPct >= 80) {
-        flags.push({
-          t: `Recuperación ${c.recoveryPct}%`,
-          tab: 'contracts'
-        });
-        score += 2;
-      } else if (c && c.problemRate <= 20) {
-        flags.push({
-          t: `Contratos ${c.problemRate}% (bajo)`,
-          tab: 'contracts'
-        });
-        score += 1;
-      }
-      const rp = resp[a];
-      if (rp != null && rp <= 5) {
-        flags.push({
-          t: `Respuesta ${rp} min`,
-          tab: 'response'
-        });
-        score += 1;
-      }
-      const w = wq[a];
-      if (w != null && grade(w) >= 87) {
-        flags.push({
-          t: `Escritura ${grade(w)}/100`,
-          tab: 'writing'
-        });
-        score += 1;
-      }
-      // Solo top si NO tiene un problema serio (no puede estar en ambos lados) y destaca claramente.
-      if (score >= 3 && !seriousSet.has(a)) top.push({
-        agent: a,
-        score,
-        flags
-      });
+  const mesLargo = k => {
+    const [y, m] = k.split('-');
+    return new Date(y, m - 1, 15).toLocaleDateString('es-MX', {
+      month: 'short',
+      year: 'numeric'
     });
-    top.sort((a, b) => b.score - a.score || b.flags.length - a.flags.length);
-    const tTier = s => s >= 4 ? {
-      l: 'Estrella',
-      c: '#0F6E56',
-      bg: '#D1FAE5',
-      bar: '#1D9E75'
-    } : {
-      l: 'Sólido',
-      c: '#0F6E56',
-      bg: '#E1F5EE',
-      bar: '#5DCAA5'
+  };
+  const fechaCorta = iso => new Date(iso.length === 10 ? iso + 'T12:00:00-06:00' : iso).toLocaleDateString('es-MX', {
+    day: 'numeric',
+    month: 'short',
+    timeZone: 'America/Mexico_City'
+  });
+  const diasDesde = iso => (Date.now() - new Date(iso.length === 7 ? iso + '-28T12:00:00' : iso).getTime()) / 86400000;
+
+  // Resolución: la última corrida si ya la publica agregar_medicion.py; si no, el mes más reciente del análisis anterior
+  const resolucionActual = (() => {
+    if (D.resolutionLatest) return {
+      ...D.resolutionLatest,
+      periodo: fechaCorta(D.resolutionLatest.fecha),
+      fechaRef: D.resolutionLatest.fecha
     };
-    const Row = ({
-      r,
-      i,
-      tierFn,
-      chipC,
-      chipBg,
-      hiC,
-      hiBg
-    }) => {
-      const t = tierFn(r.score);
-      return /*#__PURE__*/React.createElement("div", {
-        className: `flex items-start gap-2.5 px-4 py-2.5 ${i > 0 ? 'border-t border-gray-100' : ''}`,
-        style: {
-          borderLeft: `4px solid ${t.bar}`
-        }
-      }, /*#__PURE__*/React.createElement("span", {
-        className: "text-xs font-mono text-gray-400 w-4 shrink-0 mt-0.5"
-      }, i + 1), /*#__PURE__*/React.createElement("div", {
-        className: "min-w-0"
-      }, /*#__PURE__*/React.createElement("div", {
-        className: "flex items-center gap-2 flex-wrap"
-      }, /*#__PURE__*/React.createElement("span", {
-        className: "text-sm font-semibold text-navy-dark"
-      }, r.agent), /*#__PURE__*/React.createElement("span", {
-        className: "text-[10px] font-bold px-1.5 py-0.5 rounded",
-        style: {
-          color: t.c,
-          background: t.bg
-        }
-      }, t.l)), /*#__PURE__*/React.createElement("div", {
-        className: "flex flex-wrap gap-1.5 mt-1"
-      }, r.flags.map((fl, j) => /*#__PURE__*/React.createElement("button", {
-        key: j,
-        onClick: () => onJump && onJump(fl.tab),
-        className: "text-[11px] font-medium px-1.5 py-0.5 rounded transition-transform hover:scale-105",
-        style: {
-          color: fl.hi ? hiC : chipC,
-          background: fl.hi ? hiBg : chipBg
-        }
-      }, fl.t)))));
+    const k = resolutionMonthly.months[resolutionMonthly.months.length - 1];
+    return {
+      ...resolutionMonthly.by_month[k],
+      periodo: mesLargo(k),
+      fechaRef: k
     };
-    return /*#__PURE__*/React.createElement(Section, {
-      title: "D\xF3nde Enfocar y a Qui\xE9n Reconocer",
-      id: "focus"
-    }, /*#__PURE__*/React.createElement("p", {
-      className: "text-sm text-gray-600 mb-5 max-w-3xl"
-    }, "Prioridad por agente combinando todas las se\xF1ales (frustraci\xF3n, sin resolver, contratos, respuesta, escritura). Es apoyo y reconocimiento, no calificaci\xF3n \u2014 varias se\xF1ales reflejan fallas del sistema que pasan por el agente."), /*#__PURE__*/React.createElement("div", {
-      className: "grid grid-cols-1 lg:grid-cols-2 gap-5"
-    }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("h3", {
-      className: "text-sm font-bold text-navy-dark mb-2"
-    }, /*#__PURE__*/React.createElement("span", {
-      style: {
-        color: '#E8505B'
-      }
-    }, "\u25CF"), " D\xF3nde enfocar \u2014 necesitan apoyo"), /*#__PURE__*/React.createElement("div", {
-      className: "bg-white rounded-2xl shadow-sm overflow-hidden"
-    }, rows.map((r, i) => /*#__PURE__*/React.createElement(Row, {
-      key: r.agent,
-      r: r,
-      i: i,
-      tierFn: fTier,
-      chipC: "#92400E",
-      chipBg: "#FEF3C7",
-      hiC: "#991B1B",
-      hiBg: "#FEE2E2"
-    })))), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("h3", {
-      className: "text-sm font-bold text-navy-dark mb-2"
-    }, /*#__PURE__*/React.createElement("span", {
-      style: {
-        color: '#1D9E75'
-      }
-    }, "\u25CF"), " Reconocer su esfuerzo \u2014 top performers"), /*#__PURE__*/React.createElement("div", {
-      className: "bg-white rounded-2xl shadow-sm overflow-hidden"
-    }, top.map((r, i) => /*#__PURE__*/React.createElement(Row, {
-      key: r.agent,
-      r: r,
-      i: i,
-      tierFn: tTier,
-      chipC: "#0F6E56",
-      chipBg: "#E1F5EE",
-      hiC: "#0F6E56",
-      hiBg: "#D1FAE5"
-    }))), /*#__PURE__*/React.createElement("div", {
-      className: "mt-3 rounded-xl p-4",
-      style: {
-        background: '#E1F5EE',
-        border: '1px solid #9FE1CB'
-      }
-    }, /*#__PURE__*/React.createElement("p", {
-      className: "text-xs font-bold mb-1.5",
-      style: {
-        color: '#0F6E56'
-      }
-    }, "C\xF3mo reconocer su esfuerzo"), /*#__PURE__*/React.createElement("ul", {
-      className: "text-xs space-y-1",
-      style: {
-        color: '#085041'
-      }
-    }, /*#__PURE__*/React.createElement("li", null, "\u2022 Menci\xF3n por nombre en la junta semanal con el dato concreto (ej. \"Kate, 100% de recuperaci\xF3n en contratos\")."), /*#__PURE__*/React.createElement("li", null, "\u2022 Mensaje directo del l\xEDder agradeciendo el resultado espec\xEDfico."), /*#__PURE__*/React.createElement("li", null, "\u2022 Pedirles compartir su pr\xE1ctica: un mini-tip o mentor\xEDa a quienes est\xE1n en \"D\xF3nde enfocar\"."), /*#__PURE__*/React.createElement("li", null, "\u2022 Considerarlos para reconocimiento formal o bono del periodo."))))), /*#__PURE__*/React.createElement("p", {
-      className: "text-xs text-gray-400 mt-3"
-    }, "Cada agente aparece en ", /*#__PURE__*/React.createElement("strong", null, "un solo lado"), ": si tiene un problema serio (frustraci\xF3n \u226525% \xB7 sin resolver \u226525% \xB7 contratos CR\xCDTICO \u226540%/rec<50%) va a la izquierda; los dem\xE1s solo entran a la derecha si destacan en \u22652 se\xF1ales positivas (frustraci\xF3n \u22648% \xB7 resoluci\xF3n \u226575% \xB7 recuperaci\xF3n \u226580% \xB7 respuesta \u22645min \xB7 escritura \u226587/100). Click en una etiqueta para el detalle."));
+  })();
+  // Contratos: el mes con más conversaciones del último análisis
+  const contratosMes = [...contractHandling.by_month].sort((a, b) => b.contractConvs - a.contractConvs)[0].month;
+
+  // Aviso arriba de una pestaña cuyos datos se quedaron atrás
+  function AvisoViejo({
+    que,
+    periodo,
+    detalle
+  }) {
+    return /*#__PURE__*/React.createElement("div", {
+      className: "mb-6 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900"
+    }, /*#__PURE__*/React.createElement("strong", null, "Datos de ", periodo, "."), " ", que, " ", detalle);
   }
-  function ExecutiveSummary({
+  function Resumen({
     onJump
   }) {
-    const avg = key => {
-      const v = agentRanking.filter(a => a[key] != null).map(a => a[key]);
-      return v.length ? Math.round(v.reduce((s, x) => s + x, 0) / v.length * 10) / 10 : null;
-    };
-    const frustTrend = MED.map(m => ({
-      l: m.label.toLowerCase(),
-      v: m.equipo != null ? m.equipo : avg(m.key)
-    })).filter(t => t.v != null);
-    const fMax = Math.max(...frustTrend.map(t => t.v));
-    const fNow = frustTrend[frustTrend.length - 1].v,
-      fBase = frustTrend[0].v;
-    const jun = resolutionMonthly.by_month[resolutionMonthly.months[resolutionMonthly.months.length - 1]] ? resolutionMonthly.by_month[resolutionMonthly.months[resolutionMonthly.months.length - 1]].team : resolutionMonthly.all.team;
-    const may = resolutionMonthly.by_month[resolutionMonthly.months[resolutionMonthly.months.length - 2]] ? resolutionMonthly.by_month[resolutionMonthly.months[resolutionMonthly.months.length - 2]].team : null;
-    const teamMedian = responseTimes.reduce((s, r) => s + r.median, 0) / responseTimes.length;
-    const toGrade = s => Math.max(0, Math.min(100, Math.round(100 - s * 1.2)));
-    const writeAvg = Math.round(writingQuality.reduce((s, w) => s + toGrade(w.score), 0) / writingQuality.length);
-    const ch = contractHandling.team;
-    const fPrev = frustTrend.length > 1 ? frustTrend[frustTrend.length - 2].v : null;
-    const chm = contractHandling.by_month || [];
-    const chLast = chm[chm.length - 1],
-      chPrev = chm[chm.length - 2];
-    const mm = typeof metricsMonthly !== 'undefined' && metricsMonthly.length ? metricsMonthly : [];
-    const mLast = mm[mm.length - 1],
-      mPrev = mm[mm.length - 2];
-    const mn2 = k => k ? new Date(k.month + '-01T00:00:00').toLocaleDateString('es-MX', {
-      month: 'short'
-    }) : '';
-    // status: green = mejoró, yellow = se mantuvo / sin comparación, red = empeoró
-    const dirStatus = (curr, prev, lowerBetter, eps = 1) => {
-      if (prev == null || curr == null) return 'yellow';
-      const dd = curr - prev;
-      if (Math.abs(dd) <= eps) return 'yellow';
-      return (lowerBetter ? dd < 0 : dd > 0) ? 'green' : 'red';
-    };
-    const dotColor = {
-      green: '#1D9E75',
-      yellow: '#F59E0B',
-      red: '#E8505B'
-    };
-    const dotTitle = {
-      green: 'Mejoró',
-      yellow: 'Se mantuvo / sin comparación',
-      red: 'Empeoró'
-    };
-    const Trend = ({
-      dir,
-      txt,
-      good
-    }) => /*#__PURE__*/React.createElement("span", {
-      className: "text-[11px] font-semibold",
-      style: {
-        color: good ? '#1D9E75' : dir === 'flat' ? '#94A3B8' : '#E8505B'
-      }
-    }, txt);
-    const pillars = [{
-      key: 'agents',
-      label: 'Frustración',
-      value: fNow + '%',
-      status: dirStatus(fNow, fPrev, true),
-      trend: /*#__PURE__*/React.createElement(Trend, {
-        good: true,
-        txt: '↓ ' + Math.round((fBase - fNow) * 10) / 10 + ' pts desde mar'
-      })
-    }, {
-      key: 'resolution',
-      label: 'Resolución (jun)',
-      value: jun.resolvedPct + '%',
-      status: dirStatus(jun.resolvedPct, may ? may.resolvedPct : null, false),
-      trend: /*#__PURE__*/React.createElement(Trend, {
-        good: may ? jun.resolvedPct >= may.resolvedPct : true,
-        txt: may ? (jun.resolvedPct >= may.resolvedPct ? '↑' : '↓') + ' vs may ' + may.resolvedPct + '%' : 'jun'
-      })
-    }, {
-      key: 'resolution',
-      label: 'Sin resolver (rojo)',
-      value: jun.unresolvedPct + '%',
-      status: dirStatus(jun.unresolvedPct, may ? may.unresolvedPct : null, true),
-      trend: /*#__PURE__*/React.createElement(Trend, {
-        good: may ? jun.unresolvedPct <= may.unresolvedPct : true,
-        txt: may ? (jun.unresolvedPct <= may.unresolvedPct ? '↓' : '↑') + ' vs may ' + may.unresolvedPct + '%' : 'meta: bajar'
-      })
-    }, {
-      key: 'response',
-      label: 'Respuesta (mediana)',
-      value: teamMedian.toFixed(1) + ' min',
-      status: mPrev ? dirStatus(mLast.response_median_min, mPrev.response_median_min, true) : 'yellow',
-      trend: /*#__PURE__*/React.createElement(Trend, {
-        dir: mPrev ? '' : 'flat',
-        good: mPrev ? mLast.response_median_min <= mPrev.response_median_min : false,
-        txt: mPrev ? `${mLast.response_median_min <= mPrev.response_median_min ? '↓' : '↑'} ${mLast.response_median_min}min vs ${mn2(mPrev)} ${mPrev.response_median_min}min` : 'horario laboral'
-      })
-    }, ...(firstResponse ? (() => {
-      // semana más reciente vs la anterior (las más viejas tienen menos cobertura)
-      const W = firstResponse.total.weeks,
-        wl = W[W.length - 1],
-        wp = W[W.length - 2];
-      const T = firstResponse.total;
-      return [{
-        key: 'response',
-        label: '1ª respuesta (4 sem)',
-        value: fmtMin(T.medianMin),
-        status: wp ? dirStatus(wl.medianMin, wp.medianMin, true) : 'yellow',
-        trend: /*#__PURE__*/React.createElement(Trend, {
-          good: wp ? wl.medianMin <= wp.medianMin : false,
-          dir: wp ? '' : 'flat',
-          txt: wp ? `${wl.medianMin <= wp.medianMin ? '↓' : '↑'} ${fmtMin(wl.medianMin)} última sem vs ${fmtMin(wp.medianMin)}` : 'mediana, horario laboral'
-        })
-      }, {
-        key: 'response',
-        label: 'Sin respuesta >24 h (4 sem)',
-        value: T.over24hPct + '%',
-        status: wp ? dirStatus(wl.over24hPct, wp.over24hPct, true, 0.5) : 'yellow',
-        trend: /*#__PURE__*/React.createElement(Trend, {
-          good: wp ? wl.over24hPct <= wp.over24hPct : false,
-          dir: wp ? '' : 'flat',
-          txt: wp ? `${wl.over24hPct <= wp.over24hPct ? '↓' : '↑'} ${wl.over24hPct}% última sem vs ${wp.over24hPct}%` : `${T.over24h} conversaciones`
-        })
-      }];
-    })() : []), {
-      key: 'contracts',
-      label: 'Contratos c/ problema',
-      value: ch.problemRate + '%',
-      status: chPrev ? dirStatus(chLast.problemRate, chPrev.problemRate, true) : 'yellow',
-      trend: /*#__PURE__*/React.createElement(Trend, {
-        good: false,
-        txt: 'recuperación ' + ch.recoveryPct + '%'
-      })
-    }, {
-      key: 'writing',
-      label: 'Escritura',
-      value: writeAvg + '/100',
-      status: mPrev ? dirStatus(mLast.writing_grade, mPrev.writing_grade, false) : 'yellow',
-      trend: /*#__PURE__*/React.createElement(Trend, {
-        dir: mPrev ? '' : 'flat',
-        good: mPrev ? mLast.writing_grade >= mPrev.writing_grade : false,
-        txt: mPrev ? `${mLast.writing_grade >= mPrev.writing_grade ? '↑' : '↓'} ${mLast.writing_grade}/100 vs ${mn2(mPrev)} ${mPrev.writing_grade}/100` : 'promedio equipo'
-      })
-    }];
-    return /*#__PURE__*/React.createElement(Section, {
-      title: "Resumen Ejecutivo",
-      id: "exec"
-    }, /*#__PURE__*/React.createElement("p", {
-      className: "text-sm text-gray-600 mb-6 max-w-3xl"
-    }, "En ", MED.length, " mediciones (", MED_1RA.label.toLowerCase(), " \u2192 ", MED_ULT.label.toLowerCase(), ") la ", /*#__PURE__*/React.createElement("strong", null, "frustraci\xF3n del equipo baj\xF3 de ", fBase, "% a ", fNow, "%"), " \u2014 una mejora de ~", Math.round(fBase - fNow), " puntos. Hoy: resoluci\xF3n ", /*#__PURE__*/React.createElement("strong", null, jun.resolvedPct, "%"), " (", jun.unresolvedPct, "% sin resolver), respuesta mediana ", /*#__PURE__*/React.createElement("strong", null, teamMedian.toFixed(1), " min"), ", contratos con problema ", /*#__PURE__*/React.createElement("strong", null, ch.problemRate, "%"), ". Detalle en cada pesta\xF1a."), /*#__PURE__*/React.createElement("div", {
-      className: "bg-white rounded-2xl p-6 shadow-sm mb-6"
-    }, /*#__PURE__*/React.createElement("div", {
-      className: "flex items-baseline justify-between mb-4"
-    }, /*#__PURE__*/React.createElement("h3", {
-      className: "font-bold text-navy-dark"
-    }, "Frustraci\xF3n del equipo en el tiempo"), /*#__PURE__*/React.createElement("span", {
-      className: "text-xs text-gray-400"
-    }, "% de conversaciones con molestia \xB7 menos = mejor")), /*#__PURE__*/React.createElement("div", {
-      className: "flex items-end gap-2 sm:gap-4",
-      style: {
-        height: '160px'
-      }
-    }, frustTrend.map((t, i) => {
-      const h = Math.round(t.v / fMax * 120) + 8;
-      const last = i === frustTrend.length - 1;
-      return /*#__PURE__*/React.createElement("div", {
-        key: i,
-        className: "flex-1 flex flex-col items-center justify-end gap-1.5"
-      }, /*#__PURE__*/React.createElement("span", {
-        className: "text-xs font-bold",
-        style: {
-          color: last ? '#1B2A4A' : '#E8505B'
-        }
-      }, t.v, "%"), /*#__PURE__*/React.createElement("div", {
-        className: "w-full rounded-t-md",
-        style: {
-          height: h + 'px',
-          background: last ? '#1B2A4A' : '#F0997B',
-          maxWidth: '54px'
-        }
-      }), /*#__PURE__*/React.createElement("span", {
-        className: "text-[10px] text-gray-400"
-      }, t.l));
-    })), /*#__PURE__*/React.createElement(NotaExcluidas, null)), /*#__PURE__*/React.createElement("div", {
-      className: `grid grid-cols-2 ${pillars.length % 4 === 0 ? 'lg:grid-cols-4' : 'lg:grid-cols-3'} gap-4`
-    }, pillars.map((p, i) => /*#__PURE__*/React.createElement("button", {
-      key: i,
-      onClick: () => onJump && onJump(p.key),
-      className: "text-left bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-coral/40"
-    }, /*#__PURE__*/React.createElement("div", {
-      className: "flex items-center justify-between"
-    }, /*#__PURE__*/React.createElement("div", {
-      className: "text-2xl font-extrabold text-navy-dark"
-    }, p.value), /*#__PURE__*/React.createElement("span", {
-      className: "w-3.5 h-3.5 rounded-full shrink-0",
-      style: {
-        background: dotColor[p.status]
-      },
-      title: dotTitle[p.status]
-    })), /*#__PURE__*/React.createElement("div", {
-      className: "text-xs text-gray-600 mt-0.5 font-semibold"
-    }, p.label), /*#__PURE__*/React.createElement("div", {
-      className: "mt-1"
-    }, p.trend)))), /*#__PURE__*/React.createElement("div", {
-      className: "flex items-center gap-4 mt-3 text-[11px] text-gray-500 flex-wrap"
-    }, /*#__PURE__*/React.createElement("span", {
-      className: "inline-flex items-center gap-1.5"
-    }, /*#__PURE__*/React.createElement("span", {
-      className: "w-2.5 h-2.5 rounded-full",
-      style: {
-        background: '#1D9E75'
-      }
-    }), "Mejor\xF3"), /*#__PURE__*/React.createElement("span", {
-      className: "inline-flex items-center gap-1.5"
-    }, /*#__PURE__*/React.createElement("span", {
-      className: "w-2.5 h-2.5 rounded-full",
-      style: {
-        background: '#F59E0B'
-      }
-    }), "Se mantuvo / sin comparaci\xF3n"), /*#__PURE__*/React.createElement("span", {
-      className: "inline-flex items-center gap-1.5"
-    }, /*#__PURE__*/React.createElement("span", {
-      className: "w-2.5 h-2.5 rounded-full",
-      style: {
-        background: '#E8505B'
-      }
-    }), "Empeor\xF3"), /*#__PURE__*/React.createElement("span", {
-      className: "text-gray-400"
-    }, "\xB7 vs. periodo anterior")));
-  }
-  function KeyMetricsSummary({
-    onJump
-  }) {
-    const [callStats, setCallStats] = React.useState(null);
+    const F = firstResponse;
+    const R = resolucionActual;
+    const CH = contractHandling.team;
+    const [orden, setOrden] = React.useState('over24hPct');
+    const [llamadas, setLlamadas] = React.useState(null);
     React.useEffect(() => {
-      let cancelled = false;
+      let vivo = true;
       fetch('https://delicate-poetry-a88a.ines-25d.workers.dev/whatsapp-calls', {
         cache: 'no-store'
       }).then(r => r.json()).then(d => {
-        if (cancelled || !Array.isArray(d)) return;
-        const total = d.length;
-        const missed = d.filter(c => c.missed).length;
-        setCallStats({
-          total,
-          missed,
-          missedRate: total ? missed / total * 100 : 0
+        if (!vivo || !Array.isArray(d)) return;
+        const desde = Date.now() - 28 * 86400000;
+        const c = d.filter(x => new Date(x.raw?.data?.date || x.ts).getTime() >= desde);
+        setLlamadas({
+          total: c.length,
+          perdidas: c.filter(x => x.missed).length
         });
       }).catch(() => {});
       return () => {
-        cancelled = true;
+        vivo = false;
       };
     }, []);
 
-    // Frustración del equipo (último vs baseline)
-    const frustNow = 16;
-    const frustBase = 39.7;
-    const frustDelta = (frustBase - frustNow).toFixed(1);
-
-    // Tiempo de respuesta — promedio de medianas por agente
-    const medians = responseTimes.map(r => r.median);
-    const teamMedian = medians.length ? medians.reduce((s, x) => s + x, 0) / medians.length : 0;
-    const under5Avg = responseTimes.length ? responseTimes.reduce((s, r) => s + r.under5, 0) / responseTimes.length : 0;
-
-    // Calidad de escritura — usar la misma conversión a /100 que el tab de Escritura
-    // (100 - score*1.2, donde score interno es "puntos de error" — menor = mejor)
-    const toWritingGrade = s => Math.max(0, Math.min(100, Math.round(100 - s * 1.2)));
-    const writingGrades = writingQuality.map(w => toWritingGrade(w.score));
-    const writingAvgGrade = writingGrades.length ? Math.round(writingGrades.reduce((s, x) => s + x, 0) / writingGrades.length) : 0;
-    const writingBest = writingQuality.reduce((best, w) => w.score < best.score ? w : best, writingQuality[0]);
-    const writingBestGrade = toWritingGrade(writingBest.score);
-    const writingLabel = writingAvgGrade >= 85 ? 'Excelente' : writingAvgGrade >= 70 ? 'Bueno' : writingAvgGrade >= 55 ? 'Aceptable' : 'A mejorar';
-    const cards = [{
-      key: 'agents',
-      icon: '😤',
-      accent: '#E8505B',
-      label: 'Frustración de los asesores',
-      value: `${frustNow}%`,
-      sub: `↓ ${frustDelta} pts desde Mar 11 (${frustBase}%)`,
-      detail: 'Conversaciones con señales de molestia detectadas'
+    // tendencias: semana más reciente vs la anterior (1–2); medición válida anterior (4)
+    const W = F ? F.total.weeks : [];
+    const wl = W[W.length - 1],
+      wp = W[W.length - 2];
+    const frustAct = Number(medPromedio(MED_ULT));
+    const MED_ANT = MED[MED.length - 2];
+    const frustAnt = MED_ANT ? Number(medPromedio(MED_ANT)) : null;
+    const tend = (act, ant, menosMejor, fmt, contra) => {
+      if (act == null || ant == null) return null;
+      const d = act - ant;
+      if (Math.abs(d) < 0.05) return {
+        txt: `= igual que ${contra}`,
+        color: '#94A3B8'
+      };
+      const bien = menosMejor ? d < 0 : d > 0;
+      return {
+        txt: `${d < 0 ? '↓' : '↑'} desde ${fmt(ant)} ${contra}`,
+        color: bien ? '#1D9E75' : '#E8505B'
+      };
+    };
+    const pct = v => `${v}%`;
+    const viejo = ref => diasDesde(ref) > DIAS_VIEJO;
+    const tarjetas = [{
+      tab: 'response',
+      pregunta: '¿Le contestaron?',
+      valor: F ? `${F.total.over24hPct}%` : '—',
+      metrica: 'conversaciones sin respuesta en más de 24 h',
+      sub: F ? `${F.total.over24h} de ${F.total.threads.toLocaleString('es-MX')}` + (llamadas && llamadas.total ? ` · llamadas perdidas ${Math.round(100 * llamadas.perdidas / llamadas.total)}%` : '') : null,
+      tend: wp ? tend(wl.over24hPct, wp.over24hPct, true, pct, 'la semana anterior') : null,
+      fuente: 'Todas las conversaciones · últimas 4 semanas'
     }, {
-      key: 'response',
-      icon: '⏱️',
-      accent: '#2EC4B6',
-      label: 'Tiempo de respuesta',
-      value: `${teamMedian.toFixed(1)} min`,
-      sub: `Mediana del equipo · ${under5Avg.toFixed(0)}% bajo 5 min`,
-      detail: `${responseTimes.length} agentes · solo horario laboral`
+      tab: 'response',
+      pregunta: '¿Qué tan rápido?',
+      valor: F ? fmtMin(F.total.medianMin) : '—',
+      metrica: 'primera respuesta (mediana, horario laboral)',
+      sub: F ? `El 10% más lento espera más de ${fmtMin(F.total.p90Min)}` : null,
+      tend: wp ? tend(wl.medianMin, wp.medianMin, true, fmtMin, 'la semana anterior') : null,
+      fuente: 'Todas las conversaciones · últimas 4 semanas'
     }, {
-      key: 'writing',
-      icon: '✍️',
-      accent: '#F97316',
-      label: 'Calidad de escritura',
-      value: `${writingAvgGrade}/100`,
-      sub: `${writingLabel} · mejor: ${writingBest.agent} (${writingBestGrade}/100)`,
-      detail: 'Promedio del equipo · gramática, tono, profesionalismo'
+      tab: 'resolution',
+      pregunta: '¿Le resolvieron?',
+      valor: `${R.team.resolvedPct}%`,
+      metrica: 'conversaciones resueltas',
+      sub: `${R.team.unresolvedPct}% quedó sin resolver`,
+      fuente: `Muestra de ${R.team.total} conversaciones · ${R.periodo}`,
+      viejo: viejo(R.fechaRef)
     }, {
-      key: 'calls',
-      icon: '📞',
-      accent: '#1B2A4A',
-      label: 'Llamadas perdidas',
-      value: callStats ? String(callStats.missed) : '—',
-      sub: callStats ? `${callStats.missedRate.toFixed(0)}% de ${callStats.total} llamadas` : 'Cargando datos en vivo...',
-      detail: 'Webhook live · solo entrantes',
-      live: true
+      tab: 'agents',
+      pregunta: '¿Cómo se sintió?',
+      valor: `${frustAct}%`,
+      metrica: 'conversaciones con frustración moderada o severa',
+      tend: tend(frustAct, frustAnt, true, pct, `el ${MED_ANT ? MED_ANT.label.toLowerCase() : ''}`),
+      fuente: `Muestra · ${MED_ULT.label.toLowerCase()} · ${MED_ULT.agentes} agentes`,
+      viejo: viejo(MED_ULT.fecha)
+    }, {
+      tab: 'contracts',
+      pregunta: '¿Su contrato salió bien?',
+      valor: `${CH.problemRate}%`,
+      metrica: 'conversaciones de contrato con un problema',
+      sub: `Se recuperó el ${CH.recoveryPct}%`,
+      fuente: `Muestra de ${CH.contractConvs} conversaciones · ${mesLargo(contratosMes)}`,
+      viejo: viejo(contratosMes)
     }];
+
+    // ── tabla por agente: el padrón son los agentes activos en las últimas 4 semanas ──
+    const idx = (arr, k = 'agent') => Object.fromEntries((arr || []).map(a => [a[k], a]));
+    const fr = idx(F && F.agents),
+      rs = idx(R.agents),
+      chA = idx(contractHandling.agents);
+    const fn = idx(D.frustrationLatest && D.frustrationLatest.key === MED_ULT.key ? D.frustrationLatest.agents : null);
+    const frustDe = Object.fromEntries(agentRanking.map(a => [a.name, a[MED_ULT.key]]));
+    const nombres = F ? F.agents.map(a => a.agent) : [...new Set(agentRanking.map(a => a.name))];
+    const filas = nombres.map(n => ({
+      agent: n,
+      threads: fr[n]?.threads ?? null,
+      over24hPct: fr[n]?.over24hPct ?? null,
+      medianMin: fr[n]?.medianMin ?? null,
+      resolvedPct: rs[n]?.resolvedPct ?? null,
+      resN: rs[n]?.total ?? null,
+      frust: frustDe[n] ?? null,
+      frustN: fn[n]?.n ?? null,
+      problemRate: chA[n]?.problemRate ?? null,
+      chN: chA[n]?.contractConvs ?? null
+    }));
+    const mayorPeor = {
+      over24hPct: true,
+      medianMin: true,
+      resolvedPct: false,
+      frust: true,
+      problemRate: true
+    };
+    filas.sort((a, b) => {
+      const va = a[orden],
+        vb = b[orden];
+      if (va == null) return 1;
+      if (vb == null) return -1;
+      return mayorPeor[orden] ? vb - va : va - vb;
+    });
+
+    // colores: referencias iniciales para leer la tabla, no metas
+    const semaforo = (v, verde, ambar, menosMejor = true) => v == null ? '#CBD5E1' : (menosMejor ? v <= verde : v >= verde) ? '#1D9E75' : (menosMejor ? v <= ambar : v >= ambar) ? '#D97706' : '#E8505B';
+    const Celda = ({
+      v,
+      txt,
+      color,
+      n,
+      viejoCol
+    }) => {
+      const debil = viejoCol || n != null && n < RES_MIN_N;
+      return /*#__PURE__*/React.createElement("td", {
+        className: "py-2.5 px-3 text-right tabular-nums whitespace-nowrap"
+      }, /*#__PURE__*/React.createElement("span", {
+        className: "text-sm font-semibold",
+        style: {
+          color: v == null ? '#CBD5E1' : debil ? '#94A3B8' : color
+        }
+      }, v == null ? '—' : txt), v != null && n != null && /*#__PURE__*/React.createElement("span", {
+        className: "text-[10px] text-gray-400 ml-1"
+      }, "n=", n));
+    };
+    const Th = ({
+      k,
+      children,
+      sub
+    }) => /*#__PURE__*/React.createElement("th", {
+      onClick: k ? () => setOrden(k) : undefined,
+      className: `py-2 px-3 text-right text-xs font-semibold align-bottom ${k ? 'cursor-pointer select-none hover:text-navy-dark' : ''} ${orden === k ? 'text-navy-dark' : 'text-gray-400'}`
+    }, children, orden === k ? ' ↓' : '', sub && /*#__PURE__*/React.createElement("div", {
+      className: "text-[10px] font-normal text-gray-400"
+    }, sub));
+    const resViejo = viejo(R.fechaRef),
+      chViejo = viejo(contratosMes);
     return /*#__PURE__*/React.createElement(Section, {
-      title: "M\xE9tricas Clave",
-      id: "key-metrics"
-    }, /*#__PURE__*/React.createElement("p", {
-      className: "text-sm text-gray-500 mb-6 max-w-3xl"
-    }, "Resumen alto-nivel de los cuatro pilares que mide el dashboard. Haz clic en cualquier tarjeta para ir al detalle."), /*#__PURE__*/React.createElement("div", {
-      className: "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5"
-    }, cards.map((c, i) => /*#__PURE__*/React.createElement("button", {
-      key: c.key,
-      onClick: () => onJump && onJump(c.key),
-      className: "text-left bg-white rounded-2xl p-6 shadow-sm hover:shadow-xl transition-all duration-300 animate-fade hover:-translate-y-0.5 cursor-pointer focus:outline-none focus:ring-2 focus:ring-coral/40",
-      style: {
-        borderLeft: `3px solid ${c.accent}`,
-        animationDelay: `${i * 0.08}s`
-      }
+      title: "Experiencia del Broker",
+      id: "resumen"
     }, /*#__PURE__*/React.createElement("div", {
-      className: "flex items-start justify-between mb-3"
+      className: "flex flex-wrap gap-x-5 gap-y-1.5 text-xs text-gray-500 mb-6 pb-4 border-b border-gray-200"
+    }, F && /*#__PURE__*/React.createElement("span", null, /*#__PURE__*/React.createElement("span", {
+      className: "text-gray-400"
+    }, "Conversaciones al"), " ", /*#__PURE__*/React.createElement("strong", {
+      className: "text-navy-dark"
+    }, fechaCorta(F.generatedAt))), /*#__PURE__*/React.createElement("span", null, /*#__PURE__*/React.createElement("span", {
+      className: "text-gray-400"
+    }, "\xDAltima muestra le\xEDda por IA"), " ", /*#__PURE__*/React.createElement("strong", {
+      className: "text-navy-dark"
+    }, MED_ULT.label), " \xB7 ", MED_ULT.agentes, " agentes"), (resViejo || chViejo) && /*#__PURE__*/React.createElement("span", {
+      className: "text-amber-700"
+    }, "\u26A0 ", [resViejo && `resolución de ${R.periodo}`, chViejo && `contratos de ${mesLargo(contratosMes)}`].filter(Boolean).join(' y '), ": desactualizados")), /*#__PURE__*/React.createElement("div", {
+      className: "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-10"
+    }, tarjetas.map((t, i) => /*#__PURE__*/React.createElement("button", {
+      key: i,
+      onClick: () => onJump && onJump(t.tab),
+      className: "text-left bg-white border border-gray-200 rounded-xl p-5 hover:border-navy-dark/30 hover:shadow-md transition-all flex flex-col focus:outline-none focus:ring-2 focus:ring-teal/40"
     }, /*#__PURE__*/React.createElement("div", {
-      className: "text-2xl opacity-80"
-    }, c.icon), c.live && /*#__PURE__*/React.createElement("span", {
-      className: "inline-flex items-center gap-1 text-[10px] font-mono text-teal bg-teal/10 border border-teal/20 rounded-full px-2 py-0.5"
+      className: "flex items-center justify-between gap-2"
     }, /*#__PURE__*/React.createElement("span", {
-      className: "w-1.5 h-1.5 rounded-full bg-teal animate-pulse"
-    }), "LIVE")), /*#__PURE__*/React.createElement("div", {
-      className: "text-4xl font-extrabold tracking-tight",
+      className: "text-[11px] font-semibold uppercase tracking-wide text-gray-400"
+    }, i + 1, ". ", t.pregunta), t.viejo && /*#__PURE__*/React.createElement("span", {
+      className: "text-[10px] font-semibold text-amber-700 bg-amber-50 border border-amber-200 rounded px-1.5 py-0.5 shrink-0"
+    }, "desactualizado")), /*#__PURE__*/React.createElement("div", {
+      className: `text-4xl font-extrabold tracking-tight mt-3 ${t.viejo ? 'text-gray-400' : 'text-navy-dark'}`
+    }, t.valor), /*#__PURE__*/React.createElement("div", {
+      className: "text-sm text-gray-600 mt-1 leading-snug"
+    }, t.metrica), t.sub && /*#__PURE__*/React.createElement("div", {
+      className: "text-xs text-gray-500 mt-2"
+    }, t.sub), t.tend && /*#__PURE__*/React.createElement("div", {
+      className: "text-xs font-semibold mt-1",
       style: {
-        color: c.accent
+        color: t.tend.color
       }
-    }, c.value), /*#__PURE__*/React.createElement("div", {
-      className: "text-sm text-gray-700 mt-1 font-semibold"
-    }, c.label), /*#__PURE__*/React.createElement("div", {
-      className: "text-xs text-gray-500 mt-1.5"
-    }, c.sub), /*#__PURE__*/React.createElement("div", {
-      className: "text-[11px] text-gray-400 mt-3 pt-3 border-t border-gray-100"
-    }, c.detail, " \u2192")))));
+    }, t.tend.txt), /*#__PURE__*/React.createElement("div", {
+      className: "text-[11px] text-gray-400 mt-auto pt-3"
+    }, t.fuente)))), /*#__PURE__*/React.createElement("div", {
+      className: "bg-white border border-gray-200 rounded-xl p-5 sm:p-6"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "flex items-baseline justify-between flex-wrap gap-2 mb-3"
+    }, /*#__PURE__*/React.createElement("h3", {
+      className: "text-navy-dark text-lg font-bold"
+    }, "Por agente"), /*#__PURE__*/React.createElement("button", {
+      onClick: () => onJump && onJump('feedback'),
+      className: "text-xs font-semibold text-teal hover:underline"
+    }, "Feedback por agente \u2192")), /*#__PURE__*/React.createElement("div", {
+      className: "overflow-x-auto -mx-1"
+    }, /*#__PURE__*/React.createElement("table", {
+      className: "w-full min-w-[820px]"
+    }, /*#__PURE__*/React.createElement("thead", null, /*#__PURE__*/React.createElement("tr", {
+      className: "border-b border-gray-200"
+    }, /*#__PURE__*/React.createElement("th", {
+      className: "py-2 px-3 text-left text-xs font-semibold text-gray-400 align-bottom"
+    }, "Agente"), /*#__PURE__*/React.createElement(Th, {
+      sub: "4 sem"
+    }, "Convs."), /*#__PURE__*/React.createElement(Th, {
+      k: "over24hPct",
+      sub: "4 sem"
+    }, "1 \xB7 Sin resp. >24 h"), /*#__PURE__*/React.createElement(Th, {
+      k: "medianMin",
+      sub: "4 sem"
+    }, "2 \xB7 1\xAA respuesta"), /*#__PURE__*/React.createElement(Th, {
+      k: "resolvedPct",
+      sub: R.periodo
+    }, "3 \xB7 Resueltas"), /*#__PURE__*/React.createElement(Th, {
+      k: "frust",
+      sub: MED_ULT.label.toLowerCase()
+    }, "4 \xB7 Frustraci\xF3n"), /*#__PURE__*/React.createElement(Th, {
+      k: "problemRate",
+      sub: mesLargo(contratosMes)
+    }, "5 \xB7 Contrato c/ problema"))), /*#__PURE__*/React.createElement("tbody", null, filas.map(r => /*#__PURE__*/React.createElement("tr", {
+      key: r.agent,
+      className: "border-b border-gray-100 last:border-0"
+    }, /*#__PURE__*/React.createElement("td", {
+      className: "py-2.5 px-3 text-sm font-medium text-navy-dark whitespace-nowrap"
+    }, r.agent), /*#__PURE__*/React.createElement("td", {
+      className: "py-2.5 px-3 text-right text-sm text-gray-500 tabular-nums"
+    }, r.threads ?? '—'), /*#__PURE__*/React.createElement(Celda, {
+      v: r.over24hPct,
+      txt: `${r.over24hPct}%`,
+      color: semaforo(r.over24hPct, 2, 5),
+      n: null,
+      viejoCol: r.threads != null && r.threads < RES_MIN_N
+    }), /*#__PURE__*/React.createElement(Celda, {
+      v: r.medianMin,
+      txt: fmtMin(r.medianMin),
+      color: semaforo(r.medianMin, 30, 60),
+      n: null,
+      viejoCol: r.threads != null && r.threads < RES_MIN_N
+    }), /*#__PURE__*/React.createElement(Celda, {
+      v: r.resolvedPct,
+      txt: `${r.resolvedPct}%`,
+      color: semaforo(r.resolvedPct, 75, 60, false),
+      n: r.resN,
+      viejoCol: resViejo
+    }), /*#__PURE__*/React.createElement(Celda, {
+      v: r.frust,
+      txt: `${r.frust}%`,
+      color: semaforo(r.frust, 10, 20),
+      n: r.frustN,
+      viejoCol: viejo(MED_ULT.fecha)
+    }), /*#__PURE__*/React.createElement(Celda, {
+      v: r.problemRate,
+      txt: `${r.problemRate}%`,
+      color: semaforo(r.problemRate, 25, 40),
+      n: r.chN,
+      viejoCol: chViejo
+    })))))), /*#__PURE__*/React.createElement("div", {
+      className: "mt-4 text-xs text-gray-500 space-y-1"
+    }, /*#__PURE__*/React.createElement("p", null, "Clic en una columna para ordenar. Agentes activos en las \xFAltimas 4 semanas."), /*#__PURE__*/React.createElement("p", null, /*#__PURE__*/React.createElement("span", {
+      className: "text-gray-400 font-semibold"
+    }, "En gris"), ": menos de ", RES_MIN_N, " conversaciones o dato desactualizado. \xDAsalo como pista, no para comparar agentes."), /*#__PURE__*/React.createElement("p", null, "1\u20132 se calculan sobre todas las conversaciones. 3\u20135 salen de una muestra que lee la IA: sirven para la tendencia del equipo; por agente, solo con muestra suficiente."), /*#__PURE__*/React.createElement("p", null, "Colores: referencias iniciales para leer la tabla, no metas acordadas."))));
   }
   function TopRequestsChart() {
     const maxPct = topRequests[0].pct;
@@ -1491,7 +1133,13 @@ function boot(D) {
     return /*#__PURE__*/React.createElement(Section, {
       title: "Efectividad de Resoluci\xF3n",
       id: "resolution"
-    }, /*#__PURE__*/React.createElement("div", {
+    }, D.resolutionLatest ? /*#__PURE__*/React.createElement("p", {
+      className: "text-sm text-gray-600 mb-4"
+    }, "\xDAltima corrida (", fechaCorta(D.resolutionLatest.fecha), "): ", /*#__PURE__*/React.createElement("strong", null, D.resolutionLatest.team.resolvedPct, "% resueltas"), " de ", D.resolutionLatest.team.total, " conversaciones. El detalle por mes de abajo es del an\xE1lisis anterior.") : /*#__PURE__*/React.createElement(AvisoViejo, {
+      periodo: mesLargo(resolutionMonthly.months[resolutionMonthly.months.length - 1]),
+      que: "Las corridas autom\xE1ticas clasifican la resoluci\xF3n pero hasta ahora no la publicaban.",
+      detalle: "Desde la pr\xF3xima corrida quincenal el Resumen muestra el dato nuevo."
+    }), /*#__PURE__*/React.createElement("div", {
       className: "flex flex-wrap items-center gap-3 mb-4"
     }, /*#__PURE__*/React.createElement("span", {
       className: "text-xs text-gray-500 uppercase tracking-wide"
@@ -3232,9 +2880,9 @@ function boot(D) {
       className: "max-w-7xl mx-auto px-4 sm:px-6 text-center"
     }, /*#__PURE__*/React.createElement("p", {
       className: "text-gray-500 text-sm"
-    }, "Morada Uno \u2014 An\xE1lisis de Conversaciones WhatsApp \u2014 ", PERIOD), /*#__PURE__*/React.createElement("p", {
+    }, "Morada Uno \u2014 An\xE1lisis de Conversaciones WhatsApp", firstResponse ? ` — datos al ${fechaCorta(firstResponse.generatedAt)}` : ` — ${PERIOD}`), /*#__PURE__*/React.createElement("p", {
       className: "text-gray-600 text-xs mt-1"
-    }, `${MED.length} mediciones: ${MED.map(m => m.label).join(' · ')} (200 convs · ${MED_ULT.agentes} agentes)`)));
+    }, `${MED.length} mediciones de frustración: ${MED.map(m => m.label).join(' · ')} (última con ${MED_ULT.agentes} agentes)`)));
   }
 
   // ── Per-agent structured feedback (auto-generated from metrics) ─────────
@@ -4570,7 +4218,11 @@ function boot(D) {
     return /*#__PURE__*/React.createElement(Section, {
       title: "Manejo de Contratos",
       id: "contracts"
-    }, /*#__PURE__*/React.createElement("div", {
+    }, diasDesde(contratosMes) > DIAS_VIEJO && /*#__PURE__*/React.createElement(AvisoViejo, {
+      periodo: mesLargo(contratosMes),
+      que: "Ninguna corrida autom\xE1tica mide todav\xEDa el manejo de contratos.",
+      detalle: "Hasta que se agregue al clasificador, este dato no se actualiza."
+    }), /*#__PURE__*/React.createElement("div", {
       className: "bg-white rounded-xl p-4 mb-6 border-l-4 border-coral shadow-sm"
     }, /*#__PURE__*/React.createElement("p", {
       className: "text-sm text-gray-700 mb-1.5"
@@ -5130,58 +4782,87 @@ function boot(D) {
       }
     }, "\u2191 rojo"), " = sube."))));
   }
+
+  // Principal = las cinco métricas del Resumen y su detalle, más Feedback (lo usan
+  // los Leads para dar feedback concreto). Diagnóstico = para explicar por qué se
+  // movió una métrica, no para seguir la experiencia.
   const TABS = [{
     id: 'overview',
     label: 'Resumen',
-    icon: '📊'
-  }, {
-    id: 'agents',
-    label: 'Tasa de Frustración',
-    icon: '😤'
-  }, {
-    id: 'resolution',
-    label: 'Resolución',
-    icon: '🎯'
-  }, {
-    id: 'contracts',
-    label: 'Manejo de Contratos',
-    icon: '📑'
+    icon: '📊',
+    grupo: 'principal'
   }, {
     id: 'response',
-    label: 'Tiempo de Respuesta',
-    icon: '⏱️'
-  }, {
-    id: 'schedule',
-    label: 'Horarios de Atención',
-    icon: '🕐'
-  }, {
-    id: 'volume',
-    label: 'Volumen de Mensajes',
-    icon: '📨'
-  }, {
-    id: 'writing',
-    label: 'Escritura',
-    icon: '✍️'
+    label: '1–2 · Respuesta',
+    icon: '⏱️',
+    grupo: 'principal'
   }, {
     id: 'calls',
     label: 'Llamadas',
-    icon: '📞'
+    icon: '📞',
+    grupo: 'principal'
+  }, {
+    id: 'resolution',
+    label: '3 · Resolución',
+    icon: '🎯',
+    grupo: 'principal'
+  }, {
+    id: 'agents',
+    label: '4 · Frustración',
+    icon: '😤',
+    grupo: 'principal'
+  }, {
+    id: 'contracts',
+    label: '5 · Contratos',
+    icon: '📑',
+    grupo: 'principal'
   }, {
     id: 'feedback',
     label: 'Feedback',
-    icon: '📋'
+    icon: '📋',
+    grupo: 'principal'
+  }, {
+    id: 'response-msg',
+    label: 'Respuesta por mensaje',
+    icon: '💬',
+    grupo: 'diagnostico'
+  }, {
+    id: 'schedule',
+    label: 'Horarios de Atención',
+    icon: '🕐',
+    grupo: 'diagnostico'
+  }, {
+    id: 'volume',
+    label: 'Volumen de Mensajes',
+    icon: '📨',
+    grupo: 'diagnostico'
+  }, {
+    id: 'writing',
+    label: 'Escritura',
+    icon: '✍️',
+    grupo: 'diagnostico'
   }, {
     id: 'correlations',
     label: 'Correlaciones',
-    icon: '🔗'
+    icon: '🔗',
+    grupo: 'diagnostico'
   }, {
     id: 'insights',
     label: 'Insights y Mejoras',
-    icon: '🔍'
+    icon: '🔍',
+    grupo: 'diagnostico'
   }, {
     id: 'coverage',
-    label: 'Cobertura',
-    icon: '📡'
+    label: 'Cobertura y Proceso',
+    icon: '📡',
+    grupo: 'diagnostico'
+  }];
+  const GRUPOS = [{
+    id: 'principal',
+    label: null
+  }, {
+    id: 'diagnostico',
+    label: 'Diagnóstico'
   }];
   function SideNav({
     open,
@@ -5227,16 +4908,21 @@ function boot(D) {
       style: {
         height: 'calc(100% - 57px)'
       }
-    }, TABS.map(t => {
+    }, GRUPOS.map(g => /*#__PURE__*/React.createElement(React.Fragment, {
+      key: g.id
+    }, g.label && /*#__PURE__*/React.createElement("div", {
+      className: "mt-4 mb-1 px-3 pt-3 border-t border-white/10 text-[10px] font-mono uppercase tracking-widest text-gray-500"
+    }, g.label), TABS.filter(t => t.grupo === g.id).map(t => {
       const isActive = active === t.id;
+      const diag = g.id === 'diagnostico';
       return /*#__PURE__*/React.createElement("button", {
         key: t.id,
         onClick: () => onChange(t.id),
-        className: `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-left transition-colors ${isActive ? 'bg-teal text-navy-dark font-semibold' : 'text-gray-300 hover:bg-white/10 hover:text-white'}`
+        className: `flex items-center gap-3 px-3 ${diag ? 'py-2 text-[13px]' : 'py-2.5 text-sm'} rounded-lg text-left transition-colors ${isActive ? 'bg-teal text-navy-dark font-semibold' : diag ? 'text-gray-400 hover:bg-white/10 hover:text-white' : 'text-gray-300 hover:bg-white/10 hover:text-white'}`
       }, /*#__PURE__*/React.createElement("span", {
         className: "w-5 text-center shrink-0"
       }, t.icon), /*#__PURE__*/React.createElement("span", null, t.label));
-    }))));
+    }))))));
   }
   function App() {
     const [tab, setTab] = React.useState('overview');
@@ -5272,11 +4958,9 @@ function boot(D) {
       onClose: () => setNavOpen(false),
       active: tab,
       onChange: setTabAndHash
-    }), tab === 'overview' && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(Hero, null), /*#__PURE__*/React.createElement(ExecutiveSummary, {
+    }), tab === 'overview' && /*#__PURE__*/React.createElement(Resumen, {
       onJump: setTabAndHash
-    }), /*#__PURE__*/React.createElement(FocusScorecard, {
-      onJump: setTabAndHash
-    }), /*#__PURE__*/React.createElement(StatsCards, null)), tab === 'agents' && /*#__PURE__*/React.createElement(ComparisonSection, null), tab === 'resolution' && /*#__PURE__*/React.createElement(ResolutionSection, null), tab === 'contracts' && /*#__PURE__*/React.createElement(ContractHandlingSection, null), tab === 'response' && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(ResponseTimeSection, null), firstResponse && /*#__PURE__*/React.createElement(FirstResponseSection, null)), tab === 'schedule' && /*#__PURE__*/React.createElement(ScheduleSection, null), tab === 'volume' && /*#__PURE__*/React.createElement(VolumeSection, null), tab === 'writing' && /*#__PURE__*/React.createElement(WritingQualitySection, null), tab === 'calls' && /*#__PURE__*/React.createElement(CallsSection, null), tab === 'feedback' && /*#__PURE__*/React.createElement(FeedbackSection, null), tab === 'correlations' && /*#__PURE__*/React.createElement(CorrelationsSection, null), tab === 'insights' && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(EvolutionOfProblemsSection, null), /*#__PURE__*/React.createElement(TopRequestsChart, null), /*#__PURE__*/React.createElement(FrustrationOverview, null), /*#__PURE__*/React.createElement(ImprovementAreasSection, null)), tab === 'coverage' && /*#__PURE__*/React.createElement(DataCoverageSection, null), /*#__PURE__*/React.createElement(Footer, null));
+    }), tab === 'agents' && /*#__PURE__*/React.createElement(ComparisonSection, null), tab === 'resolution' && /*#__PURE__*/React.createElement(ResolutionSection, null), tab === 'contracts' && /*#__PURE__*/React.createElement(ContractHandlingSection, null), tab === 'response' && (firstResponse ? /*#__PURE__*/React.createElement(FirstResponseSection, null) : /*#__PURE__*/React.createElement(ResponseTimeSection, null)), tab === 'response-msg' && /*#__PURE__*/React.createElement(ResponseTimeSection, null), tab === 'schedule' && /*#__PURE__*/React.createElement(ScheduleSection, null), tab === 'volume' && /*#__PURE__*/React.createElement(VolumeSection, null), tab === 'writing' && /*#__PURE__*/React.createElement(WritingQualitySection, null), tab === 'calls' && /*#__PURE__*/React.createElement(CallsSection, null), tab === 'feedback' && /*#__PURE__*/React.createElement(FeedbackSection, null), tab === 'correlations' && /*#__PURE__*/React.createElement(CorrelationsSection, null), tab === 'insights' && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(EvolutionOfProblemsSection, null), /*#__PURE__*/React.createElement(TopRequestsChart, null), /*#__PURE__*/React.createElement(FrustrationOverview, null), /*#__PURE__*/React.createElement(ImprovementAreasSection, null)), tab === 'coverage' && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(DataCoverageSection, null), /*#__PURE__*/React.createElement(StatsCards, null)), /*#__PURE__*/React.createElement(Footer, null));
   }
   ReactDOM.createRoot(document.getElementById('root')).render(/*#__PURE__*/React.createElement(App, null));
 } // ─── fin de boot() ───
