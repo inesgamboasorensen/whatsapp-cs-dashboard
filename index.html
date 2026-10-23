@@ -1384,13 +1384,26 @@ function boot(D) {
       className: "text-gray-400 font-semibold"
     }, "En gris"), ": menos de ", RES_MIN_N, " conversaciones o dato anterior a ", DIAS_VIEJO, " d\xEDas. \xDAsalo como pista, no para comparar agentes."), /*#__PURE__*/React.createElement("p", null, "1\u20132 se calculan sobre todas las conversaciones; 3\u20135 salen de una muestra que lee la IA cada quincena."))));
   }
+
+  // De qué periodo y muestra salen las secciones de Insights
+  function FuenteInsights({
+    dark,
+    extra
+  }) {
+    const M = D.insightsMeta;
+    return /*#__PURE__*/React.createElement("p", {
+      className: `text-xs mb-5 -mt-4 max-w-3xl ${dark ? 'text-gray-400' : 'text-gray-500'}`
+    }, M ? /*#__PURE__*/React.createElement(React.Fragment, null, "Quincena ", /*#__PURE__*/React.createElement("strong", null, M.periodo), " \xB7 muestra de ", M.n, " conversaciones (m\xE1x. 18 por agente) le\xEDda con las instrucciones del clasificador.") : /*#__PURE__*/React.createElement(React.Fragment, null, "An\xE1lisis anterior (junio\u2013agosto 2026)."), extra ? ` ${extra}` : '');
+  }
   function TopRequestsChart() {
     const maxPct = topRequests[0].pct;
     const getColor = i => i < 2 ? '#E8505B' : i < 6 ? '#1B2A4A' : '#94A3B8';
     return /*#__PURE__*/React.createElement(Section, {
       title: "Top 10 Solicitudes de Brokers",
       id: "requests"
-    }, /*#__PURE__*/React.createElement("div", {
+    }, /*#__PURE__*/React.createElement(FuenteInsights, {
+      extra: "Una conversaci\xF3n puede tener varios temas."
+    }), /*#__PURE__*/React.createElement("div", {
       className: "bg-white rounded-xl p-4 sm:p-8 shadow-sm"
     }, /*#__PURE__*/React.createElement("div", {
       className: "space-y-3"
@@ -1478,7 +1491,10 @@ function boot(D) {
       title: "An\xE1lisis de Frustraci\xF3n",
       dark: true,
       id: "frustration"
-    }, /*#__PURE__*/React.createElement("div", {
+    }, /*#__PURE__*/React.createElement(FuenteInsights, {
+      dark: true,
+      extra: D.insightsMeta ? `Las causas se agruparon a partir del problema concreto que reportó cada uno de los ${D.insightsMeta.frustrados} brokers con frustración moderada o severa.` : ''
+    }), /*#__PURE__*/React.createElement("div", {
       className: "grid grid-cols-1 lg:grid-cols-2 gap-8"
     }, /*#__PURE__*/React.createElement("div", {
       className: "bg-navy-card rounded-xl p-8 flex flex-col items-center"
@@ -1516,8 +1532,10 @@ function boot(D) {
     }, /*#__PURE__*/React.createElement("span", {
       className: "text-gray-300 text-sm"
     }, c.cause), /*#__PURE__*/React.createElement("span", {
-      className: "text-coral font-bold text-sm"
-    }, c.pct, "%")), /*#__PURE__*/React.createElement("div", {
+      className: "text-coral font-bold text-sm whitespace-nowrap"
+    }, c.pct, "%", c.count != null && /*#__PURE__*/React.createElement("span", {
+      className: "text-gray-400 font-normal text-xs"
+    }, " \xB7 ", c.count))), /*#__PURE__*/React.createElement("div", {
       className: "w-full bg-navy-dark rounded-full h-3"
     }, /*#__PURE__*/React.createElement("div", {
       className: "h-3 rounded-full animate-bar",
@@ -1530,10 +1548,14 @@ function boot(D) {
       className: "mt-8 p-4 border border-coral/20 rounded-lg"
     }, /*#__PURE__*/React.createElement("p", {
       className: "text-gray-400 text-xs leading-relaxed"
-    }, "\uD83D\uDCA1 La causa #1 de frustraci\xF3n es la falta de respuesta oportuna. El 31% de los brokers frustrados reportaron ser ignorados o no poder contactar a su agente CS.")))));
+    }, "\uD83D\uDCA1 La causa #1 de frustraci\xF3n: ", /*#__PURE__*/React.createElement("strong", {
+      className: "text-gray-200"
+    }, frustrationCauses[0].cause.toLowerCase()), " (", frustrationCauses[0].pct, "% de los brokers frustrados)", frustrationCauses[1] ? /*#__PURE__*/React.createElement(React.Fragment, null, ", seguida de ", frustrationCauses[1].cause.toLowerCase(), " (", frustrationCauses[1].pct, "%)") : null, ".")))));
   }
   function ResolutionSection() {
-    const [scope, setScope] = React.useState(resolutionMonthly.months[resolutionMonthly.months.length - 1]);
+    // 'q' = la quincena medida (resolutionLatest); jun/jul son del análisis anterior, con otra muestra
+    const RL = D.resolutionLatest;
+    const [scope, setScope] = React.useState(RL ? 'q' : resolutionMonthly.months[resolutionMonthly.months.length - 1]);
     const [order, setOrder] = React.useState('red'); // red (más sin resolver) | resolved
     const monthName = k => {
       const [y, m] = k.split('-');
@@ -1542,14 +1564,23 @@ function boot(D) {
         year: 'numeric'
       });
     };
-    const scopeOpts = [{
-      k: 'all',
-      l: 'Todos'
-    }, ...resolutionMonthly.months.slice().reverse().map(k => ({
+    const scopeOpts = [...(RL ? [{
+      k: 'q',
+      l: RL.periodo || fechaCorta(RL.fecha)
+    }] : []), ...resolutionMonthly.months.slice().reverse().map(k => ({
       k,
-      l: monthName(k)
-    }))];
-    const scopeData = scope === 'all' ? resolutionMonthly.all : resolutionMonthly.by_month[scope];
+      l: `${monthName(k)}${RL ? ' (anterior)' : ''}`
+    })), {
+      k: 'all',
+      l: RL ? 'jun–jul (anterior)' : 'Todos'
+    }];
+    const scopeData = scope === 'q' ? {
+      team: RL.team,
+      agents: RL.agents.map(a => ({
+        avgMsgs: '—',
+        ...a
+      }))
+    } : scope === 'all' ? resolutionMonthly.all : resolutionMonthly.by_month[scope];
     const sorted = [...scopeData.agents].sort((a, b) => order === 'red' ? b.unresolvedPct - a.unresolvedPct : b.resolvedPct - a.resolvedPct);
     const team = scopeData.team;
     const teamResolved = team.resolvedPct;
@@ -1584,7 +1615,7 @@ function boot(D) {
       id: "resolution"
     }, D.resolutionLatest ? /*#__PURE__*/React.createElement("p", {
       className: "text-sm text-gray-600 mb-4"
-    }, "\xDAltima corrida (", fechaCorta(D.resolutionLatest.fecha), "): ", /*#__PURE__*/React.createElement("strong", null, D.resolutionLatest.team.resolvedPct, "% resueltas"), " de ", D.resolutionLatest.team.total, " conversaciones. El detalle por mes de abajo es del an\xE1lisis anterior.") : /*#__PURE__*/React.createElement(AvisoViejo, {
+    }, "Quincena ", /*#__PURE__*/React.createElement("strong", null, D.resolutionLatest.periodo || fechaCorta(D.resolutionLatest.fecha)), ": ", /*#__PURE__*/React.createElement("strong", null, D.resolutionLatest.team.resolvedPct, "% resueltas"), " de ", D.resolutionLatest.team.total, " conversaciones (m\xE1x. 18 por agente). Junio y julio son del an\xE1lisis anterior, con otra muestra: no se comparan directo.") : /*#__PURE__*/React.createElement(AvisoViejo, {
       periodo: mesLargo(resolutionMonthly.months[resolutionMonthly.months.length - 1]),
       que: "Las corridas autom\xE1ticas clasifican la resoluci\xF3n pero hasta ahora no la publicaban.",
       detalle: "Desde la pr\xF3xima corrida quincenal el Resumen muestra el dato nuevo."
@@ -2267,7 +2298,7 @@ function boot(D) {
       id: "first-response"
     }, /*#__PURE__*/React.createElement("p", {
       className: "text-sm text-gray-500 mb-6 max-w-3xl"
-    }, "Conversaciones que abri\xF3 un broker del ", d(F.window.from), " al ", d(F.window.to), " (\xFAltimas ", F.window.days / 7, " semanas). Una conversaci\xF3n abre cuando el broker escribe tras ", F.gapHours, " h sin actividad en el chat. La primera respuesta se mide en horario laboral; las 24 h, en horas de reloj sin contar domingos."), /*#__PURE__*/React.createElement("div", {
+    }, "Conversaciones que abri\xF3 un broker del ", d(F.window.from), " al ", d(F.window.to), " (\xFAltimas ", F.window.days / 7, " semanas). Una conversaci\xF3n abre cuando el broker escribe tras ", F.gapHours, " h sin actividad en el chat. La primera respuesta se mide en horario laboral; las 24 h, en horas de reloj sin contar domingos. Esta pesta\xF1a va ", /*#__PURE__*/React.createElement("strong", null, "semana por semana"), " para ver el detalle; el Resumen y Feedback usan la quincena cerrada."), /*#__PURE__*/React.createElement("div", {
       className: "grid grid-cols-1 sm:grid-cols-3 gap-5 mb-8"
     }, /*#__PURE__*/React.createElement("div", {
       className: "bg-white rounded-xl p-6 shadow-sm"
@@ -3123,7 +3154,7 @@ function boot(D) {
       className: "bg-white rounded-xl p-4 mb-8 border border-navy/10"
     }, /*#__PURE__*/React.createElement("p", {
       className: "text-xs text-gray-600"
-    }, `📅 Comparativa entre ${MED_1RA.label} (baseline) y ${MED_ULT.label} (corrida actual con ${MED_ULT.agentes} agentes · 200 conversaciones analizadas).`, " Detecta qu\xE9 se redujo, qu\xE9 desapareci\xF3, y qu\xE9 problemas nuevos surgieron.")), /*#__PURE__*/React.createElement("div", {
+    }, `📅 Comparativa hecha a mano en junio 2026 entre ${MED_1RA.label} (baseline) y las corridas de entonces. No se recalcula sola: para lo actual, ve el Resumen y las secciones de abajo (quincena ${D.insightsMeta ? D.insightsMeta.periodo : ''}).`)), /*#__PURE__*/React.createElement("div", {
       className: "grid grid-cols-1 lg:grid-cols-2 gap-6"
     }, /*#__PURE__*/React.createElement("div", {
       className: "bg-gradient-to-br from-teal/5 to-white rounded-2xl p-6 border border-teal/20"
@@ -3290,7 +3321,9 @@ function boot(D) {
     return /*#__PURE__*/React.createElement(Section, {
       title: "\xC1reas de Mejora",
       id: "improvements"
-    }, /*#__PURE__*/React.createElement("div", {
+    }, /*#__PURE__*/React.createElement(FuenteInsights, {
+      extra: "Prioridad por volumen y por qu\xE9 tanto enoja al broker; contratos y fin de semana tambi\xE9n son el Enfoque del Resumen."
+    }), /*#__PURE__*/React.createElement("div", {
       className: "space-y-10"
     }, improvementAreas.map((group, gi) => /*#__PURE__*/React.createElement("div", {
       key: gi
@@ -3334,517 +3367,305 @@ function boot(D) {
     }, `${MED.length} mediciones de frustración: ${MED.map(m => m.label).join(' · ')} (última con ${MED_ULT.agentes} agentes)`)));
   }
 
-  // ── Per-agent structured feedback (auto-generated from metrics) ─────────
-  // Returns an object with: grade, strengths[], improvements[], actions[], trend
-  // callStats: optional { [firstName]: { totalBiz, missedBiz, missedBizRate } }
-  function generateFeedback(agentName, callStats) {
-    // Find the agent's data across all sources
-    const ranking = agentRanking.find(a => a.name === agentName);
-    const responseT = responseTimes.find(r => r.agent === agentName || r.agent === agentName.replace(/^Whats App /, ''));
-    const writing = writingQuality.find(w => w.agent === agentName);
-    const resolution = resolutionData.find(r => r.agent === agentName);
-    const firstName = agentName.split(' ')[0].toLowerCase();
-    const callRow = callStats ? callStats[firstName] || null : null;
-    const strengths = [];
-    const improvements = [];
-    const actions = [];
-    let trend = 'sin-datos';
-    let trendNote = '';
+  // ── Feedback individual por agente ─────────────────────────────────────
+  // Las mismas cinco métricas, metas y tolerancias del Resumen, sobre la misma
+  // quincena. No es una calificación: dice qué está en meta, qué está cerca y qué
+  // está fuera de la tolerancia, con una acción concreta por cada cosa a trabajar.
+  // (Antes promediaba frustración de distintas fechas, respuesta por mensaje,
+  // escritura y la resolución de julio en una letra A–D.)
+  const fueraTol = (v, r) => v != null && (r.menosMejor ? v > r.tol : v < r.tol);
+  const quincenaFeedback = () => {
+    const qs = firstResponse && firstResponse.quincenas ? firstResponse.quincenas.filter(q => q.closed) : [];
+    return qs[qs.length - 1] || null;
+  };
+  function feedbackDeAgente(nombre, ctx) {
+    const {
+      Q,
+      fr,
+      res,
+      con,
+      cal,
+      team
+    } = ctx;
+    const a = fr[nombre],
+      r = res[nombre],
+      c = con[nombre];
+    const frust = (agentRanking.find(x => x.name === nombre) || {})[MED_ULT.key];
+    const w = writingQuality.find(x => x.agent === nombre);
+    const llam = cal ? cal(nombre) : null;
+    const pocas = n => n != null && n < RES_MIN_N;
 
-    // === Frustration analysis ===
-    const fAll = medValores(ranking);
-    const latest = fAll[fAll.length - 1];
-    const earliest = fAll[0];
-    const frustHistory = fAll;
-    if (latest !== undefined) {
-      if (latest <= 15) strengths.push(`Tasa de frustración muy baja (${latest}%) — top tier del equipo`);else if (latest <= 25) strengths.push(`Tasa de frustración aceptable (${latest}%)`);else if (latest <= 40) improvements.push(`Tasa de frustración elevada (${latest}%) — revisar interacciones difíciles`);else improvements.push(`Tasa de frustración crítica (${latest}%) — atención inmediata`);
-      if (fAll.length >= 2) {
-        const delta = latest - earliest;
-        if (delta <= -10) {
-          trend = 'mejorando';
-          trendNote = `Mejoró ${Math.abs(delta)} pts vs primera medición (${earliest}% → ${latest}%)`;
-          strengths.push(`Tendencia positiva: ${trendNote}`);
-        } else if (delta >= 10) {
-          trend = 'empeorando';
-          trendNote = `Subió ${delta} pts vs primera medición (${earliest}% → ${latest}%)`;
-          improvements.push(`Tendencia negativa: ${trendNote}`);
-        } else {
-          trend = 'estable';
-          trendNote = `Estable en ${latest}% (rango ${Math.min(...fAll)}-${Math.max(...fAll)}%)`;
+    // cada métrica: valor, estado (meta / cerca / fuera / sin dato), texto
+    const met = [{
+      k: 'over24h',
+      nombre: 'Sin respuesta >24 h',
+      ref: REF.over24h,
+      v: a?.over24hPct,
+      n: a?.threads,
+      txt: a ? `${a.over24hPct}% (${a.over24h} de ${a.threads})` : '—'
+    }, {
+      k: 'primera',
+      nombre: 'Primera respuesta',
+      ref: REF.primera,
+      v: a?.medianMin,
+      n: a?.threads,
+      txt: a ? fmtMin(a.medianMin) : '—'
+    }, {
+      k: 'resueltas',
+      nombre: 'Resueltas',
+      ref: REF.resueltas,
+      v: r?.resolvedPct,
+      n: r?.total,
+      muestra: true,
+      txt: r ? `${r.resolvedPct}% (n=${r.total})` : '—'
+    }, {
+      k: 'frust',
+      nombre: 'Frustración',
+      ref: REF.frust,
+      v: frust ?? null,
+      muestra: true,
+      txt: frust != null ? `${frust}%` : '—'
+    }, {
+      k: 'contratos',
+      nombre: 'Contrato con problema',
+      ref: REF.contratos,
+      v: c && c.contractConvs >= 5 ? c.problemRate : null,
+      n: c?.contractConvs,
+      txt: c ? `${c.problemRate}% (${c.problems} de ${c.contractConvs})` : '—'
+    }].map(m => ({
+      ...m,
+      estado: m.v == null ? 'sin' : nivel(m.v, m.ref) === 'bien' ? 'meta' : fueraTol(m.v, m.ref) ? 'fuera' : 'cerca'
+    }));
+    const fuerte = [],
+      trabajar = [],
+      acciones = [];
+    met.forEach(m => {
+      const debil = m.muestra && pocas(m.n) ? ' (muestra chica: úsalo como pista)' : '';
+      if (m.estado === 'meta') {
+        if (m.k === 'over24h') fuerte.push(`Contesta casi todo: ${m.txt} sin respuesta en más de 24 h (meta ${m.ref.txt}).`);
+        if (m.k === 'primera') fuerte.push(`Primera respuesta rápida: ${m.txt} de mediana (meta ${m.ref.txt}; equipo ${fmtMin(team.medianMin)}).`);
+        if (m.k === 'resueltas') fuerte.push(`Resuelve: ${m.txt} de sus conversaciones terminan atendidas${debil}.`);
+        if (m.k === 'frust') fuerte.push(`Pocos brokers molestos: ${m.txt} con frustración moderada o severa.`);
+        if (m.k === 'contratos') fuerte.push(`Sus cambios a contrato salen bien: ${m.txt} con problema.`);
+      } else if (m.estado === 'fuera') {
+        if (m.k === 'over24h') {
+          trabajar.push(`${m.txt} de sus conversaciones esperaron más de un día (tolerancia ${m.ref.tolTxt}; equipo ${team.over24hPct}%).`);
+          acciones.push('Revisar con su Lead quién cubre su línea cuando no está (ausencias, sábados) y cerrar el día sin chats abiertos.');
         }
-      } else {
-        trend = 'inicial';
-        trendNote = `Primera medición disponible: ${latest}%`;
+        if (m.k === 'primera') {
+          trabajar.push(`Su primera respuesta tarda ${m.txt} (tolerancia ${m.ref.tolTxt}; equipo ${fmtMin(team.medianMin)}).`);
+          acciones.push('Ver en Horarios a qué hora se le acumulan los mensajes y apartar bloques para la bandeja.');
+        }
+        if (m.k === 'resueltas') {
+          trabajar.push(`Solo ${m.txt} de las conversaciones leídas terminan resueltas${debil}.`);
+          acciones.push('Cerrar con una confirmación explícita ("¿queda algo más?") y dar seguimiento a lo que queda pendiente.');
+        }
+        if (m.k === 'frust') {
+          trabajar.push(`${m.txt} de sus conversaciones muestran frustración moderada o severa (tolerancia ${m.ref.tolTxt})${debil}.`);
+          acciones.push('Revisar con su Lead 2–3 conversaciones tensas de la quincena y qué las detonó.');
+        }
+        if (m.k === 'contratos') {
+          trabajar.push(`${m.txt} de sus cambios a contrato salieron mal o tardaron; ${c.problemsUnresolved ?? 0} siguen sin quedar bien.`);
+          acciones.push('Confirmar con el broker que cada cambio quedó antes de cerrar, y escalar a Legal los que siguen mal (Excel de casos).');
+        }
+      } else if (m.estado === 'cerca') {
+        trabajar.push(`${m.nombre}: ${m.txt}, cerca pero arriba de la meta (${m.ref.txt}). Dentro de la tolerancia.`);
+      }
+    });
+    if (llam && llam.totalBiz >= 5) {
+      const rate = Math.round(100 * llam.missedBiz / llam.totalBiz);
+      if (rate <= 10) fuerte.push(`Contesta el teléfono: ${rate}% de llamadas perdidas en horario (${llam.missedBiz}/${llam.totalBiz}).`);else if (rate > 25) {
+        trabajar.push(`${rate}% de llamadas perdidas en horario laboral (${llam.missedBiz}/${llam.totalBiz}).`);
+        acciones.push('Revisar disponibilidad o redirigir llamadas cuando esté ocupado.');
       }
     }
-
-    // === Response time analysis ===
-    if (responseT) {
-      if (responseT.median < 5) {
-        strengths.push(`Mediana de respuesta excelente (${responseT.median.toFixed(1)} min)`);
-      } else if (responseT.median < 15) {
-        strengths.push(`Mediana de respuesta buena (${responseT.median.toFixed(1)} min)`);
-      } else if (responseT.median < 30) {
-        improvements.push(`Mediana de respuesta lenta (${responseT.median.toFixed(1)} min)`);
-        actions.push('Apuntar a responder en menos de 15 min en horario laboral');
-      } else {
-        improvements.push(`Mediana de respuesta crítica (${responseT.median.toFixed(1)} min)`);
-        actions.push('Revisar carga de trabajo o escalación — la mediana debería estar bajo 15 min');
-      }
-      if (responseT.under5 >= 60) strengths.push(`${responseT.under5}% de respuestas en menos de 5 min`);
-      if (responseT.under30 < 70) improvements.push(`Solo ${responseT.under30}% responde en menos de 30 min`);
-      if (responseT.avg > responseT.median * 5) {
-        improvements.push(`Algunos brokers esperan mucho — promedio (${responseT.avg < 60 ? responseT.avg.toFixed(0) + ' min' : (responseT.avg / 60).toFixed(1) + ' h'}) muy alto vs mediana`);
-        actions.push('Identificar conversaciones que se quedan sin respuesta más de 1 hora');
-      }
-    }
-
-    // === Writing quality analysis ===
-    if (writing) {
-      if (writing.score < 10) {
-        strengths.push(`Escritura impecable (score ${writing.score}, ${writing.typos} typos por 100 msg)`);
-      } else if (writing.score < 25) {
-        // neutral
-      } else {
-        improvements.push(`Calidad de escritura a mejorar (score ${writing.score})`);
-      }
-      if (writing.typos > 2) {
-        improvements.push(`${writing.typos} typos por cada 100 mensajes`);
-        actions.push('Activar autocorrector de WhatsApp y revisar antes de enviar');
-      }
-      if (writing.lowerStart > 25) {
-        improvements.push(`${writing.lowerStart}% de mensajes inician con minúscula`);
-        actions.push('Iniciar siempre con mayúscula — proyecta más profesionalismo');
-      }
-      if (writing.missingAccents > 8) {
-        improvements.push(`${writing.missingAccents}% de palabras sin acento`);
-        actions.push('Habilitar teclado en español con acentos automáticos');
-      }
-      if (writing.emojiPerMsg > 0.5) {
-        improvements.push(`Uso excesivo de emojis (${writing.emojiPerMsg}/mensaje)`);
-      }
-      if (writing.examples?.bad?.length > 0) {
-        writing.examples.bad.forEach(b => improvements.push(b));
-      }
-    }
-
-    // === Resolution effectiveness ===
-    if (resolution) {
-      if (resolution.resolvedPct >= 65) {
-        strengths.push(`Alta tasa de resolución (${resolution.resolvedPct}% de conversaciones cerradas exitosamente)`);
-      } else if (resolution.resolvedPct >= 50) {
-        // neutral
-      } else {
-        improvements.push(`Tasa de resolución baja (${resolution.resolvedPct}%) — muchas conversaciones quedan sin cierre claro`);
-        actions.push('Cerrar conversaciones con confirmación explícita ("¿queda algo más?", "te confirmo cuando quede listo")');
-      }
-      if (resolution.unresolvedPct >= 5) {
-        improvements.push(`${resolution.unresolvedPct}% conversaciones terminan con el broker frustrado o sin solución`);
-      }
-      if (resolution.escalationPct > 50) {
-        improvements.push(`${resolution.escalationPct}% de conversaciones requieren escalar a otro equipo — muchos cuellos de botella internos`);
-        actions.push('Documentar qué casos se pueden resolver internamente para no escalar tanto');
-      }
-    }
-
-    // === Calls (live webhook) — % perdidas en horario laboral ===
-    if (callRow && callRow.totalBiz > 0) {
-      const rate = Math.round(callRow.missedBiz / callRow.totalBiz * 100);
-      if (rate <= 10) {
-        strengths.push(`Disponibilidad telefónica alta (${rate}% perdidas en horario laboral · ${callRow.missedBiz}/${callRow.totalBiz})`);
-      } else if (rate <= 25) {
-        // neutral
-      } else if (rate <= 50) {
-        improvements.push(`${rate}% de llamadas perdidas en horario laboral (${callRow.missedBiz}/${callRow.totalBiz})`);
-        actions.push('Revisar disponibilidad o redirigir llamadas cuando esté ocupado');
-      } else {
-        improvements.push(`Tasa crítica de llamadas perdidas en horario laboral: ${rate}% (${callRow.missedBiz}/${callRow.totalBiz})`);
-        actions.push('Más de la mitad de las llamadas no se contestan en horario laboral — atención inmediata');
-      }
-    }
-
-    // === Coverage / data freshness ===
-    const today = new Date().toISOString().slice(0, 10);
-    if (ranking?.lastSeen) {
-      const daysSince = Math.floor((new Date(today) - new Date(ranking.lastSeen)) / (1000 * 60 * 60 * 24));
-      if (daysSince > 14) {
-        improvements.push(`Sin datos recientes desde ${ranking.lastSeen} (${daysSince} días)`);
-        actions.push('Reconectar la cuenta de WhatsApp en Evolution API');
-      }
-    }
+    const fueraN = met.filter(m => m.estado === 'fuera').length,
+      metaN = met.filter(m => m.estado === 'meta').length;
+    const conDato = met.filter(m => m.estado !== 'sin').length;
     return {
-      strengths,
-      improvements,
-      actions,
-      trend,
-      trendNote,
-      frustHistory,
-      hasResponseData: !!responseT,
-      hasWritingData: !!writing,
-      responseT,
-      writing,
-      ranking,
-      callRow
+      nombre,
+      met,
+      fuerte,
+      trabajar,
+      acciones,
+      fueraN,
+      metaN,
+      conDato,
+      llam,
+      escritura: w ? Math.max(0, Math.min(100, Math.round(100 - w.score * 1.2))) : null,
+      convs: a?.threads ?? null
     };
-  }
-
-  // Helper: read a metric for an agent and return { value, displayValue, color, label, ok }
-  // callStats: optional { [firstName]: { totalBiz, missedBiz, missedBizRate } } from FeedbackSection
-  function getMetrics(agentName, callStats) {
-    const ranking = agentRanking.find(a => a.name === agentName);
-    const responseT = responseTimes.find(r => r.agent === agentName || r.agent === agentName.replace(/^Whats App /, ''));
-    const writing = writingQuality.find(w => w.agent === agentName);
-    const resolution = resolutionData.find(r => r.agent === agentName);
-
-    // Frustration: latest available
-    const fAll = ranking ? medValores(ranking) : [];
-    const frustration = fAll.length ? fAll[fAll.length - 1] : null;
-
-    // Calls: aggregate from live data, matching agent first name to instance
-    const firstName = agentName.split(' ')[0].toLowerCase();
-    const callRow = callStats ? callStats[firstName] || null : null;
-    const callsBizMissedRate = callRow && callRow.totalBiz > 0 ? Math.round(callRow.missedBiz / callRow.totalBiz * 100) : null;
-    const colorByFrust = v => v === null ? '#94A3B8' : v <= 15 ? '#2EC4B6' : v <= 30 ? '#22C55E' : v <= 45 ? '#F97316' : '#E8505B';
-    const colorByResp = v => v === null ? '#94A3B8' : v < 5 ? '#2EC4B6' : v < 15 ? '#22C55E' : v < 30 ? '#F97316' : '#E8505B';
-    const colorByGrade = g => g === null ? '#94A3B8' : g >= 85 ? '#2EC4B6' : g >= 70 ? '#22C55E' : g >= 55 ? '#F97316' : '#E8505B';
-    const colorByRes = v => v === null ? '#94A3B8' : v >= 65 ? '#2EC4B6' : v >= 50 ? '#22C55E' : v >= 35 ? '#F97316' : '#E8505B';
-    const colorByMiss = v => v === null ? '#94A3B8' : v <= 10 ? '#2EC4B6' : v <= 25 ? '#22C55E' : v <= 50 ? '#F97316' : '#E8505B';
-    const writingGrade = writing ? Math.max(0, Math.min(100, Math.round(100 - writing.score * 1.2))) : null;
-    return {
-      ranking,
-      responseT,
-      writing,
-      resolution,
-      callRow,
-      frustration: {
-        value: frustration,
-        color: colorByFrust(frustration),
-        display: frustration !== null ? `${frustration}%` : '—'
-      },
-      responseTime: {
-        value: responseT?.median ?? null,
-        color: colorByResp(responseT?.median ?? null),
-        display: responseT ? responseT.median < 60 ? `${responseT.median.toFixed(1)} min` : `${(responseT.median / 60).toFixed(1)} h` : '—'
-      },
-      writingGrade: {
-        value: writingGrade,
-        color: colorByGrade(writingGrade),
-        display: writingGrade !== null ? `${writingGrade}/100` : '—'
-      },
-      resolutionPct: {
-        value: resolution?.resolvedPct ?? null,
-        color: colorByRes(resolution?.resolvedPct ?? null),
-        display: resolution ? `${resolution.resolvedPct}%` : '—'
-      },
-      callsBizMissed: {
-        value: callsBizMissedRate,
-        color: colorByMiss(callsBizMissedRate),
-        display: callsBizMissedRate !== null ? `${callsBizMissedRate}%` : '—',
-        sub: callRow ? `${callRow.missedBiz}/${callRow.totalBiz} en horario` : 'sin datos'
-      }
-    };
-  }
-
-  // Convierte cada métrica disponible a un score 0-100 y promedia para sacar la calificación
-  function gradeFromMetrics(m) {
-    const scores = [];
-    if (m.frustration.value !== null) scores.push({
-      key: 'frustración',
-      s: Math.max(0, Math.min(100, 100 - m.frustration.value * 2))
-    });
-    if (m.resolutionPct.value !== null) scores.push({
-      key: 'resolución',
-      s: m.resolutionPct.value
-    });
-    if (m.responseTime.value !== null) {
-      const med = m.responseTime.value;
-      const s = med < 5 ? 100 : med < 15 ? 80 : med < 30 ? 60 : med < 60 ? 40 : 20;
-      scores.push({
-        key: 'respuesta',
-        s
-      });
-    }
-    if (m.writingGrade.value !== null) scores.push({
-      key: 'escritura',
-      s: m.writingGrade.value
-    });
-    if (m.callsBizMissed.value !== null) scores.push({
-      key: 'llamadas',
-      s: 100 - m.callsBizMissed.value
-    });
-    if (scores.length === 0) return {
-      grade: '—',
-      gradeColor: '#94A3B8',
-      gradeLabel: 'Sin datos suficientes',
-      score: null,
-      scores
-    };
-    const avg = Math.round(scores.reduce((s, x) => s + x.s, 0) / scores.length);
-    let grade, gradeColor, gradeLabel;
-    if (avg >= 85) {
-      grade = 'A';
-      gradeColor = '#2EC4B6';
-      gradeLabel = 'Excelente desempeño';
-    } else if (avg >= 70) {
-      grade = 'B';
-      gradeColor = '#22C55E';
-      gradeLabel = 'Buen desempeño';
-    } else if (avg >= 55) {
-      grade = 'C';
-      gradeColor = '#F97316';
-      gradeLabel = 'Aceptable, oportunidades claras';
-    } else {
-      grade = 'D';
-      gradeColor = '#E8505B';
-      gradeLabel = 'Requiere atención y coaching';
-    }
-    return {
-      grade,
-      gradeColor,
-      gradeLabel,
-      score: avg,
-      scores
-    };
-  }
-
-  // Pill compacto para celdas de métrica
-  function MetricCell({
-    value,
-    color,
-    sub
-  }) {
-    return /*#__PURE__*/React.createElement("div", {
-      className: "flex flex-col items-center"
-    }, /*#__PURE__*/React.createElement("div", {
-      className: "text-sm font-bold",
-      style: {
-        color
-      }
-    }, value), sub && /*#__PURE__*/React.createElement("div", {
-      className: "text-[10px] text-gray-400 mt-0.5"
-    }, sub));
-  }
-  function FeedbackRow({
-    f,
-    m,
-    expanded,
-    onToggle
-  }) {
-    const dateStr = f.agent.lastSeen ? new Date(f.agent.lastSeen).toLocaleDateString('es-MX', {
-      day: 'numeric',
-      month: 'short'
-    }) : '—';
-    return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("tr", {
-      onClick: onToggle,
-      className: "border-b border-gray-100 cursor-pointer hover:bg-coral/5 transition-colors"
-    }, /*#__PURE__*/React.createElement("td", {
-      className: "py-3 px-3 text-center"
-    }, /*#__PURE__*/React.createElement("div", {
-      className: "inline-flex items-center justify-center w-9 h-9 rounded-full text-base font-extrabold text-white",
-      style: {
-        backgroundColor: f.grade.gradeColor
-      }
-    }, f.grade.grade), f.grade.score !== null && /*#__PURE__*/React.createElement("div", {
-      className: "text-[10px] text-gray-400 mt-1"
-    }, f.grade.score, "/100")), /*#__PURE__*/React.createElement("td", {
-      className: "py-3 px-3"
-    }, /*#__PURE__*/React.createElement("div", {
-      className: "flex items-center gap-2"
-    }, /*#__PURE__*/React.createElement("span", {
-      className: "text-sm font-semibold text-navy-dark"
-    }, f.name), f.agent.isBrandNew && /*#__PURE__*/React.createElement("span", {
-      className: "text-[9px] text-teal bg-teal/10 px-1.5 py-0.5 rounded font-semibold"
-    }, "NUEVO")), /*#__PURE__*/React.createElement("div", {
-      className: "text-[11px] text-gray-500 mt-0.5"
-    }, f.grade.gradeLabel)), /*#__PURE__*/React.createElement("td", {
-      className: "py-3 px-3"
-    }, /*#__PURE__*/React.createElement(MetricCell, {
-      value: m.frustration.display,
-      color: m.frustration.color
-    })), /*#__PURE__*/React.createElement("td", {
-      className: "py-3 px-3"
-    }, /*#__PURE__*/React.createElement(MetricCell, {
-      value: m.responseTime.display,
-      color: m.responseTime.color
-    })), /*#__PURE__*/React.createElement("td", {
-      className: "py-3 px-3"
-    }, /*#__PURE__*/React.createElement(MetricCell, {
-      value: m.writingGrade.display,
-      color: m.writingGrade.color
-    })), /*#__PURE__*/React.createElement("td", {
-      className: "py-3 px-3"
-    }, /*#__PURE__*/React.createElement(MetricCell, {
-      value: m.resolutionPct.display,
-      color: m.resolutionPct.color
-    })), /*#__PURE__*/React.createElement("td", {
-      className: "py-3 px-3"
-    }, /*#__PURE__*/React.createElement(MetricCell, {
-      value: m.callsBizMissed.display,
-      color: m.callsBizMissed.color,
-      sub: m.callsBizMissed.sub
-    })), /*#__PURE__*/React.createElement("td", {
-      className: "py-3 px-3 text-center text-[11px] text-gray-500"
-    }, dateStr), /*#__PURE__*/React.createElement("td", {
-      className: "py-3 px-3 text-center text-coral font-bold text-base"
-    }, expanded ? '▲' : '▼')), expanded && /*#__PURE__*/React.createElement("tr", {
-      className: "bg-gray-50 border-b border-gray-200"
-    }, /*#__PURE__*/React.createElement("td", {
-      colSpan: 9,
-      className: "p-5"
-    }, f.fb.trendNote && /*#__PURE__*/React.createElement("p", {
-      className: "text-xs text-gray-500 italic mb-4"
-    }, f.fb.trendNote), /*#__PURE__*/React.createElement("div", {
-      className: "grid grid-cols-1 md:grid-cols-3 gap-4"
-    }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("p", {
-      className: "text-xs font-bold text-teal mb-2 uppercase tracking-wide"
-    }, "\u2713 Fortalezas"), f.fb.strengths.length > 0 ? /*#__PURE__*/React.createElement("ul", {
-      className: "text-sm text-gray-700 space-y-1.5"
-    }, f.fb.strengths.map((s, j) => /*#__PURE__*/React.createElement("li", {
-      key: j,
-      className: "leading-snug pl-3 border-l-2 border-teal/40"
-    }, s))) : /*#__PURE__*/React.createElement("p", {
-      className: "text-xs text-gray-400 italic"
-    }, "Sin fortalezas destacadas todav\xEDa")), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("p", {
-      className: "text-xs font-bold text-coral mb-2 uppercase tracking-wide"
-    }, "\u26A0 \xC1reas de mejora"), f.fb.improvements.length > 0 ? /*#__PURE__*/React.createElement("ul", {
-      className: "text-sm text-gray-700 space-y-1.5"
-    }, f.fb.improvements.map((s, j) => /*#__PURE__*/React.createElement("li", {
-      key: j,
-      className: "leading-snug pl-3 border-l-2 border-coral/40"
-    }, s))) : /*#__PURE__*/React.createElement("p", {
-      className: "text-xs text-gray-400 italic"
-    }, "Sin \xE1reas cr\xEDticas detectadas")), /*#__PURE__*/React.createElement("div", {
-      className: "bg-orange-50 border border-orange-200 rounded-lg p-3"
-    }, /*#__PURE__*/React.createElement("p", {
-      className: "text-xs font-bold text-orange-700 mb-2 uppercase tracking-wide"
-    }, "\uD83C\uDFAF Acciones sugeridas"), f.fb.actions.length > 0 ? /*#__PURE__*/React.createElement("ol", {
-      className: "text-sm text-gray-700 space-y-1.5 list-decimal list-inside"
-    }, f.fb.actions.map((s, j) => /*#__PURE__*/React.createElement("li", {
-      key: j,
-      className: "leading-snug"
-    }, s))) : /*#__PURE__*/React.createElement("p", {
-      className: "text-xs text-gray-400 italic"
-    }, "Sin acciones pendientes"))))));
   }
   function FeedbackSection() {
-    const [expanded, setExpanded] = React.useState(null);
-    const [callStats, setCallStats] = React.useState(null);
+    const [abierto, setAbierto] = React.useState(null);
+    const [llamadas, setLlamadas] = React.useState(null);
+    const Q = quincenaFeedback();
 
-    // Trae llamadas live y agrega por agente (% perdidas en horario laboral)
+    // llamadas en vivo, misma quincena, por nombre completo (o primer nombre si es único)
     React.useEffect(() => {
-      let cancelled = false;
+      let vivo = true;
       fetch('https://delicate-poetry-a88a.ines-25d.workers.dev/whatsapp-calls', {
         cache: 'no-store'
       }).then(r => r.json()).then(d => {
-        if (cancelled || !Array.isArray(d)) return;
-        const isBiz = date => {
-          const day = date.getDay();
-          const hour = date.getHours();
-          if (day === 0) return false;
-          if (day === 6) return hour >= 9 && hour < 15;
-          return hour >= 9 && hour < 19;
+        if (!vivo || !Array.isArray(d)) return;
+        const desde = Q ? new Date(Q.from + 'T00:00:00-06:00') : new Date(Date.now() - 15 * 86400000);
+        const hasta = Q ? new Date(new Date(Q.to + 'T00:00:00-06:00').getTime() + 86400000) : new Date();
+        const isBiz = dt => {
+          const day = dt.getDay(),
+            h = dt.getHours();
+          return day === 0 ? false : day === 6 ? h >= 9 && h < 15 : h >= 9 && h < 19;
         };
-        const stats = {};
+        const st = {};
         d.forEach(c => {
-          const inst = (c.instance || '').replace(/^Whats App /, '').replace(/^WhatsApp /, '').trim();
-          const key = inst.split(' ')[0].toLowerCase();
-          if (!key) return;
-          if (!stats[key]) stats[key] = {
-            total: 0,
-            missed: 0,
+          const dt = new Date(c.raw?.data?.date || c.ts);
+          if (dt < desde || dt >= hasta || !isBiz(dt)) return;
+          const k = sinAcentosFb((c.instance || '').replace(/^Whats ?App /, ''));
+          if (!st[k]) st[k] = {
             totalBiz: 0,
             missedBiz: 0
           };
-          const dt = new Date(c.raw?.data?.date || c.ts);
-          stats[key].total++;
-          if (c.missed) stats[key].missed++;
-          if (isBiz(dt)) {
-            stats[key].totalBiz++;
-            if (c.missed) stats[key].missedBiz++;
-          }
+          st[k].totalBiz++;
+          if (c.missed) st[k].missedBiz++;
         });
-        setCallStats(stats);
-      }).catch(() => setCallStats({}));
+        setLlamadas(st);
+      }).catch(() => setLlamadas({}));
       return () => {
-        cancelled = true;
+        vivo = false;
       };
     }, []);
-
-    // Solo generamos feedback para agentes con al menos 1 fuente de datos
-    const agentsWithData = agentRanking.filter(a => responseTimes.find(r => r.agent === a.name || r.agent === a.name.replace(/^Whats App /, '')) || writingQuality.find(w => w.agent === a.name) || resolutionData.find(r => r.agent === a.name) || medTiene(a));
-    const feedbackList = agentsWithData.map(a => {
-      const m = getMetrics(a.name, callStats);
-      return {
-        name: a.name,
-        agent: a,
-        fb: generateFeedback(a.name, callStats),
-        grade: gradeFromMetrics(m),
-        m
-      };
-    });
-    // Ordenar por score numérico (más alto primero), nulls al final
-    feedbackList.sort((a, b) => {
-      const sa = a.grade.score ?? -1;
-      const sb = b.grade.score ?? -1;
-      return sb - sa;
-    });
+    const cal = llamadas ? nombre => {
+      const full = sinAcentosFb(nombre);
+      if (llamadas[full]) return llamadas[full];
+      const pn = full.split(' ')[0],
+        cand = Object.keys(llamadas).filter(k => k.split(' ')[0] === pn);
+      return cand.length === 1 ? llamadas[cand[0]] : null;
+    } : null;
+    const idx = arr => Object.fromEntries((arr || []).map(x => [x.agent, x]));
+    const ctx = {
+      Q,
+      cal,
+      fr: idx(Q ? Q.agents : firstResponse?.agents),
+      res: idx(resolucionActual.agents),
+      con: idx(contratosActual.corrida ? contratosActual.agents : null),
+      team: Q ? Q.total : firstResponse ? firstResponse.total : {}
+    };
+    const nombres = Q ? Q.agents.map(a => a.agent) : agentRanking.map(a => a.name);
+    const lista = nombres.map(n => feedbackDeAgente(n, ctx)).filter(f => f.conDato > 0).sort((a, b) => b.fueraN - a.fueraN || a.metaN - b.metaN || a.nombre.localeCompare(b.nombre));
+    const COLOR = {
+      meta: '#1D9E75',
+      cerca: '#334155',
+      fuera: '#E8505B',
+      sin: '#CBD5E1'
+    };
+    const periodo = Q ? Q.label : 'última medición';
     return /*#__PURE__*/React.createElement(Section, {
-      title: "Feedback Individual por Agente",
+      title: "Feedback por Agente",
       id: "feedback"
-    }, /*#__PURE__*/React.createElement("div", {
-      className: "bg-white rounded-xl p-4 mb-6 border border-navy/10"
     }, /*#__PURE__*/React.createElement("p", {
-      className: "text-xs text-gray-600"
-    }, "\uD83D\uDCCB Calificaci\xF3n auto-generada como promedio de 5 m\xE9tricas (cada una a escala 0-100):", ' ', /*#__PURE__*/React.createElement("strong", null, "frustraci\xF3n"), ", ", /*#__PURE__*/React.createElement("strong", null, "tiempo de respuesta"), ", ", /*#__PURE__*/React.createElement("strong", null, "escritura"), ", ", /*#__PURE__*/React.createElement("strong", null, "resoluci\xF3n"), " y ", /*#__PURE__*/React.createElement("strong", null, "llamadas"), " (% perdidas en horario laboral). Haz clic en cualquier fila para ver fortalezas, \xE1reas de mejora y acciones sugeridas.")), /*#__PURE__*/React.createElement("div", {
-      className: "bg-white rounded-xl shadow-sm overflow-x-auto"
+      className: "text-sm text-gray-600 -mt-4 mb-6 max-w-3xl"
+    }, "Para que cada Lead d\xE9 feedback concreto. Quincena ", /*#__PURE__*/React.createElement("strong", null, periodo), ", con las mismas metas y tolerancias del Resumen. No es una calificaci\xF3n: dice qu\xE9 est\xE1 en meta, qu\xE9 est\xE1 cerca y qu\xE9 est\xE1 fuera de la tolerancia, y qu\xE9 hacer. Clic en un agente para ver el detalle."), /*#__PURE__*/React.createElement("div", {
+      className: "bg-white border border-gray-200 rounded-xl overflow-x-auto"
     }, /*#__PURE__*/React.createElement("table", {
-      className: "w-full min-w-[900px]"
+      className: "w-full min-w-[880px]"
     }, /*#__PURE__*/React.createElement("thead", null, /*#__PURE__*/React.createElement("tr", {
-      className: "bg-navy-dark text-white"
+      className: "border-b border-gray-200 text-gray-400"
     }, /*#__PURE__*/React.createElement("th", {
-      className: "py-3 px-3 text-center text-xs font-semibold w-20"
-    }, "Calif."), /*#__PURE__*/React.createElement("th", {
-      className: "py-3 px-3 text-left text-xs font-semibold"
-    }, "Agente MoradaUno"), /*#__PURE__*/React.createElement("th", {
-      className: "py-3 px-3 text-center text-xs font-semibold"
-    }, "Frustraci\xF3n"), /*#__PURE__*/React.createElement("th", {
-      className: "py-3 px-3 text-center text-xs font-semibold"
-    }, "Respuesta"), /*#__PURE__*/React.createElement("th", {
-      className: "py-3 px-3 text-center text-xs font-semibold"
-    }, "Escritura"), /*#__PURE__*/React.createElement("th", {
-      className: "py-3 px-3 text-center text-xs font-semibold"
-    }, "Resoluci\xF3n"), /*#__PURE__*/React.createElement("th", {
-      className: "py-3 px-3 text-center text-xs font-semibold"
-    }, "Llamadas (laboral)"), /*#__PURE__*/React.createElement("th", {
-      className: "py-3 px-3 text-center text-xs font-semibold"
-    }, "Datos al"), /*#__PURE__*/React.createElement("th", {
-      className: "py-3 px-3 w-12"
-    }))), /*#__PURE__*/React.createElement("tbody", null, feedbackList.map(f => /*#__PURE__*/React.createElement(FeedbackRow, {
-      key: f.name,
-      f: f,
-      m: f.m,
-      expanded: expanded === f.name,
-      onToggle: () => setExpanded(prev => prev === f.name ? null : f.name)
-    }))))), /*#__PURE__*/React.createElement("div", {
-      className: "mt-8 bg-navy-dark rounded-xl p-5"
-    }, /*#__PURE__*/React.createElement("p", {
-      className: "text-teal text-sm font-bold mb-2"
-    }, "\xBFC\xF3mo se calcula la calificaci\xF3n?"), /*#__PURE__*/React.createElement("div", {
-      className: "text-gray-300 text-xs leading-relaxed space-y-1"
-    }, /*#__PURE__*/React.createElement("p", null, "Cada m\xE9trica disponible se convierte a un score 0-100 y se promedia. La letra final corresponde al promedio:"), /*#__PURE__*/React.createElement("p", null, /*#__PURE__*/React.createElement("strong", {
-      className: "text-white"
-    }, "A \u2014 85-100:"), " Excelente desempe\xF1o \xB7 ", /*#__PURE__*/React.createElement("strong", {
-      className: "text-white"
-    }, "B \u2014 70-84:"), " Bueno \xB7 ", /*#__PURE__*/React.createElement("strong", {
-      className: "text-white"
-    }, "C \u2014 55-69:"), " Aceptable \xB7 ", /*#__PURE__*/React.createElement("strong", {
-      className: "text-white"
-    }, "D \u2014 <55:"), " Requiere atenci\xF3n"), /*#__PURE__*/React.createElement("p", {
-      className: "pt-2 text-gray-400"
-    }, /*#__PURE__*/React.createElement("strong", null, "Frustraci\xF3n:"), " 100 \u2212 pct\xB72 (a m\xE1s frustraci\xF3n menos puntos) \xB7", ' ', /*#__PURE__*/React.createElement("strong", null, "Respuesta:"), " mediana <5min=100, <15=80, <30=60, <60=40, \u226560=20 \xB7", ' ', /*#__PURE__*/React.createElement("strong", null, "Escritura:"), " 100 \u2212 score\xB71.2 \xB7", ' ', /*#__PURE__*/React.createElement("strong", null, "Resoluci\xF3n:"), " % de conversaciones cerradas exitosamente \xB7", ' ', /*#__PURE__*/React.createElement("strong", null, "Llamadas:"), " 100 \u2212 % perdidas en horario laboral."), /*#__PURE__*/React.createElement("p", {
-      className: "text-gray-400"
-    }, "Si una m\xE9trica no tiene dato, no se cuenta en el promedio."))));
+      className: "py-2.5 px-3 text-left text-xs font-semibold"
+    }, "Agente"), /*#__PURE__*/React.createElement("th", {
+      className: "py-2.5 px-3 text-right text-xs font-semibold"
+    }, "Convs."), ['1 · Sin resp. >24 h', '2 · 1ª respuesta', '3 · Resueltas', '4 · Frustración', '5 · Contrato c/ problema'].map(h => /*#__PURE__*/React.createElement("th", {
+      key: h,
+      className: "py-2.5 px-3 text-right text-xs font-semibold"
+    }, h)), /*#__PURE__*/React.createElement("th", {
+      className: "py-2.5 px-3 text-left text-xs font-semibold"
+    }, "Resumen"), /*#__PURE__*/React.createElement("th", {
+      className: "py-2.5 px-2 w-8"
+    }))), /*#__PURE__*/React.createElement("tbody", null, lista.map(f => {
+      const open = abierto === f.nombre;
+      return /*#__PURE__*/React.createElement(React.Fragment, {
+        key: f.nombre
+      }, /*#__PURE__*/React.createElement("tr", {
+        onClick: () => setAbierto(open ? null : f.nombre),
+        className: "border-b border-gray-100 cursor-pointer hover:bg-gray-50"
+      }, /*#__PURE__*/React.createElement("td", {
+        className: "py-2.5 px-3 text-sm font-semibold text-navy-dark whitespace-nowrap"
+      }, f.nombre), /*#__PURE__*/React.createElement("td", {
+        className: "py-2.5 px-3 text-right text-sm text-gray-500 tabular-nums"
+      }, f.convs ?? '—'), f.met.map(m => /*#__PURE__*/React.createElement("td", {
+        key: m.k,
+        className: "py-2.5 px-3 text-right text-sm font-semibold tabular-nums whitespace-nowrap",
+        style: {
+          color: m.muestra && m.n != null && m.n < RES_MIN_N && m.estado !== 'sin' ? '#94A3B8' : COLOR[m.estado]
+        }
+      }, m.k === 'over24h' && m.v != null ? `${m.v}%` : m.k === 'contratos' && m.v != null ? `${m.v}%` : m.v == null ? '—' : m.txt.split(' (')[0])), /*#__PURE__*/React.createElement("td", {
+        className: "py-2.5 px-3 text-xs whitespace-nowrap"
+      }, f.fueraN > 0 && /*#__PURE__*/React.createElement("span", {
+        className: "font-semibold text-coral mr-2"
+      }, f.fueraN, " fuera"), /*#__PURE__*/React.createElement("span", {
+        className: "text-gray-500"
+      }, f.metaN, " de ", f.conDato, " en meta")), /*#__PURE__*/React.createElement("td", {
+        className: "py-2.5 px-2 text-center text-gray-400 text-xs"
+      }, open ? '▲' : '▼')), open && /*#__PURE__*/React.createElement("tr", {
+        className: "bg-gray-50 border-b border-gray-200"
+      }, /*#__PURE__*/React.createElement("td", {
+        colSpan: 9,
+        className: "p-0"
+      }, /*#__PURE__*/React.createElement("div", {
+        className: "sticky left-0 p-4 sm:p-5",
+        style: {
+          maxWidth: 'min(100%, calc(100vw - 48px))',
+          width: 'calc(100vw - 48px)'
+        }
+      }, /*#__PURE__*/React.createElement("div", {
+        className: "grid grid-cols-1 md:grid-cols-3 gap-5"
+      }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("p", {
+        className: "text-xs font-bold text-teal mb-2 uppercase tracking-wide"
+      }, "Lo que hace bien"), f.fuerte.length ? /*#__PURE__*/React.createElement("ul", {
+        className: "text-sm text-gray-700 space-y-1.5"
+      }, f.fuerte.map((s, j) => /*#__PURE__*/React.createElement("li", {
+        key: j,
+        className: "pl-3 border-l-2 border-teal/40 leading-snug"
+      }, s))) : /*#__PURE__*/React.createElement("p", {
+        className: "text-xs text-gray-400 italic"
+      }, "Ninguna m\xE9trica en meta esta quincena.")), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("p", {
+        className: "text-xs font-bold text-coral mb-2 uppercase tracking-wide"
+      }, "A trabajar"), f.trabajar.length ? /*#__PURE__*/React.createElement("ul", {
+        className: "text-sm text-gray-700 space-y-1.5"
+      }, f.trabajar.map((s, j) => /*#__PURE__*/React.createElement("li", {
+        key: j,
+        className: "pl-3 border-l-2 border-coral/40 leading-snug"
+      }, s))) : /*#__PURE__*/React.createElement("p", {
+        className: "text-xs text-gray-400 italic"
+      }, "Todo en meta.")), /*#__PURE__*/React.createElement("div", {
+        className: "bg-white border border-gray-200 rounded-lg p-3"
+      }, /*#__PURE__*/React.createElement("p", {
+        className: "text-xs font-bold text-navy-dark mb-2 uppercase tracking-wide"
+      }, "Qu\xE9 hacer"), f.acciones.length ? /*#__PURE__*/React.createElement("ol", {
+        className: "text-sm text-gray-700 space-y-1.5 list-decimal list-inside"
+      }, f.acciones.map((s, j) => /*#__PURE__*/React.createElement("li", {
+        key: j,
+        className: "leading-snug"
+      }, s))) : /*#__PURE__*/React.createElement("p", {
+        className: "text-xs text-gray-400 italic"
+      }, "Nada fuera de tolerancia: reconocer y mantener."))), /*#__PURE__*/React.createElement("p", {
+        className: "text-[11px] text-gray-400 mt-4"
+      }, "Quincena ", periodo, ". Resueltas y frustraci\xF3n salen de una muestra le\xEDda por la IA (resueltas: m\xE1x. 18 conversaciones por agente); contratos, de todos sus cambios pedidos.", f.escritura != null && ` Escritura (diagnóstico): ${f.escritura}/100.`)))));
+    })))), /*#__PURE__*/React.createElement("div", {
+      className: "mt-4 text-xs text-gray-500 space-y-1"
+    }, /*#__PURE__*/React.createElement("p", null, /*#__PURE__*/React.createElement("span", {
+      className: "font-semibold",
+      style: {
+        color: COLOR.meta
+      }
+    }, "Verde"), " = en meta \xB7 ", /*#__PURE__*/React.createElement("span", {
+      className: "font-semibold text-gray-700"
+    }, "sin color"), " = cerca, dentro de la tolerancia \xB7 ", /*#__PURE__*/React.createElement("span", {
+      className: "font-semibold text-coral"
+    }, "rojo"), " = fuera de la tolerancia \xB7 ", /*#__PURE__*/React.createElement("span", {
+      className: "text-gray-400 font-semibold"
+    }, "gris"), " = muestra chica."), /*#__PURE__*/React.createElement("p", null, "Metas y tolerancias: sin respuesta >24 h ", REF.over24h.txt, " (tolerancia ", REF.over24h.tolTxt, ") \xB7 primera respuesta ", REF.primera.txt, " (", REF.primera.tolTxt, ") \xB7 resueltas ", REF.resueltas.txt, " (", REF.resueltas.tolTxt, ") \xB7 frustraci\xF3n ", REF.frust.txt, " (", REF.frust.tolTxt, ") \xB7 contrato con problema ", REF.contratos.txt, " (", REF.contratos.tolTxt, "). Ordenado por cu\xE1ntas m\xE9tricas est\xE1n fuera de tolerancia.")));
   }
+  const sinAcentosFb = s => (s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim();
 
   // ── Correlaciones: frustración vs cada métrica ─────────────────────────
   // Pearson r y scatter por agente. Pensado para crecer con más data.
@@ -4664,7 +4485,10 @@ function boot(D) {
     const colRec = p => p == null ? '#94A3B8' : p >= 70 ? '#2EC4B6' : p >= 50 ? '#22C55E' : p >= 33 ? '#F97316' : '#E8505B';
     // CRÍTICO = alto % con problema (>=40) Y baja recuperación (<50%) — donde deben enfocarse los managers
     // en una corrida la muestra por agente es chica: sin n suficiente no se marca a nadie
-    const isCritical = a => a.problemRate >= 40 && a.recoveryPct != null && a.recoveryPct < 50 && (!d.corrida || a.contractConvs >= RES_MIN_N);
+    // todos los cambios de la quincena (no una muestra): con 10 casos ya se puede leer al agente
+    const todos = !!(d.metodo && d.metodo.startsWith('Todos'));
+    const minN = todos ? 10 : RES_MIN_N;
+    const isCritical = a => a.problemRate >= 40 && a.recoveryPct != null && a.recoveryPct < 50 && (!d.corrida || a.contractConvs >= minN);
     const critical = agents.filter(isCritical).sort((a, b) => b.problemRate - a.problemRate);
     const Seg = ({
       value,
@@ -4692,7 +4516,7 @@ function boot(D) {
       className: "bg-white rounded-xl p-4 mb-6 border-l-4 border-coral shadow-sm"
     }, /*#__PURE__*/React.createElement("p", {
       className: "text-sm text-gray-700 mb-1.5"
-    }, "Mide qu\xE9 tan bien maneja cada asesor los ", /*#__PURE__*/React.createElement("strong", null, "cambios al contrato"), " que pide el cliente. ", d.corrida ? /*#__PURE__*/React.createElement(React.Fragment, null, "Corrida del ", d.periodo, ": ", /*#__PURE__*/React.createElement("strong", null, d.team.contractConvs, " conversaciones de contrato"), " dentro de la muestra de ", d.team.convsTotal, " que lee la IA. Por agente son pocas: los de menos de ", RES_MIN_N, " van en gris.") : /*#__PURE__*/React.createElement(React.Fragment, null, "Sobre una muestra grande: ", /*#__PURE__*/React.createElement("strong", null, d.team.contractConvs, " conversaciones de contrato"), " (~20 por agente).")), /*#__PURE__*/React.createElement("p", {
+    }, "Mide qu\xE9 tan bien maneja cada asesor los ", /*#__PURE__*/React.createElement("strong", null, "cambios al contrato"), " que pide el cliente. ", d.corrida ? todos ? /*#__PURE__*/React.createElement(React.Fragment, null, "Quincena ", d.periodo, ": ", /*#__PURE__*/React.createElement("strong", null, "todos los ", d.team.contractConvs, " cambios a contrato"), " que pidieron los brokers, no una muestra. Con problema = no se aplic\xF3, sali\xF3 a medias o mal, o tard\xF3 y el broker tuvo que insistir. Los agentes con menos de ", minN, " cambios van en gris.") : /*#__PURE__*/React.createElement(React.Fragment, null, "Corrida del ", d.periodo, ": ", /*#__PURE__*/React.createElement("strong", null, d.team.contractConvs, " conversaciones de contrato"), " dentro de la muestra de ", d.team.convsTotal, " que lee la IA. Por agente son pocas: los de menos de ", RES_MIN_N, " van en gris.") : /*#__PURE__*/React.createElement(React.Fragment, null, "Sobre una muestra grande: ", /*#__PURE__*/React.createElement("strong", null, d.team.contractConvs, " conversaciones de contrato"), " (~20 por agente).")), /*#__PURE__*/React.createElement("p", {
       className: "text-xs text-gray-500"
     }, "\u26A0\uFE0F La causa ra\xEDz de que un cambio no se aplique suele estar ", /*#__PURE__*/React.createElement("strong", null, "aguas arriba (Legal/contratos)"), ", no en el asesor. Esta vista muestra d\xF3nde se concentra y, sobre todo, ", /*#__PURE__*/React.createElement("strong", null, "qui\xE9n logra recuperarlo"), " (recuperaci\xF3n) \u2014 la se\xF1al m\xE1s atribuible al asesor.")), critical.length > 0 && /*#__PURE__*/React.createElement("div", {
       className: "rounded-xl p-5 mb-6",
@@ -4859,7 +4683,7 @@ function boot(D) {
     }, "CR\xCDTICO"), a.inRoster === false && /*#__PURE__*/React.createElement("span", {
       className: "ml-2 text-[10px] text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded"
     }, "nuevo")), /*#__PURE__*/React.createElement("td", {
-      className: `py-3 px-3 text-center text-sm ${d.corrida && a.contractConvs < RES_MIN_N ? 'text-gray-400' : 'text-gray-600'}`
+      className: `py-3 px-3 text-center text-sm ${d.corrida && a.contractConvs < minN ? 'text-gray-400' : 'text-gray-600'}`
     }, a.contractConvs), /*#__PURE__*/React.createElement("td", {
       className: "py-3 px-3 bg-orange-500/5"
     }, /*#__PURE__*/React.createElement("div", {

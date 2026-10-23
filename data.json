@@ -139,113 +139,120 @@
  "topRequests": [
   {
    "label": "Modificaciones de contrato",
-   "count": 94,
-   "pct": 47
+   "count": 198,
+   "pct": 43.8
   },
   {
    "label": "Proceso de firma",
-   "count": 79,
-   "pct": 39.5
-  },
-  {
-   "label": "Investigación de inquilinos",
-   "count": 59,
-   "pct": 29.5
-  },
-  {
-   "label": "Gestión de renovaciones",
-   "count": 48,
-   "pct": 24
-  },
-  {
-   "label": "Carga de documentos",
-   "count": 38,
-   "pct": 19
+   "count": 197,
+   "pct": 43.6
   },
   {
    "label": "Pagos / facturación",
-   "count": 34,
-   "pct": 17
+   "count": 169,
+   "pct": 37.4
+  },
+  {
+   "label": "Investigación de inquilinos",
+   "count": 166,
+   "pct": 36.7
   },
   {
    "label": "Consultas generales",
-   "count": 26,
-   "pct": 13
+   "count": 142,
+   "pct": 31.4
+  },
+  {
+   "label": "Carga de documentos",
+   "count": 140,
+   "pct": 31.0
+  },
+  {
+   "label": "Gestión de renovaciones",
+   "count": 133,
+   "pct": 29.4
   },
   {
    "label": "Estatus de operación",
-   "count": 20,
-   "pct": 10
+   "count": 70,
+   "pct": 15.5
   },
   {
-   "label": "Problemas técnicos app",
-   "count": 12,
-   "pct": 6
+   "label": "Fallas de la app",
+   "count": 56,
+   "pct": 12.4
   },
   {
    "label": "Comisiones",
-   "count": 11,
-   "pct": 5.5
+   "count": 29,
+   "pct": 6.4
   }
  ],
  "frustrationSeverity": [
   {
    "level": "Severa",
-   "count": 5,
-   "pct": 3,
+   "count": 2,
+   "pct": 0.4,
    "color": "#DC2626",
    "desc": "Posible fraude, amenazas legales, info incorrecta"
   },
   {
    "level": "Moderada",
-   "count": 13,
-   "pct": 6,
+   "count": 46,
+   "pct": 10.2,
    "color": "#F97316",
    "desc": "Quejas explícitas, seguimientos repetidos"
   },
   {
    "level": "Leve",
-   "count": 14,
-   "pct": 7,
+   "count": 92,
+   "pct": 20.4,
    "color": "#FACC15",
    "desc": "Impaciencia, emojis tristes"
   },
   {
    "level": "Sin frustración",
-   "count": 168,
-   "pct": 84,
+   "count": 312,
+   "pct": 69.0,
    "color": "#2EC4B6",
    "desc": ""
   }
  ],
  "frustrationCauses": [
   {
-   "cause": "Comentarios al contrato no aplicados",
-   "pct": 25
+   "cause": "Contrato con errores o cambios no aplicados",
+   "pct": 41,
+   "count": 19
   },
   {
-   "cause": "App falla / se traba / no envía código SMS",
-   "pct": 22
+   "cause": "Sin respuesta o sin seguimiento",
+   "pct": 15,
+   "count": 7
   },
   {
-   "cause": "Liga de pago expira o sale con monto erróneo",
-   "pct": 13
+   "cause": "App / firma digital (ZapSign, plataforma)",
+   "pct": 13,
+   "count": 6
   },
   {
-   "cause": "Pagos / investigación no se reflejan en la app",
-   "pct": 11
+   "cause": "Investigación y documentos",
+   "pct": 13,
+   "count": 6
   },
   {
-   "cause": "Ciclos largos de investigación / docs rechazados",
-   "pct": 9
+   "cause": "Pagos, cobros y comisiones",
+   "pct": 7,
+   "count": 3
   },
   {
-   "cause": "Comisión retenida sin aviso",
-   "pct": 6
+   "cause": "Errores de operación (perfil o departamento equivocado)",
+   "pct": 7,
+   "count": 3
   },
   {
-   "cause": "Precios o info incorrecta dada al cliente",
-   "pct": 5
+   "cause": "Cláusulas no negociables / explicación del proceso",
+   "pct": 4,
+   "count": 2
   }
  ],
  "agentRanking": [
@@ -2046,14 +2053,14 @@
    "bgLight": "#FEE2E2",
    "items": [
     {
-     "title": "Precisión de Contratos",
-     "description": "Contratos requieren 2-3+ rondas de corrección. Montos, fechas y cláusulas incorrectas retrasan firmas; los cambios no siempre se aplican.",
-     "stat": "94 menciones en 200 conversaciones"
+     "title": "Precisión de contratos",
+     "description": "Los cambios pedidos no se aplican, se aplican a medias o mal, y el broker tiene que pedirlos otra vez. Es la causa #1 de frustración.",
+     "stat": "41% de 264 cambios con problema · 19 de 46 brokers frustrados"
     },
     {
-     "title": "Confiabilidad de la App",
-     "description": "No pueden subir documentos, descargar contratos ni iniciar sesión. Links de pago expiran. Intermitencia general.",
-     "stat": "Queja más transversal del run"
+     "title": "Cobertura de fin de semana",
+     "description": "Lo que llega el sábado en horario (9–15 h) o el viernes en la noche se contesta hasta el lunes.",
+     "stat": "15% del fin de semana espera más de 24 h vs 2% entre semana"
     }
    ]
   },
@@ -2063,12 +2070,14 @@
    "bgLight": "#FEF3C7",
    "items": [
     {
-     "title": "Tiempo de Respuesta",
-     "description": "Brokers esperan horas o días sin respuesta. No existe ruta de escalación para urgencias."
+     "title": "Seguimiento y respuesta",
+     "description": "Brokers que se quedan días sin respuesta o sin saber quién los atiende; temas que pasan a otra área y no regresan.",
+     "stat": "7 de 46 brokers frustrados · 39% de conversaciones escalan a otra área"
     },
     {
-     "title": "Claridad en Firma",
-     "description": "Confusión entre vista previa y liga de firma. Problemas frecuentes con ZapSign."
+     "title": "App y firma digital",
+     "description": "Validaciones de INE en ZapSign que fallan, registros que se cierran, firmas canceladas o cambiadas por la plataforma.",
+     "stat": "6 de 46 brokers frustrados · tema en 56 de 452 conversaciones"
     }
    ]
   },
@@ -2078,20 +2087,14 @@
    "bgLight": "#D1FAE5",
    "items": [
     {
-     "title": "Seguimiento de Pagos",
-     "description": "Pagos aparecen pendientes después de realizarse."
+     "title": "Investigación y documentos",
+     "description": "Validaciones largas, documentos rechazados sin claridad y pendientes que siguen marcados después de subirlos.",
+     "stat": "6 de 46 brokers frustrados"
     },
     {
-     "title": "Transparencia Investigación",
-     "description": "Sin visibilidad de tiempos para screening de inquilinos."
-    },
-    {
-     "title": "UX de Onboarding",
-     "description": "Proceso complejo confunde a brokers y clientes nuevos."
-    },
-    {
-     "title": "Handoffs Internos",
-     "description": "Clientes rebotan entre personas sin contexto previo."
+     "title": "Pagos y comisiones",
+     "description": "Ligas de pago con monto equivocado, cobros de más y comisiones en efectivo que tardan.",
+     "stat": "3 de 46 brokers frustrados"
     }
    ]
   }
@@ -14639,5 +14642,12 @@
     "recoveryPct": 62
    }
   ]
+ },
+ "insightsMeta": {
+  "periodo": "1–15 oct",
+  "fecha": "2026-10-15",
+  "n": 452,
+  "frustrados": 48,
+  "metodo": "Muestra de 452 conversaciones de la quincena (máx. 18 por agente) leída el 23 oct con las instrucciones del clasificador; las causas se agruparon a partir del problema concreto que reportó cada broker frustrado."
  }
 }
