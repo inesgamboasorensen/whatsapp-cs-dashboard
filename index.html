@@ -933,7 +933,20 @@ function boot(D) {
       mejorar = [];
     const conMuestra = AG.filter(a => a.threads >= RES_MIN_N);
     const fuera = (v, r) => v != null && (r.menosMejor ? v > r.tol : v < r.tol); // fuera de la tolerancia
-    const CCR = D.contractCasesRecent;
+    // contratos: la corrida quincenal (contractLatest) cuando ya lo publique; mientras, la lectura puntual del 23 oct
+    const CCR = C.corrida ? null : D.contractCasesRecent;
+    if (C.corrida && CH.problems) {
+      mejorar.push({
+        afectados: CH.problems,
+        gravedad: GRAVEDAD.contrato,
+        tab: 'contracts',
+        titulo: `Cambios a contrato que no salen bien: ${CH.problemRate}% de los que se piden`,
+        detalle: `${CH.problems} de ${CH.contractConvs} conversaciones de contrato en la muestra del ${C.periodo}; se recuperó el ${CH.recoveryPct}%.`,
+        responsable: 'Legal / contratos, con los Leads escalando',
+        accion: 'Revisar con Legal en qué paso fallan los cambios y acordar una verificación antes de mandar la versión corregida.',
+        exito: `En la siguiente corrida (${proximaCorrida}): contrato con problema bajando hacia la meta (${REF.contratos.txt}).`
+      });
+    }
     if (CCR) {
       const porQuincena = Math.round(CCR.fallas / (CCR.semanas / 2));
       const legal = CCR.dondeSeAtora.legal_contratos || 0,
