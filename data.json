@@ -11777,10 +11777,10 @@
   }
  ],
  "firstResponse": {
-  "generatedAt": "2026-10-23T16:43:40+00:00",
+  "generatedAt": "2026-10-23T18:44:17+00:00",
   "window": {
-   "from": "2026-09-25T16:43:40+00:00",
-   "to": "2026-10-22T16:43:40+00:00",
+   "from": "2026-09-25T18:44:17+00:00",
+   "to": "2026-10-22T18:44:17+00:00",
    "days": 28
   },
   "gapHours": 12,
@@ -11792,56 +11792,56 @@
    "2026-10-15"
   ],
   "total": {
-   "threads": 5053,
-   "answered": 4998,
+   "threads": 5127,
+   "answered": 5072,
    "medianMin": 16.9,
-   "p90Min": 80.0,
-   "under60Pct": 85.0,
-   "over24h": 179,
+   "p90Min": 79.5,
+   "under60Pct": 85.2,
+   "over24h": 178,
    "over24hPct": 3.5,
    "weeks": [
     {
-     "n": 540,
-     "over24hPct": 4.4,
-     "medianMin": 17.8
+     "n": 539,
+     "over24hPct": 4.6,
+     "medianMin": 17.5
     },
     {
-     "n": 808,
-     "over24hPct": 3.6,
-     "medianMin": 13.6
+     "n": 827,
+     "over24hPct": 3.5,
+     "medianMin": 13.5
     },
     {
-     "n": 1526,
-     "over24hPct": 2.8,
-     "medianMin": 17.1
+     "n": 1575,
+     "over24hPct": 2.7,
+     "medianMin": 16.8
     },
     {
-     "n": 2179,
-     "over24hPct": 3.8,
-     "medianMin": 17.8
+     "n": 2186,
+     "over24hPct": 3.7,
+     "medianMin": 18.0
     }
    ]
   },
   "agents": [
    {
     "agent": "Gael Santiago",
-    "threads": 159,
-    "answered": 154,
-    "medianMin": 85.5,
+    "threads": 158,
+    "answered": 153,
+    "medianMin": 82.0,
     "p90Min": 826.0,
-    "under60Pct": 44.8,
+    "under60Pct": 45.8,
     "over24h": 34,
-    "over24hPct": 21.4,
+    "over24hPct": 21.5,
     "weeks": [
      {
       "n": 49,
-      "over24hPct": 14.3,
-      "medianMin": 81.8
+      "over24hPct": 16.3,
+      "medianMin": 65.1
      },
      {
-      "n": 34,
-      "over24hPct": 26.5,
-      "medianMin": 69.9
+      "n": 30,
+      "over24hPct": 26.7,
+      "medianMin": 119.3
      },
      {
       "n": 31,
@@ -11849,21 +11849,21 @@
       "medianMin": 121.7
      },
      {
-      "n": 45,
-      "over24hPct": 11.1,
-      "medianMin": 74.5
+      "n": 48,
+      "over24hPct": 10.4,
+      "medianMin": 67.4
      }
     ]
    },
    {
     "agent": "Dylan Arellano",
-    "threads": 82,
-    "answered": 81,
+    "threads": 86,
+    "answered": 85,
     "medianMin": 4.1,
     "p90Min": 78.7,
-    "under60Pct": 87.7,
+    "under60Pct": 88.2,
     "over24h": 5,
-    "over24hPct": 6.1,
+    "over24hPct": 5.8,
     "weeks": [
      {
       "n": 5,
@@ -11876,31 +11876,31 @@
       "medianMin": 1.4
      },
      {
-      "n": 18,
-      "over24hPct": 5.6,
-      "medianMin": 4.2
+      "n": 21,
+      "over24hPct": 4.8,
+      "medianMin": 2.8
      },
      {
-      "n": 55,
-      "over24hPct": 5.5,
-      "medianMin": 5.1
+      "n": 56,
+      "over24hPct": 5.4,
+      "medianMin": 5.0
      }
     ]
    },
    {
     "agent": "Horace \"el bueno\"",
-    "threads": 142,
-    "answered": 136,
+    "threads": 141,
+    "answered": 135,
     "medianMin": 27.2,
     "p90Min": 86.2,
-    "under60Pct": 83.1,
+    "under60Pct": 83.0,
     "over24h": 8,
-    "over24hPct": 5.6,
+    "over24hPct": 5.7,
     "weeks": [
      {
-      "n": 13,
+      "n": 12,
       "over24hPct": 0.0,
-      "medianMin": 17.8
+      "medianMin": 39.7
      },
      {
       "n": 9,
@@ -11908,26 +11908,26 @@
       "medianMin": 17.6
      },
      {
-      "n": 28,
+      "n": 30,
       "over24hPct": 0.0,
       "medianMin": 30.5
      },
      {
-      "n": 92,
-      "over24hPct": 8.7,
-      "medianMin": 27.6
+      "n": 90,
+      "over24hPct": 8.9,
+      "medianMin": 27.4
      }
     ]
    },
    {
     "agent": "Paola Viveros",
-    "threads": 125,
-    "answered": 120,
+    "threads": 131,
+    "answered": 126,
     "medianMin": 34.0,
-    "p90Min": 79.5,
-    "under60Pct": 82.5,
+    "p90Min": 76.2,
+    "under60Pct": 83.3,
     "over24h": 7,
-    "over24hPct": 5.6,
+    "over24hPct": 5.3,
     "weeks": [
      {
       "n": 11,
@@ -11945,169 +11945,137 @@
       "medianMin": 36.1
      },
      {
-      "n": 87,
-      "over24hPct": 5.7,
+      "n": 93,
+      "over24hPct": 5.4,
       "medianMin": 33.0
      }
     ]
    },
    {
     "agent": "Elsa Hernández",
-    "threads": 420,
-    "answered": 416,
+    "threads": 430,
+    "answered": 426,
     "medianMin": 12.3,
-    "p90Min": 69.2,
-    "under60Pct": 88.2,
+    "p90Min": 68.9,
+    "under60Pct": 88.5,
     "over24h": 21,
-    "over24hPct": 5.0,
+    "over24hPct": 4.9,
     "weeks": [
      {
-      "n": 36,
-      "over24hPct": 2.8,
-      "medianMin": 17.6
+      "n": 38,
+      "over24hPct": 2.6,
+      "medianMin": 15.0
      },
      {
-      "n": 70,
-      "over24hPct": 1.4,
-      "medianMin": 7.7
+      "n": 75,
+      "over24hPct": 1.3,
+      "medianMin": 9.0
      },
      {
-      "n": 156,
-      "over24hPct": 6.4,
-      "medianMin": 13.5
+      "n": 159,
+      "over24hPct": 6.3,
+      "medianMin": 12.3
      },
      {
       "n": 158,
       "over24hPct": 5.7,
-      "medianMin": 13.6
-     }
-    ]
-   },
-   {
-    "agent": "Alex",
-    "threads": 81,
-    "answered": 80,
-    "medianMin": 10.3,
-    "p90Min": 85.0,
-    "under60Pct": 87.5,
-    "over24h": 4,
-    "over24hPct": 4.9,
-    "weeks": [
-     {
-      "n": 7,
-      "over24hPct": 14.3,
-      "medianMin": 8.9
-     },
-     {
-      "n": 13,
-      "over24hPct": 15.4,
-      "medianMin": 8.2
-     },
-     {
-      "n": 19,
-      "over24hPct": 0.0,
-      "medianMin": 10.1
-     },
-     {
-      "n": 42,
-      "over24hPct": 2.4,
-      "medianMin": 18.8
+      "medianMin": 14.1
      }
     ]
    },
    {
     "agent": "Carlos",
-    "threads": 148,
-    "answered": 146,
-    "medianMin": 54.5,
+    "threads": 149,
+    "answered": 147,
+    "medianMin": 54.2,
     "p90Min": 128.3,
-    "under60Pct": 56.2,
+    "under60Pct": 56.5,
     "over24h": 7,
     "over24hPct": 4.7,
     "weeks": [
      {
-      "n": 8,
+      "n": 9,
       "over24hPct": 0.0,
-      "medianMin": 54.5
+      "medianMin": 37.7
      },
      {
-      "n": 12,
-      "over24hPct": 0.0,
-      "medianMin": 33.2
+      "n": 13,
+      "over24hPct": 7.7,
+      "medianMin": 35.7
      },
      {
-      "n": 52,
-      "over24hPct": 3.8,
-      "medianMin": 75.2
+      "n": 51,
+      "over24hPct": 2.0,
+      "medianMin": 73.8
      },
      {
       "n": 76,
       "over24hPct": 6.6,
-      "medianMin": 50.0
+      "medianMin": 49.6
      }
     ]
    },
    {
     "agent": "Gabriel García",
-    "threads": 271,
-    "answered": 268,
-    "medianMin": 12.9,
-    "p90Min": 77.6,
-    "under60Pct": 89.2,
+    "threads": 276,
+    "answered": 273,
+    "medianMin": 12.7,
+    "p90Min": 76.8,
+    "under60Pct": 89.4,
     "over24h": 12,
-    "over24hPct": 4.4,
+    "over24hPct": 4.3,
     "weeks": [
      {
-      "n": 26,
-      "over24hPct": 3.8,
+      "n": 28,
+      "over24hPct": 3.6,
       "medianMin": 21.8
      },
      {
       "n": 36,
-      "over24hPct": 11.1,
+      "over24hPct": 13.9,
       "medianMin": 19.6
      },
      {
-      "n": 78,
-      "over24hPct": 3.8,
+      "n": 80,
+      "over24hPct": 2.5,
       "medianMin": 12.7
      },
      {
-      "n": 131,
-      "over24hPct": 3.1,
-      "medianMin": 11.8
+      "n": 132,
+      "over24hPct": 3.0,
+      "medianMin": 10.9
      }
     ]
    },
    {
     "agent": "Xel Xanat",
-    "threads": 347,
-    "answered": 342,
-    "medianMin": 24.3,
+    "threads": 352,
+    "answered": 347,
+    "medianMin": 22.9,
     "p90Min": 77.2,
-    "under60Pct": 85.4,
+    "under60Pct": 85.6,
     "over24h": 15,
     "over24hPct": 4.3,
     "weeks": [
      {
       "n": 33,
       "over24hPct": 3.0,
-      "medianMin": 11.3
+      "medianMin": 15.8
      },
      {
-      "n": 41,
+      "n": 44,
       "over24hPct": 0.0,
-      "medianMin": 15.1
+      "medianMin": 11.7
      },
      {
-      "n": 108,
+      "n": 111,
       "over24hPct": 0.9,
       "medianMin": 22.9
      },
      {
-      "n": 165,
+      "n": 164,
       "over24hPct": 7.9,
-      "medianMin": 27.1
+      "medianMin": 27.8
      }
     ]
    },
@@ -12127,131 +12095,163 @@
       "medianMin": 36.4
      },
      {
-      "n": 33,
-      "over24hPct": 3.0,
-      "medianMin": 30.2
+      "n": 36,
+      "over24hPct": 2.8,
+      "medianMin": 31.7
      },
      {
-      "n": 93,
-      "over24hPct": 4.3,
-      "medianMin": 52.8
+      "n": 99,
+      "over24hPct": 4.0,
+      "medianMin": 46.5
      },
      {
-      "n": 26,
-      "over24hPct": 7.7,
-      "medianMin": 24.6
+      "n": 17,
+      "over24hPct": 11.8,
+      "medianMin": 22.0
      }
     ]
    },
    {
     "agent": "Saúl",
-    "threads": 317,
-    "answered": 315,
-    "medianMin": 9.2,
+    "threads": 318,
+    "answered": 316,
+    "medianMin": 9.6,
     "p90Min": 48.1,
     "under60Pct": 92.4,
     "over24h": 12,
     "over24hPct": 3.8,
     "weeks": [
      {
-      "n": 54,
-      "over24hPct": 3.7,
+      "n": 53,
+      "over24hPct": 5.7,
+      "medianMin": 9.0
+     },
+     {
+      "n": 65,
+      "over24hPct": 6.2,
+      "medianMin": 7.4
+     },
+     {
+      "n": 91,
+      "over24hPct": 2.2,
+      "medianMin": 9.0
+     },
+     {
+      "n": 109,
+      "over24hPct": 2.8,
+      "medianMin": 12.7
+     }
+    ]
+   },
+   {
+    "agent": "Alex",
+    "threads": 82,
+    "answered": 81,
+    "medianMin": 10.3,
+    "p90Min": 63.9,
+    "under60Pct": 88.9,
+    "over24h": 3,
+    "over24hPct": 3.7,
+    "weeks": [
+     {
+      "n": 7,
+      "over24hPct": 0.0,
+      "medianMin": 8.9
+     },
+     {
+      "n": 12,
+      "over24hPct": 16.7,
       "medianMin": 8.2
      },
      {
-      "n": 63,
-      "over24hPct": 7.9,
-      "medianMin": 7.9
+      "n": 19,
+      "over24hPct": 0.0,
+      "medianMin": 10.1
      },
      {
-      "n": 92,
-      "over24hPct": 2.2,
-      "medianMin": 8.8
-     },
-     {
-      "n": 108,
-      "over24hPct": 2.8,
-      "medianMin": 12.4
+      "n": 44,
+      "over24hPct": 2.3,
+      "medianMin": 17.8
      }
     ]
    },
    {
     "agent": "Elizabeth Bustos",
-    "threads": 211,
-    "answered": 207,
+    "threads": 209,
+    "answered": 205,
     "medianMin": 23.8,
     "p90Min": 88.7,
-    "under60Pct": 82.1,
+    "under60Pct": 82.0,
     "over24h": 7,
     "over24hPct": 3.3,
     "weeks": [
      {
-      "n": 21,
+      "n": 20,
       "over24hPct": 0.0,
-      "medianMin": 5.7
+      "medianMin": 8.4
      },
      {
-      "n": 50,
-      "over24hPct": 2.0,
+      "n": 52,
+      "over24hPct": 1.9,
       "medianMin": 26.0
      },
      {
-      "n": 84,
+      "n": 87,
       "over24hPct": 0.0,
-      "medianMin": 28.6
+      "medianMin": 28.0
      },
      {
-      "n": 56,
-      "over24hPct": 10.7,
-      "medianMin": 28.0
+      "n": 50,
+      "over24hPct": 12.0,
+      "medianMin": 35.5
      }
     ]
    },
    {
     "agent": "Alfonso",
-    "threads": 279,
-    "answered": 276,
-    "medianMin": 11.4,
-    "p90Min": 49.2,
-    "under60Pct": 91.3,
+    "threads": 282,
+    "answered": 279,
+    "medianMin": 11.7,
+    "p90Min": 50.1,
+    "under60Pct": 91.0,
     "over24h": 9,
     "over24hPct": 3.2,
     "weeks": [
      {
-      "n": 44,
-      "over24hPct": 4.5,
-      "medianMin": 18.3
+      "n": 43,
+      "over24hPct": 4.7,
+      "medianMin": 17.8
      },
      {
-      "n": 71,
-      "over24hPct": 2.8,
-      "medianMin": 8.7
+      "n": 70,
+      "over24hPct": 2.9,
+      "medianMin": 8.8
      },
      {
-      "n": 87,
-      "over24hPct": 3.4,
+      "n": 92,
+      "over24hPct": 3.3,
       "medianMin": 11.4
      },
      {
       "n": 77,
       "over24hPct": 2.6,
-      "medianMin": 12.8
+      "medianMin": 14.9
      }
     ]
    },
    {
     "agent": "Daniel Luna",
-    "threads": 194,
-    "answered": 192,
+    "threads": 200,
+    "answered": 198,
     "medianMin": 36.2,
-    "p90Min": 103.4,
-    "under60Pct": 71.9,
+    "p90Min": 115.3,
+    "under60Pct": 71.2,
     "over24h": 6,
-    "over24hPct": 3.1,
+    "over24hPct": 3.0,
     "weeks": [
      {
-      "n": 11,
-      "over24hPct": 9.1,
+      "n": 12,
+      "over24hPct": 8.3,
       "medianMin": 53.5
      },
      {
@@ -12260,63 +12260,63 @@
       "medianMin": 49.2
      },
      {
-      "n": 40,
-      "over24hPct": 0.0,
-      "medianMin": 39.3
+      "n": 44,
+      "over24hPct": 2.3,
+      "medianMin": 39.1
      },
      {
-      "n": 111,
-      "over24hPct": 3.6,
-      "medianMin": 32.1
+      "n": 112,
+      "over24hPct": 2.7,
+      "medianMin": 35.3
      }
     ]
    },
    {
     "agent": "Tania Balderas",
-    "threads": 304,
-    "answered": 302,
-    "medianMin": 17.9,
-    "p90Min": 78.6,
-    "under60Pct": 85.8,
+    "threads": 301,
+    "answered": 299,
+    "medianMin": 17.0,
+    "p90Min": 75.0,
+    "under60Pct": 86.6,
     "over24h": 9,
     "over24hPct": 3.0,
     "weeks": [
      {
-      "n": 63,
-      "over24hPct": 4.8,
-      "medianMin": 28.4
+      "n": 59,
+      "over24hPct": 5.1,
+      "medianMin": 27.0
      },
      {
-      "n": 54,
+      "n": 55,
       "over24hPct": 0.0,
-      "medianMin": 26.5
+      "medianMin": 26.2
      },
      {
-      "n": 107,
+      "n": 112,
       "over24hPct": 0.9,
-      "medianMin": 9.6
+      "medianMin": 9.8
      },
      {
-      "n": 80,
-      "over24hPct": 6.2,
-      "medianMin": 17.1
+      "n": 75,
+      "over24hPct": 6.7,
+      "medianMin": 17.9
      }
     ]
    },
    {
     "agent": "Eduardo",
-    "threads": 68,
-    "answered": 67,
-    "medianMin": 11.9,
-    "p90Min": 59.0,
-    "under60Pct": 91.0,
+    "threads": 69,
+    "answered": 68,
+    "medianMin": 12.4,
+    "p90Min": 58.8,
+    "under60Pct": 92.6,
     "over24h": 2,
     "over24hPct": 2.9,
     "weeks": [
      {
-      "n": 6,
-      "over24hPct": 16.7,
-      "medianMin": 115.2
+      "n": 4,
+      "over24hPct": 25.0,
+      "medianMin": 183.3
      },
      {
       "n": 11,
@@ -12324,56 +12324,56 @@
       "medianMin": 6.6
      },
      {
-      "n": 17,
+      "n": 19,
       "over24hPct": 0.0,
-      "medianMin": 28.7
+      "medianMin": 24.7
      },
      {
-      "n": 34,
+      "n": 35,
       "over24hPct": 0.0,
-      "medianMin": 8.4
+      "medianMin": 8.5
      }
     ]
    },
    {
     "agent": "Angeles Espinoza",
-    "threads": 192,
-    "answered": 190,
+    "threads": 195,
+    "answered": 193,
     "medianMin": 18.1,
-    "p90Min": 61.5,
-    "under60Pct": 88.9,
+    "p90Min": 60.6,
+    "under60Pct": 89.1,
     "over24h": 3,
-    "over24hPct": 1.6,
+    "over24hPct": 1.5,
     "weeks": [
      {
-      "n": 14,
+      "n": 15,
       "over24hPct": 0.0,
       "medianMin": 9.8
      },
      {
-      "n": 57,
-      "over24hPct": 3.5,
-      "medianMin": 17.9
+      "n": 59,
+      "over24hPct": 3.4,
+      "medianMin": 16.0
      },
      {
-      "n": 57,
+      "n": 56,
       "over24hPct": 1.8,
-      "medianMin": 14.5
+      "medianMin": 15.1
      },
      {
-      "n": 64,
+      "n": 65,
       "over24hPct": 0.0,
-      "medianMin": 30.1
+      "medianMin": 32.2
      }
     ]
    },
    {
     "agent": "Dana",
-    "threads": 87,
-    "answered": 87,
+    "threads": 90,
+    "answered": 90,
     "medianMin": 37.1,
     "p90Min": 79.4,
-    "under60Pct": 78.2,
+    "under60Pct": 78.9,
     "over24h": 1,
     "over24hPct": 1.1,
     "weeks": [
@@ -12393,26 +12393,26 @@
       "medianMin": 36.3
      },
      {
-      "n": 63,
-      "over24hPct": 1.6,
-      "medianMin": 43.4
+      "n": 66,
+      "over24hPct": 1.5,
+      "medianMin": 41.5
      }
     ]
    },
    {
     "agent": "Diego Cedillo",
-    "threads": 272,
-    "answered": 272,
-    "medianMin": 29.7,
+    "threads": 278,
+    "answered": 278,
+    "medianMin": 29.3,
     "p90Min": 76.0,
-    "under60Pct": 83.5,
+    "under60Pct": 83.8,
     "over24h": 3,
     "over24hPct": 1.1,
     "weeks": [
      {
-      "n": 14,
-      "over24hPct": 7.1,
-      "medianMin": 14.4
+      "n": 15,
+      "over24hPct": 6.7,
+      "medianMin": 9.3
      },
      {
       "n": 40,
@@ -12420,30 +12420,30 @@
       "medianMin": 25.3
      },
      {
-      "n": 92,
-      "over24hPct": 1.1,
+      "n": 97,
+      "over24hPct": 1.0,
       "medianMin": 41.4
      },
      {
       "n": 126,
       "over24hPct": 0.8,
-      "medianMin": 25.9
+      "medianMin": 23.7
      }
     ]
    },
    {
     "agent": "Cesar Quijano",
-    "threads": 300,
-    "answered": 299,
+    "threads": 307,
+    "answered": 306,
     "medianMin": 7.4,
     "p90Min": 57.5,
-    "under60Pct": 91.3,
+    "under60Pct": 91.2,
     "over24h": 3,
     "over24hPct": 1.0,
     "weeks": [
      {
-      "n": 31,
-      "over24hPct": 3.2,
+      "n": 32,
+      "over24hPct": 3.1,
       "medianMin": 6.1
      },
      {
@@ -12452,90 +12452,90 @@
       "medianMin": 6.5
      },
      {
-      "n": 93,
-      "over24hPct": 0.0,
-      "medianMin": 10.2
+      "n": 98,
+      "over24hPct": 1.0,
+      "medianMin": 10.9
      },
      {
-      "n": 121,
-      "over24hPct": 1.7,
-      "medianMin": 7.5
+      "n": 122,
+      "over24hPct": 0.8,
+      "medianMin": 7.8
      }
     ]
    },
    {
     "agent": "Hugo",
-    "threads": 99,
-    "answered": 98,
+    "threads": 102,
+    "answered": 101,
     "medianMin": 22.6,
-    "p90Min": 58.5,
-    "under60Pct": 90.8,
+    "p90Min": 56.0,
+    "under60Pct": 91.1,
     "over24h": 1,
     "over24hPct": 1.0,
     "weeks": [
      {
       "n": 6,
       "over24hPct": 0.0,
-      "medianMin": 19.8
+      "medianMin": 26.5
      },
      {
-      "n": 15,
+      "n": 13,
       "over24hPct": 0.0,
       "medianMin": 22.2
      },
      {
-      "n": 20,
+      "n": 22,
       "over24hPct": 0.0,
-      "medianMin": 32.4
+      "medianMin": 31.8
      },
      {
-      "n": 58,
-      "over24hPct": 1.7,
+      "n": 61,
+      "over24hPct": 1.6,
       "medianMin": 22.6
      }
     ]
    },
    {
-    "agent": "Lore Dominguez",
-    "threads": 102,
-    "answered": 101,
-    "medianMin": 19.3,
+    "agent": "Lorena Domínguez",
+    "threads": 104,
+    "answered": 103,
+    "medianMin": 18.5,
     "p90Min": 78.2,
-    "under60Pct": 81.2,
+    "under60Pct": 81.6,
     "over24h": 1,
     "over24hPct": 1.0,
     "weeks": [
      {
-      "n": 9,
+      "n": 10,
       "over24hPct": 0.0,
       "medianMin": 17.4
      },
      {
       "n": 10,
       "over24hPct": 0.0,
-      "medianMin": 18.3
+      "medianMin": 25.7
      },
      {
       "n": 28,
       "over24hPct": 0.0,
-      "medianMin": 22.0
+      "medianMin": 21.3
      },
      {
-      "n": 55,
+      "n": 56,
       "over24hPct": 1.8,
-      "medianMin": 22.1
+      "medianMin": 19.3
      }
     ]
    },
    {
     "agent": "Kate González",
-    "threads": 116,
-    "answered": 116,
-    "medianMin": 19.9,
-    "p90Min": 61.9,
-    "under60Pct": 89.7,
+    "threads": 121,
+    "answered": 121,
+    "medianMin": 19.1,
+    "p90Min": 58.7,
+    "under60Pct": 90.1,
     "over24h": 1,
-    "over24hPct": 0.9,
+    "over24hPct": 0.8,
     "weeks": [
      {
       "n": 10,
@@ -12543,61 +12543,61 @@
       "medianMin": 32.0
      },
      {
-      "n": 16,
+      "n": 18,
       "over24hPct": 0.0,
-      "medianMin": 39.9
+      "medianMin": 38.8
      },
      {
-      "n": 27,
+      "n": 26,
       "over24hPct": 0.0,
-      "medianMin": 19.6
+      "medianMin": 20.9
      },
      {
-      "n": 63,
-      "over24hPct": 1.6,
+      "n": 67,
+      "over24hPct": 1.5,
       "medianMin": 15.6
      }
     ]
    },
    {
     "agent": "Elvia",
-    "threads": 258,
-    "answered": 257,
-    "medianMin": 5.7,
-    "p90Min": 40.8,
-    "under60Pct": 94.9,
+    "threads": 261,
+    "answered": 260,
+    "medianMin": 6.2,
+    "p90Min": 41.5,
+    "under60Pct": 95.0,
     "over24h": 1,
     "over24hPct": 0.4,
     "weeks": [
      {
-      "n": 13,
+      "n": 12,
       "over24hPct": 0.0,
-      "medianMin": 15.3
+      "medianMin": 21.4
      },
      {
-      "n": 29,
+      "n": 32,
       "over24hPct": 0.0,
-      "medianMin": 9.6
+      "medianMin": 12.2
      },
      {
-      "n": 84,
+      "n": 86,
       "over24hPct": 0.0,
-      "medianMin": 7.2
+      "medianMin": 5.4
      },
      {
-      "n": 132,
+      "n": 131,
       "over24hPct": 0.8,
-      "medianMin": 4.5
+      "medianMin": 5.2
      }
     ]
    },
    {
     "agent": "Iran",
-    "threads": 127,
-    "answered": 127,
+    "threads": 132,
+    "answered": 132,
     "medianMin": 4.9,
     "p90Min": 21.8,
-    "under60Pct": 97.6,
+    "under60Pct": 97.7,
     "over24h": 0,
     "over24hPct": 0.0,
     "weeks": [
@@ -12607,9 +12607,9 @@
       "medianMin": 2.5
      },
      {
-      "n": 18,
+      "n": 19,
       "over24hPct": 0.0,
-      "medianMin": 9.1
+      "medianMin": 7.0
      },
      {
       "n": 29,
@@ -12617,7 +12617,7 @@
       "medianMin": 4.4
      },
      {
-      "n": 73,
+      "n": 77,
       "over24hPct": 0.0,
       "medianMin": 5.7
      }
@@ -12625,11 +12625,11 @@
    },
    {
     "agent": "Karen Pérez",
-    "threads": 179,
-    "answered": 179,
+    "threads": 180,
+    "answered": 180,
     "medianMin": 4.2,
     "p90Min": 25.7,
-    "under60Pct": 95.5,
+    "under60Pct": 95.6,
     "over24h": 0,
     "over24hPct": 0.0,
     "weeks": [
@@ -12639,17 +12639,17 @@
       "medianMin": 4.0
      },
      {
-      "n": 22,
+      "n": 24,
       "over24hPct": 0.0,
       "medianMin": 4.5
      },
      {
-      "n": 56,
+      "n": 57,
       "over24hPct": 0.0,
-      "medianMin": 5.2
+      "medianMin": 4.6
      },
      {
-      "n": 81,
+      "n": 79,
       "over24hPct": 0.0,
       "medianMin": 3.2
      }
