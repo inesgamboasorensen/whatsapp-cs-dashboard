@@ -500,14 +500,14 @@
 
     // Resolución: la última corrida si ya la publica agregar_medicion.py; si no, el mes más reciente del análisis anterior
     const resolucionActual = (() => {
-      if (D.resolutionLatest) return { ...D.resolutionLatest, periodo: fechaCorta(D.resolutionLatest.fecha), fechaRef: D.resolutionLatest.fecha };
+      if (D.resolutionLatest) return { ...D.resolutionLatest, periodo: D.resolutionLatest.periodo || fechaCorta(D.resolutionLatest.fecha), fechaRef: D.resolutionLatest.fecha };
       const k = resolutionMonthly.months[resolutionMonthly.months.length - 1];
       return { ...resolutionMonthly.by_month[k], periodo: mesLargo(k), fechaRef: k };
     })();
     // Contratos: la última corrida si ya la publica agregar_medicion.py (prompt v2); si no,
     // el mes con más conversaciones del análisis de julio. by_month es siempre el de julio.
     const contratosActual = (() => {
-      if (D.contractLatest) return { ...D.contractLatest, by_month: contractHandling.by_month, periodo: fechaCorta(D.contractLatest.fecha), fechaRef: D.contractLatest.fecha, corrida: true };
+      if (D.contractLatest) return { ...D.contractLatest, by_month: contractHandling.by_month, periodo: D.contractLatest.periodo || fechaCorta(D.contractLatest.fecha), fechaRef: D.contractLatest.fecha, corrida: true };
       const k = [...contractHandling.by_month].sort((a, b) => b.contractConvs - a.contractConvs)[0].month;
       return { ...contractHandling, periodo: mesLargo(k), fechaRef: k, corrida: false };
     })();
@@ -601,8 +601,10 @@
       const frustSerie = MED.map(m => Number(medPromedio(m)));
       const frustAct = frustSerie[frustSerie.length - 1];
       const MED_ANT = MED[MED.length - 2];
-      const resSerie = [...resolutionMonthly.months.map(k => resolutionMonthly.by_month[k].team.resolvedPct), ...(D.resolutionLatest ? [D.resolutionLatest.team.resolvedPct] : [])];
-      const chSerie = [...contractHandling.by_month.filter(m => m.contractConvs >= 40).map(m => m.problemRate), ...(C.corrida ? [CH.problemRate] : [])];
+      // Las lecturas de julio usaron otra muestra (chats más recientes de Evolution): no se
+      // comparan con las de quincena. La historia empieza en la primera quincena medida.
+      const resSerie = D.resolutionLatest ? [D.resolutionLatest.team.resolvedPct] : resolutionMonthly.months.map(k => resolutionMonthly.by_month[k].team.resolvedPct);
+      const chSerie = C.corrida ? [CH.problemRate] : contractHandling.by_month.filter(m => m.contractConvs >= 40).map(m => m.problemRate);
 
       // tendencia contra el promedio de los puntos anteriores (hasta 3) de la misma serie:
       // una sola semana se mueve mucho por azar
@@ -637,7 +639,7 @@
         { tab: 'resolution', pregunta: '¿Le resolvieron?', metrica: 'conversaciones resueltas', ref: REF.resueltas,
           v: R.team.resolvedPct, valor: `${R.team.resolvedPct}%`, serie: resSerie, viejo: viejo(R.fechaRef), periodo: R.periodo,
           tend: vsPrevios(resSerie, false, pct, 'mediciones'), dist: distancia(R.team.resolvedPct, REF.resueltas, x => `${x} pts`),
-          fuente: `Muestra de ${R.team.total} conversaciones · ${R.periodo}` },
+          fuente: `Muestra de ${R.team.total} conversaciones (máx. 18 por agente) · ${R.periodo}` },
         { tab: 'agents', pregunta: '¿Cómo se sintió?', metrica: 'con frustración moderada o severa', ref: REF.frust,
           v: frustAct, valor: `${frustAct}%`, serie: frustSerie, viejo: viejo(MED_ULT.fecha), periodo: MED_ULT.label.toLowerCase(),
           tend: vsPrevios(frustSerie, true, pct, 'mediciones'), dist: distancia(frustAct, REF.frust, x => `${x} pts`),
@@ -645,7 +647,7 @@
         { tab: 'contracts', pregunta: '¿Su contrato salió bien?', metrica: 'conversaciones de contrato con un problema', ref: REF.contratos,
           v: CH.problemRate, valor: `${CH.problemRate}%`, serie: chSerie, viejo: viejo(C.fechaRef), periodo: C.periodo,
           tend: vsPrevios(chSerie, true, pct, 'meses'), dist: distancia(CH.problemRate, REF.contratos, x => `${x} pts`),
-          fuente: `Muestra de ${CH.contractConvs} conversaciones · ${C.periodo} · se recuperó el ${CH.recoveryPct}%` },
+          fuente: `${C.metodo && C.metodo.startsWith('Todos') ? 'Todos los' : 'Muestra de'} ${CH.contractConvs} cambios pedidos · ${C.periodo} · se recuperó el ${CH.recoveryPct}%` },
       ];
 
       // ── 2. Qué va bien / qué mejorar ────────────────────────────────────
@@ -661,7 +663,7 @@
       if (C.corrida && CH.problems) {
         mejorar.push({ afectados: CH.problems, gravedad: GRAVEDAD.contrato, tab: 'contracts',
           titulo: `Cambios a contrato que no salen bien: ${CH.problemRate}% de los que se piden`,
-          detalle: `${CH.problems} de ${CH.contractConvs} conversaciones de contrato en la muestra del ${C.periodo}; se recuperó el ${CH.recoveryPct}%.`,
+          detalle: `${CH.problems} de ${CH.contractConvs} cambios pedidos en ${C.periodo} no se aplicaron, salieron a medias o mal, o tardaron y el broker tuvo que insistir; ${CH.problemsUnresolved ?? '—'} siguen sin quedar bien.`,
           responsable: 'Legal / contratos, con los Leads escalando',
           accion: 'Revisar con Legal en qué paso fallan los cambios y acordar una verificación antes de mandar la versión corregida.',
           exito: `En la siguiente corrida (${proximaCorrida}): contrato con problema bajando hacia la meta (${REF.contratos.txt}).` });
@@ -783,9 +785,9 @@
       const porQue = [
         ['Sin respuesta >24 h', REF.over24h.txt, `El mejor 25% de los agentes ya está en ${q25('over24hPct') === 0 ? '0%' : `${q25('over24hPct') ?? '—'}% o menos`}, y de lunes a viernes el equipo completo ronda el 2%. El problema está concentrado en el fin de semana, así que es alcanzable.`],
         ['Primera respuesta', `${REF.primera.txt} · p90 ${REF.p90.txt}`, `El equipo ya contesta en ${fmtMin(T ? T.medianMin : null)} (mediana): la meta deja margen para días pesados sin bajar el estándar, y el mejor 25% está en ${fmtMin(q25('medianMin'))}. La mediana dice cómo le va al broker típico; el p90, al que más espera.`],
-        ['Resueltas', REF.resueltas.txt, 'Históricamente 73–75%. La meta pide 5 puntos más: que 4 de cada 5 brokers terminen con su tema atendido.'],
+        ['Resueltas', REF.resueltas.txt, `Que 4 de cada 5 brokers terminen con su tema atendido. Hoy: ${R.team.resolvedPct}% (${R.periodo}); en julio, con otra muestra, era 73–75%.`],
         ['Frustración', REF.frust.txt, `Empezó en ${MED_1RA.equipo || '39.7'}% (${MED_1RA.label.toLowerCase()}) y la mejor medición es la actual. La meta es seguir bajando hasta 1 de cada 10 conversaciones.`],
-        ['Contrato con problema', REF.contratos.txt, 'Hoy falla 1 de cada 3 cambios a contrato; en mayo fue 22%. La meta es volver a ese nivel y bajarlo.'],
+        ['Contrato con problema', REF.contratos.txt, `Hoy ${CH.problemRate}% de los cambios pedidos tuvo un problema (${C.periodo}, contando los que tardaron); en mayo fue 22%. La meta es volver a ese nivel y bajarlo.`],
       ];
 
       const Hallazgo = ({ h, tono }) => (
@@ -2993,7 +2995,9 @@
         return cs && cs.totalBiz >= 5 ? Math.round(cs.missedBiz / cs.totalBiz * 100) : null;
       };
 
-      const fr = Object.fromEntries((firstResponse ? firstResponse.agents : []).map(a => [a.agent, a]));
+      const qc = firstResponse && firstResponse.quincenas ? firstResponse.quincenas.filter(q => q.closed) : [];
+      const qUlt = qc[qc.length - 1];   // misma quincena que la frustración
+      const fr = Object.fromEntries((qUlt ? qUlt.agents : firstResponse ? firstResponse.agents : []).map(a => [a.agent, a]));
       const mismoCorte = (x) => x && x.fecha === MED_ULT.fecha;
       const resL = mismoCorte(D.resolutionLatest) ? Object.fromEntries(D.resolutionLatest.agents.map(a => [a.agent, a])) : null;
       const chL  = mismoCorte(D.contractLatest)   ? Object.fromEntries(D.contractLatest.agents.map(a => [a.agent, a])) : null;
@@ -3011,8 +3015,8 @@
 
       const pts = (k) => data.map(d => ({ name: d.name, x: d[k], y: d.frust }));
       const vars = [
-        { k: 'over24h', titulo: 'Frustración vs Sin respuesta >24 h', eje: '% sin respuesta en más de 24 h', var: '1 · Sin respuesta >24 h', fuente: 'últimas 4 semanas, todas las conversaciones', esperado: 1 },
-        { k: 'primera', titulo: 'Frustración vs Primera respuesta', eje: 'Mediana de primera respuesta (min hábiles)', var: '2 · Primera respuesta', fuente: 'últimas 4 semanas, todas las conversaciones', esperado: 1 },
+        { k: 'over24h', titulo: 'Frustración vs Sin respuesta >24 h', eje: '% sin respuesta en más de 24 h', var: '1 · Sin respuesta >24 h', fuente: `${qUlt ? 'quincena ' + qUlt.label : 'últimas 4 semanas'}, todas las conversaciones`, esperado: 1 },
+        { k: 'primera', titulo: 'Frustración vs Primera respuesta', eje: 'Mediana de primera respuesta (min hábiles)', var: '2 · Primera respuesta', fuente: `${qUlt ? 'quincena ' + qUlt.label : 'últimas 4 semanas'}, todas las conversaciones`, esperado: 1 },
         { k: 'res', titulo: 'Frustración vs % Resueltas', eje: '% conversaciones resueltas', var: '3 · Resueltas', pendiente: !resL, esperado: -1, xMax: 100 },
         { k: 'ch', titulo: 'Frustración vs Contratos con problema', eje: '% contratos con problema', var: '5 · Contrato con problema', pendiente: !chL, esperado: 1, xMax: 100 },
         { k: 'calls', titulo: 'Frustración vs Llamadas perdidas', eje: '% perdidas en horario laboral', var: 'Llamadas perdidas', fuente: 'webhook en vivo, mismas 4 semanas (≥5 llamadas)', esperado: 1, xMax: 100 },

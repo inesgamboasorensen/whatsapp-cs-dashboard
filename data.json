@@ -14165,5 +14165,479 @@
     "fallas": 1
    }
   ]
+ },
+ "resolutionLatest": {
+  "fecha": "2026-10-15",
+  "key": "oct1526",
+  "periodo": "1–15 oct",
+  "metodo": "Muestra de la quincena 1–15 oct desde Supabase (máx. 18 conversaciones por agente), leída el 23 oct con las instrucciones del clasificador (prompt v2).",
+  "team": {
+   "total": 452,
+   "resolvedPct": 60,
+   "unresolvedPct": 24,
+   "unclearPct": 16,
+   "escalationPct": 39
+  },
+  "agents": [
+   {
+    "agent": "Alex",
+    "total": 17,
+    "resolvedPct": 59,
+    "unresolvedPct": 29,
+    "unclearPct": 12,
+    "escalationPct": 47
+   },
+   {
+    "agent": "Alfonso",
+    "total": 18,
+    "resolvedPct": 44,
+    "unresolvedPct": 39,
+    "unclearPct": 17,
+    "escalationPct": 33
+   },
+   {
+    "agent": "Angeles Espinoza",
+    "total": 18,
+    "resolvedPct": 61,
+    "unresolvedPct": 33,
+    "unclearPct": 6,
+    "escalationPct": 33
+   },
+   {
+    "agent": "Carlos",
+    "total": 18,
+    "resolvedPct": 44,
+    "unresolvedPct": 50,
+    "unclearPct": 6,
+    "escalationPct": 72
+   },
+   {
+    "agent": "Cesar Quijano",
+    "total": 18,
+    "resolvedPct": 50,
+    "unresolvedPct": 28,
+    "unclearPct": 22,
+    "escalationPct": 83
+   },
+   {
+    "agent": "Dana",
+    "total": 8,
+    "resolvedPct": 38,
+    "unresolvedPct": 25,
+    "unclearPct": 38,
+    "escalationPct": 62
+   },
+   {
+    "agent": "Daniel Luna",
+    "total": 18,
+    "resolvedPct": 56,
+    "unresolvedPct": 22,
+    "unclearPct": 22,
+    "escalationPct": 22
+   },
+   {
+    "agent": "Diego Cedillo",
+    "total": 18,
+    "resolvedPct": 67,
+    "unresolvedPct": 22,
+    "unclearPct": 11,
+    "escalationPct": 50
+   },
+   {
+    "agent": "Dylan Arellano",
+    "total": 13,
+    "resolvedPct": 46,
+    "unresolvedPct": 31,
+    "unclearPct": 23,
+    "escalationPct": 38
+   },
+   {
+    "agent": "Eduardo",
+    "total": 18,
+    "resolvedPct": 83,
+    "unresolvedPct": 11,
+    "unclearPct": 6,
+    "escalationPct": 28
+   },
+   {
+    "agent": "Elizabeth Bustos",
+    "total": 18,
+    "resolvedPct": 72,
+    "unresolvedPct": 22,
+    "unclearPct": 6,
+    "escalationPct": 28
+   },
+   {
+    "agent": "Elsa Hernández",
+    "total": 18,
+    "resolvedPct": 67,
+    "unresolvedPct": 22,
+    "unclearPct": 11,
+    "escalationPct": 33
+   },
+   {
+    "agent": "Elvia",
+    "total": 18,
+    "resolvedPct": 78,
+    "unresolvedPct": 17,
+    "unclearPct": 6,
+    "escalationPct": 28
+   },
+   {
+    "agent": "Gabriel García",
+    "total": 18,
+    "resolvedPct": 61,
+    "unresolvedPct": 11,
+    "unclearPct": 28,
+    "escalationPct": 17
+   },
+   {
+    "agent": "Gael Santiago",
+    "total": 18,
+    "resolvedPct": 44,
+    "unresolvedPct": 33,
+    "unclearPct": 22,
+    "escalationPct": 33
+   },
+   {
+    "agent": "Horace \"el bueno\"",
+    "total": 18,
+    "resolvedPct": 61,
+    "unresolvedPct": 11,
+    "unclearPct": 28,
+    "escalationPct": 39
+   },
+   {
+    "agent": "Hugo",
+    "total": 18,
+    "resolvedPct": 39,
+    "unresolvedPct": 17,
+    "unclearPct": 44,
+    "escalationPct": 44
+   },
+   {
+    "agent": "Iran",
+    "total": 18,
+    "resolvedPct": 50,
+    "unresolvedPct": 22,
+    "unclearPct": 28,
+    "escalationPct": 56
+   },
+   {
+    "agent": "Karen Pérez",
+    "total": 18,
+    "resolvedPct": 72,
+    "unresolvedPct": 17,
+    "unclearPct": 11,
+    "escalationPct": 22
+   },
+   {
+    "agent": "Kate González",
+    "total": 18,
+    "resolvedPct": 56,
+    "unresolvedPct": 28,
+    "unclearPct": 17,
+    "escalationPct": 44
+   },
+   {
+    "agent": "Lorena Domínguez",
+    "total": 18,
+    "resolvedPct": 28,
+    "unresolvedPct": 61,
+    "unclearPct": 11,
+    "escalationPct": 67
+   },
+   {
+    "agent": "Paola Viveros",
+    "total": 18,
+    "resolvedPct": 89,
+    "unresolvedPct": 11,
+    "unclearPct": 0,
+    "escalationPct": 0
+   },
+   {
+    "agent": "Saúl",
+    "total": 18,
+    "resolvedPct": 56,
+    "unresolvedPct": 17,
+    "unclearPct": 28,
+    "escalationPct": 33
+   },
+   {
+    "agent": "Tania Balderas",
+    "total": 18,
+    "resolvedPct": 67,
+    "unresolvedPct": 11,
+    "unclearPct": 22,
+    "escalationPct": 22
+   },
+   {
+    "agent": "Xel Xanat",
+    "total": 18,
+    "resolvedPct": 72,
+    "unresolvedPct": 17,
+    "unclearPct": 11,
+    "escalationPct": 67
+   },
+   {
+    "agent": "Zayret Cornejo",
+    "total": 18,
+    "resolvedPct": 89,
+    "unresolvedPct": 11,
+    "unclearPct": 0,
+    "escalationPct": 33
+   }
+  ]
+ },
+ "contractLatest": {
+  "fecha": "2026-10-15",
+  "key": "oct1526",
+  "periodo": "1–15 oct",
+  "prompt_version": "v2",
+  "metodo": "Todos los chats de la quincena donde el broker pidió cambiar el contrato (no una muestra), leídos el 23 oct. Problema = no se aplicó, a medias, mal o tardó y tuvo que insistir (misma definición que el prompt v2).",
+  "team": {
+   "n": 264,
+   "contractConvs": 264,
+   "problems": 108,
+   "problemRate": 41,
+   "problemsUnresolved": 39,
+   "recoveryPct": 64
+  },
+  "agents": [
+   {
+    "agent": "Alex",
+    "n": 1,
+    "contractConvs": 1,
+    "problems": 0,
+    "problemRate": 0,
+    "problemsUnresolved": 0,
+    "recoveryPct": null
+   },
+   {
+    "agent": "Alfonso",
+    "n": 7,
+    "contractConvs": 7,
+    "problems": 1,
+    "problemRate": 14,
+    "problemsUnresolved": 0,
+    "recoveryPct": 100
+   },
+   {
+    "agent": "Angeles Espinoza",
+    "n": 13,
+    "contractConvs": 13,
+    "problems": 5,
+    "problemRate": 38,
+    "problemsUnresolved": 2,
+    "recoveryPct": 60
+   },
+   {
+    "agent": "Carlos",
+    "n": 8,
+    "contractConvs": 8,
+    "problems": 4,
+    "problemRate": 50,
+    "problemsUnresolved": 2,
+    "recoveryPct": 50
+   },
+   {
+    "agent": "Cesar Quijano",
+    "n": 19,
+    "contractConvs": 19,
+    "problems": 13,
+    "problemRate": 68,
+    "problemsUnresolved": 2,
+    "recoveryPct": 85
+   },
+   {
+    "agent": "Dana",
+    "n": 2,
+    "contractConvs": 2,
+    "problems": 0,
+    "problemRate": 0,
+    "problemsUnresolved": 0,
+    "recoveryPct": null
+   },
+   {
+    "agent": "Daniel Luna",
+    "n": 10,
+    "contractConvs": 10,
+    "problems": 5,
+    "problemRate": 50,
+    "problemsUnresolved": 1,
+    "recoveryPct": 80
+   },
+   {
+    "agent": "Diego Cedillo",
+    "n": 14,
+    "contractConvs": 14,
+    "problems": 4,
+    "problemRate": 29,
+    "problemsUnresolved": 3,
+    "recoveryPct": 25
+   },
+   {
+    "agent": "Dylan Arellano",
+    "n": 5,
+    "contractConvs": 5,
+    "problems": 0,
+    "problemRate": 0,
+    "problemsUnresolved": 0,
+    "recoveryPct": null
+   },
+   {
+    "agent": "Eduardo",
+    "n": 4,
+    "contractConvs": 4,
+    "problems": 1,
+    "problemRate": 25,
+    "problemsUnresolved": 0,
+    "recoveryPct": 100
+   },
+   {
+    "agent": "Elizabeth Bustos",
+    "n": 14,
+    "contractConvs": 14,
+    "problems": 6,
+    "problemRate": 43,
+    "problemsUnresolved": 2,
+    "recoveryPct": 67
+   },
+   {
+    "agent": "Elsa Hernández",
+    "n": 29,
+    "contractConvs": 29,
+    "problems": 13,
+    "problemRate": 45,
+    "problemsUnresolved": 8,
+    "recoveryPct": 38
+   },
+   {
+    "agent": "Elvia",
+    "n": 11,
+    "contractConvs": 11,
+    "problems": 1,
+    "problemRate": 9,
+    "problemsUnresolved": 0,
+    "recoveryPct": 100
+   },
+   {
+    "agent": "Gabriel García",
+    "n": 14,
+    "contractConvs": 14,
+    "problems": 7,
+    "problemRate": 50,
+    "problemsUnresolved": 2,
+    "recoveryPct": 71
+   },
+   {
+    "agent": "Gael Santiago",
+    "n": 7,
+    "contractConvs": 7,
+    "problems": 2,
+    "problemRate": 29,
+    "problemsUnresolved": 1,
+    "recoveryPct": 50
+   },
+   {
+    "agent": "Horace \"el bueno\"",
+    "n": 4,
+    "contractConvs": 4,
+    "problems": 2,
+    "problemRate": 50,
+    "problemsUnresolved": 0,
+    "recoveryPct": 100
+   },
+   {
+    "agent": "Hugo",
+    "n": 5,
+    "contractConvs": 5,
+    "problems": 3,
+    "problemRate": 60,
+    "problemsUnresolved": 0,
+    "recoveryPct": 100
+   },
+   {
+    "agent": "Iran",
+    "n": 4,
+    "contractConvs": 4,
+    "problems": 1,
+    "problemRate": 25,
+    "problemsUnresolved": 0,
+    "recoveryPct": 100
+   },
+   {
+    "agent": "Karen Pérez",
+    "n": 8,
+    "contractConvs": 8,
+    "problems": 3,
+    "problemRate": 38,
+    "problemsUnresolved": 1,
+    "recoveryPct": 67
+   },
+   {
+    "agent": "Kate González",
+    "n": 5,
+    "contractConvs": 5,
+    "problems": 1,
+    "problemRate": 20,
+    "problemsUnresolved": 1,
+    "recoveryPct": 0
+   },
+   {
+    "agent": "Lorena Domínguez",
+    "n": 2,
+    "contractConvs": 2,
+    "problems": 1,
+    "problemRate": 50,
+    "problemsUnresolved": 0,
+    "recoveryPct": 100
+   },
+   {
+    "agent": "Paola Viveros",
+    "n": 6,
+    "contractConvs": 6,
+    "problems": 4,
+    "problemRate": 67,
+    "problemsUnresolved": 2,
+    "recoveryPct": 50
+   },
+   {
+    "agent": "Saúl",
+    "n": 19,
+    "contractConvs": 19,
+    "problems": 6,
+    "problemRate": 32,
+    "problemsUnresolved": 2,
+    "recoveryPct": 67
+   },
+   {
+    "agent": "Tania Balderas",
+    "n": 11,
+    "contractConvs": 11,
+    "problems": 3,
+    "problemRate": 27,
+    "problemsUnresolved": 0,
+    "recoveryPct": 100
+   },
+   {
+    "agent": "Xel Xanat",
+    "n": 21,
+    "contractConvs": 21,
+    "problems": 14,
+    "problemRate": 67,
+    "problemsUnresolved": 7,
+    "recoveryPct": 50
+   },
+   {
+    "agent": "Zayret Cornejo",
+    "n": 21,
+    "contractConvs": 21,
+    "problems": 8,
+    "problemRate": 38,
+    "problemsUnresolved": 3,
+    "recoveryPct": 62
+   }
+  ]
  }
 }
