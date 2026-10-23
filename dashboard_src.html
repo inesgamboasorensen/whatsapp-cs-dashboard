@@ -490,7 +490,7 @@
     // sirve para explicar por qué se movió una de estas, no para seguir la experiencia.
     //   1–2 salen de TODAS las conversaciones (Postgres, compute_first_response.py)
     //   3–4 salen de una muestra leída por Claude (classify.py) → frágiles: ver nota de sep
-    //   5   todavía no la mide ninguna corrida automática
+    //   5   también sale de esa muestra desde el prompt v2 (contractLatest); antes, del análisis de julio
     const RES_MIN_N = 30;   // por debajo, el % de un agente se mueve mucho con 1–2 casos
     const DIAS_VIEJO = 45;  // un dato más viejo que esto se marca como desactualizado
 
@@ -504,8 +504,13 @@
       const k = resolutionMonthly.months[resolutionMonthly.months.length - 1];
       return { ...resolutionMonthly.by_month[k], periodo: mesLargo(k), fechaRef: k };
     })();
-    // Contratos: el mes con más conversaciones del último análisis
-    const contratosMes = [...contractHandling.by_month].sort((a, b) => b.contractConvs - a.contractConvs)[0].month;
+    // Contratos: la última corrida si ya la publica agregar_medicion.py (prompt v2); si no,
+    // el mes con más conversaciones del análisis de julio. by_month es siempre el de julio.
+    const contratosActual = (() => {
+      if (D.contractLatest) return { ...D.contractLatest, by_month: contractHandling.by_month, periodo: fechaCorta(D.contractLatest.fecha), fechaRef: D.contractLatest.fecha, corrida: true };
+      const k = [...contractHandling.by_month].sort((a, b) => b.contractConvs - a.contractConvs)[0].month;
+      return { ...contractHandling, periodo: mesLargo(k), fechaRef: k, corrida: false };
+    })();
 
     // Aviso arriba de una pestaña cuyos datos se quedaron atrás
     function AvisoViejo({ que, periodo, detalle }) {
@@ -519,7 +524,7 @@
     function Resumen({ onJump }) {
       const F = firstResponse;
       const R = resolucionActual;
-      const CH = contractHandling.team;
+      const C = contratosActual, CH = C.team;
       const [orden, setOrden] = React.useState('over24hPct');
       const [llamadas, setLlamadas] = React.useState(null);
       React.useEffect(() => {
@@ -584,16 +589,16 @@
         },
         {
           tab: 'contracts', pregunta: '¿Su contrato salió bien?',
-          valor: `${CH.problemRate}%`, metrica: 'conversaciones de contrato con un problema',
-          sub: `Se recuperó el ${CH.recoveryPct}%`,
-          fuente: `Muestra de ${CH.contractConvs} conversaciones · ${mesLargo(contratosMes)}`,
-          viejo: viejo(contratosMes),
+          valor: CH.problemRate == null ? '—' : `${CH.problemRate}%`, metrica: 'conversaciones de contrato con un problema',
+          sub: CH.recoveryPct == null ? null : `Se recuperó el ${CH.recoveryPct}%`,
+          fuente: `Muestra de ${CH.contractConvs} conversaciones · ${C.periodo}`,
+          viejo: viejo(C.fechaRef),
         },
       ];
 
       // ── tabla por agente: el padrón son los agentes activos en las últimas 4 semanas ──
       const idx = (arr, k = 'agent') => Object.fromEntries((arr || []).map(a => [a[k], a]));
-      const fr = idx(F && F.agents), rs = idx(R.agents), chA = idx(contractHandling.agents);
+      const fr = idx(F && F.agents), rs = idx(R.agents), chA = idx(C.agents);
       const fn = idx(D.frustrationLatest && D.frustrationLatest.key === MED_ULT.key ? D.frustrationLatest.agents : null);
       const frustDe = Object.fromEntries(agentRanking.map(a => [a.name, a[MED_ULT.key]]));
       const nombres = F ? F.agents.map(a => a.agent) : [...new Set(agentRanking.map(a => a.name))];
@@ -633,7 +638,7 @@
           {sub && <div className="text-[10px] font-normal text-gray-400">{sub}</div>}
         </th>
       );
-      const resViejo = viejo(R.fechaRef), chViejo = viejo(contratosMes);
+      const resViejo = viejo(R.fechaRef), chViejo = viejo(C.fechaRef);
 
       return (
         <Section title="Experiencia del Broker" id="resumen">
@@ -642,7 +647,7 @@
             {F && <span><span className="text-gray-400">Conversaciones al</span> <strong className="text-navy-dark">{fechaCorta(F.generatedAt)}</strong></span>}
             <span><span className="text-gray-400">Última muestra leída por IA</span> <strong className="text-navy-dark">{MED_ULT.label}</strong> · {MED_ULT.agentes} agentes</span>
             {(resViejo || chViejo) && (
-              <span className="text-amber-700">⚠ {[resViejo && `resolución de ${R.periodo}`, chViejo && `contratos de ${mesLargo(contratosMes)}`].filter(Boolean).join(' y ')}: desactualizados</span>
+              <span className="text-amber-700">⚠ {[resViejo && `resolución de ${R.periodo}`, chViejo && `contratos de ${C.periodo}`].filter(Boolean).join(' y ')}: desactualizados</span>
             )}
           </div>
 
@@ -678,7 +683,7 @@
                     <Th k="medianMin" sub="4 sem">2 · 1ª respuesta</Th>
                     <Th k="resolvedPct" sub={R.periodo}>3 · Resueltas</Th>
                     <Th k="frust" sub={MED_ULT.label.toLowerCase()}>4 · Frustración</Th>
-                    <Th k="problemRate" sub={mesLargo(contratosMes)}>5 · Contrato c/ problema</Th>
+                    <Th k="problemRate" sub={C.periodo}>5 · Contrato c/ problema</Th>
                   </tr>
                 </thead>
                 <tbody>
@@ -3138,17 +3143,19 @@
 
     // ─── Manejo de Contratos ───
     function ContractHandlingSection() {
-      const d = contractHandling;
+      const d = contratosActual;
       const [sortKey, setSortKey] = React.useState('problemRate'); // problemRate | recoveryPct
-      const agents = [...d.agents].sort((a, b) =>
+      // en una corrida, un agente sin conversaciones de contrato en la muestra no tiene %
+      const agents = d.agents.filter(a => a.contractConvs > 0).sort((a, b) =>
         sortKey === 'problemRate'
           ? b.problemRate - a.problemRate
           : (a.recoveryPct == null ? 101 : a.recoveryPct) - (b.recoveryPct == null ? 101 : b.recoveryPct));
       const colRate = (p) => p >= 45 ? '#E8505B' : p >= 30 ? '#F97316' : p >= 20 ? '#FACC15' : '#2EC4B6';
       const colRec = (p) => p == null ? '#94A3B8' : p >= 70 ? '#2EC4B6' : p >= 50 ? '#22C55E' : p >= 33 ? '#F97316' : '#E8505B';
       // CRÍTICO = alto % con problema (>=40) Y baja recuperación (<50%) — donde deben enfocarse los managers
-      const isCritical = (a) => a.problemRate >= 40 && a.recoveryPct != null && a.recoveryPct < 50;
-      const critical = [...d.agents].filter(isCritical).sort((a, b) => b.problemRate - a.problemRate);
+      // en una corrida la muestra por agente es chica: sin n suficiente no se marca a nadie
+      const isCritical = (a) => a.problemRate >= 40 && a.recoveryPct != null && a.recoveryPct < 50 && (!d.corrida || a.contractConvs >= RES_MIN_N);
+      const critical = agents.filter(isCritical).sort((a, b) => b.problemRate - a.problemRate);
       const Seg = ({ value, set, opts }) => (
         <div className="inline-flex bg-white border border-gray-200 rounded-lg p-1 gap-1 shadow-sm">
           {opts.map(o => (
@@ -3159,10 +3166,14 @@
       );
       return (
         <Section title="Manejo de Contratos" id="contracts">
-          {diasDesde(contratosMes) > DIAS_VIEJO && <AvisoViejo periodo={mesLargo(contratosMes)} que="Ninguna corrida automática mide todavía el manejo de contratos." detalle="Hasta que se agregue al clasificador, este dato no se actualiza." />}
+          {diasDesde(d.fechaRef) > DIAS_VIEJO && (d.corrida
+            ? <AvisoViejo periodo={d.periodo} que="La última corrida que midió contratos es de hace más de 45 días." detalle="Revisa que el análisis quincenal esté corriendo con el prompt v2." />
+            : <AvisoViejo periodo={d.periodo} que="Ninguna corrida automática mide todavía el manejo de contratos." detalle="Hasta que se agregue al clasificador, este dato no se actualiza." />)}
           <div className="bg-white rounded-xl p-4 mb-6 border-l-4 border-coral shadow-sm">
             <p className="text-sm text-gray-700 mb-1.5">
-              Mide qué tan bien maneja cada asesor los <strong>cambios al contrato</strong> que pide el cliente. Sobre una muestra grande: <strong>{d.team.contractConvs} conversaciones de contrato</strong> (~20 por agente).
+              Mide qué tan bien maneja cada asesor los <strong>cambios al contrato</strong> que pide el cliente. {d.corrida
+                ? <>Corrida del {d.periodo}: <strong>{d.team.contractConvs} conversaciones de contrato</strong> dentro de la muestra de {d.team.convsTotal} que lee la IA. Por agente son pocas: los de menos de {RES_MIN_N} van en gris.</>
+                : <>Sobre una muestra grande: <strong>{d.team.contractConvs} conversaciones de contrato</strong> (~20 por agente).</>}
             </p>
             <p className="text-xs text-gray-500">
               ⚠️ La causa raíz de que un cambio no se aplique suele estar <strong>aguas arriba (Legal/contratos)</strong>, no en el asesor. Esta vista muestra dónde se concentra y, sobre todo, <strong>quién logra recuperarlo</strong> (recuperación) — la señal más atribuible al asesor.
@@ -3187,11 +3198,11 @@
           {/* Team KPIs */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
             <div className="bg-white rounded-xl p-5 shadow-sm" style={{ borderLeft: '4px solid #F97316' }}>
-              <div className="text-3xl font-extrabold text-orange-500">{d.team.problemRate}%</div>
+              <div className="text-3xl font-extrabold text-orange-500">{d.team.problemRate == null ? '—' : d.team.problemRate + '%'}</div>
               <div className="text-xs text-gray-500 mt-1">Conversaciones de contrato con problema (equipo)</div>
             </div>
             <div className="bg-white rounded-xl p-5 shadow-sm" style={{ borderLeft: '4px solid #2EC4B6' }}>
-              <div className="text-3xl font-extrabold text-teal">{d.team.recoveryPct}%</div>
+              <div className="text-3xl font-extrabold text-teal">{d.team.recoveryPct == null ? '—' : d.team.recoveryPct + '%'}</div>
               <div className="text-xs text-gray-500 mt-1">Recuperación: problemas que sí se resolvieron</div>
             </div>
             <div className="bg-white rounded-xl p-5 shadow-sm" style={{ borderLeft: '4px solid #1B2A4A' }}>
@@ -3207,7 +3218,7 @@
           {d.by_month && d.by_month.length > 1 && (
             <div className="bg-white rounded-xl p-5 mb-6 shadow-sm" style={{ borderLeft: '4px solid #1B2A4A' }}>
               <p className="text-sm font-bold text-navy-dark mb-0.5">Tendencia por mes (equipo)</p>
-              <p className="text-xs text-gray-500 mb-3">% de contratos con problema y % de recuperación, por mes. Se va llenando cada corrida.</p>
+              <p className="text-xs text-gray-500 mb-3">% de contratos con problema y % de recuperación, por mes{d.corrida ? <>, del análisis de julio (pull profundo, ≤70 chats por agente). No es la misma muestra que la corrida del {d.periodo}: compáralo con cuidado.</> : '. Se va llenando cada corrida.'}</p>
               <div className="flex items-center gap-2 flex-wrap">
                 {d.by_month.map((m, i) => {
                   const mn = new Date(m.month + '-01T00:00:00').toLocaleDateString('es-MX', { month: 'short', year: 'numeric' });
@@ -3253,9 +3264,9 @@
                       <td className="py-3 px-3 text-sm font-medium text-navy-dark">
                         {a.agent}
                         {isCritical(a) && <span className="ml-2 text-[10px] font-bold px-1.5 py-0.5 rounded" style={{ background: '#E8505B', color: 'white' }}>CRÍTICO</span>}
-                        {!a.inRoster && <span className="ml-2 text-[10px] text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded">nuevo</span>}
+                        {a.inRoster === false && <span className="ml-2 text-[10px] text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded">nuevo</span>}
                       </td>
-                      <td className="py-3 px-3 text-center text-sm text-gray-600">{a.contractConvs}</td>
+                      <td className={`py-3 px-3 text-center text-sm ${d.corrida && a.contractConvs < RES_MIN_N ? 'text-gray-400' : 'text-gray-600'}`}>{a.contractConvs}</td>
                       <td className="py-3 px-3 bg-orange-500/5">
                         <div className="flex items-center gap-2">
                           <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
@@ -3275,7 +3286,7 @@
             </div>
             <div className="px-4 py-3 bg-gray-50 border-t">
               <p className="text-xs text-gray-400">
-                <strong>% con problema</strong> = de sus conversaciones de contrato, cuántas tuvieron un cambio no aplicado / parcial / mal / demorado. <strong>% recuperación</strong> = de esos problemas, cuántos sí se resolvieron al final (alto = bueno). · 3 asesores no estaban conectados en este pull (Elizabeth Bustos, Elizabeth Castro, Itzel Alarcón); 2 instancias nuevas aparecen marcadas "nuevo".
+                <strong>% con problema</strong> = de sus conversaciones de contrato, cuántas tuvieron un cambio no aplicado / parcial / mal / demorado. <strong>% recuperación</strong> = de esos problemas, cuántos sí se resolvieron al final (alto = bueno). {d.corrida ? `· Corrida del ${d.periodo} (prompt ${d.prompt_version}). Solo aparecen agentes con al menos una conversación de contrato en la muestra.` : '· 3 asesores no estaban conectados en este pull (Elizabeth Bustos, Elizabeth Castro, Itzel Alarcón); 2 instancias nuevas aparecen marcadas "nuevo".'}
               </p>
             </div>
           </div>

@@ -615,7 +615,7 @@ function boot(D) {
   // sirve para explicar por qué se movió una de estas, no para seguir la experiencia.
   //   1–2 salen de TODAS las conversaciones (Postgres, compute_first_response.py)
   //   3–4 salen de una muestra leída por Claude (classify.py) → frágiles: ver nota de sep
-  //   5   todavía no la mide ninguna corrida automática
+  //   5   también sale de esa muestra desde el prompt v2 (contractLatest); antes, del análisis de julio
   const RES_MIN_N = 30; // por debajo, el % de un agente se mueve mucho con 1–2 casos
   const DIAS_VIEJO = 45; // un dato más viejo que esto se marca como desactualizado
 
@@ -647,8 +647,24 @@ function boot(D) {
       fechaRef: k
     };
   })();
-  // Contratos: el mes con más conversaciones del último análisis
-  const contratosMes = [...contractHandling.by_month].sort((a, b) => b.contractConvs - a.contractConvs)[0].month;
+  // Contratos: la última corrida si ya la publica agregar_medicion.py (prompt v2); si no,
+  // el mes con más conversaciones del análisis de julio. by_month es siempre el de julio.
+  const contratosActual = (() => {
+    if (D.contractLatest) return {
+      ...D.contractLatest,
+      by_month: contractHandling.by_month,
+      periodo: fechaCorta(D.contractLatest.fecha),
+      fechaRef: D.contractLatest.fecha,
+      corrida: true
+    };
+    const k = [...contractHandling.by_month].sort((a, b) => b.contractConvs - a.contractConvs)[0].month;
+    return {
+      ...contractHandling,
+      periodo: mesLargo(k),
+      fechaRef: k,
+      corrida: false
+    };
+  })();
 
   // Aviso arriba de una pestaña cuyos datos se quedaron atrás
   function AvisoViejo({
@@ -665,7 +681,8 @@ function boot(D) {
   }) {
     const F = firstResponse;
     const R = resolucionActual;
-    const CH = contractHandling.team;
+    const C = contratosActual,
+      CH = C.team;
     const [orden, setOrden] = React.useState('over24hPct');
     const [llamadas, setLlamadas] = React.useState(null);
     React.useEffect(() => {
@@ -743,18 +760,18 @@ function boot(D) {
     }, {
       tab: 'contracts',
       pregunta: '¿Su contrato salió bien?',
-      valor: `${CH.problemRate}%`,
+      valor: CH.problemRate == null ? '—' : `${CH.problemRate}%`,
       metrica: 'conversaciones de contrato con un problema',
-      sub: `Se recuperó el ${CH.recoveryPct}%`,
-      fuente: `Muestra de ${CH.contractConvs} conversaciones · ${mesLargo(contratosMes)}`,
-      viejo: viejo(contratosMes)
+      sub: CH.recoveryPct == null ? null : `Se recuperó el ${CH.recoveryPct}%`,
+      fuente: `Muestra de ${CH.contractConvs} conversaciones · ${C.periodo}`,
+      viejo: viejo(C.fechaRef)
     }];
 
     // ── tabla por agente: el padrón son los agentes activos en las últimas 4 semanas ──
     const idx = (arr, k = 'agent') => Object.fromEntries((arr || []).map(a => [a[k], a]));
     const fr = idx(F && F.agents),
       rs = idx(R.agents),
-      chA = idx(contractHandling.agents);
+      chA = idx(C.agents);
     const fn = idx(D.frustrationLatest && D.frustrationLatest.key === MED_ULT.key ? D.frustrationLatest.agents : null);
     const frustDe = Object.fromEntries(agentRanking.map(a => [a.name, a[MED_ULT.key]]));
     const nombres = F ? F.agents.map(a => a.agent) : [...new Set(agentRanking.map(a => a.name))];
@@ -817,7 +834,7 @@ function boot(D) {
       className: "text-[10px] font-normal text-gray-400"
     }, sub));
     const resViejo = viejo(R.fechaRef),
-      chViejo = viejo(contratosMes);
+      chViejo = viejo(C.fechaRef);
     return /*#__PURE__*/React.createElement(Section, {
       title: "Experiencia del Broker",
       id: "resumen"
@@ -833,7 +850,7 @@ function boot(D) {
       className: "text-navy-dark"
     }, MED_ULT.label), " \xB7 ", MED_ULT.agentes, " agentes"), (resViejo || chViejo) && /*#__PURE__*/React.createElement("span", {
       className: "text-amber-700"
-    }, "\u26A0 ", [resViejo && `resolución de ${R.periodo}`, chViejo && `contratos de ${mesLargo(contratosMes)}`].filter(Boolean).join(' y '), ": desactualizados")), /*#__PURE__*/React.createElement("div", {
+    }, "\u26A0 ", [resViejo && `resolución de ${R.periodo}`, chViejo && `contratos de ${C.periodo}`].filter(Boolean).join(' y '), ": desactualizados")), /*#__PURE__*/React.createElement("div", {
       className: "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-10"
     }, tarjetas.map((t, i) => /*#__PURE__*/React.createElement("button", {
       key: i,
@@ -891,7 +908,7 @@ function boot(D) {
       sub: MED_ULT.label.toLowerCase()
     }, "4 \xB7 Frustraci\xF3n"), /*#__PURE__*/React.createElement(Th, {
       k: "problemRate",
-      sub: mesLargo(contratosMes)
+      sub: C.periodo
     }, "5 \xB7 Contrato c/ problema"))), /*#__PURE__*/React.createElement("tbody", null, filas.map(r => /*#__PURE__*/React.createElement("tr", {
       key: r.agent,
       className: "border-b border-gray-100 last:border-0"
@@ -4196,14 +4213,16 @@ function boot(D) {
 
   // ─── Manejo de Contratos ───
   function ContractHandlingSection() {
-    const d = contractHandling;
+    const d = contratosActual;
     const [sortKey, setSortKey] = React.useState('problemRate'); // problemRate | recoveryPct
-    const agents = [...d.agents].sort((a, b) => sortKey === 'problemRate' ? b.problemRate - a.problemRate : (a.recoveryPct == null ? 101 : a.recoveryPct) - (b.recoveryPct == null ? 101 : b.recoveryPct));
+    // en una corrida, un agente sin conversaciones de contrato en la muestra no tiene %
+    const agents = d.agents.filter(a => a.contractConvs > 0).sort((a, b) => sortKey === 'problemRate' ? b.problemRate - a.problemRate : (a.recoveryPct == null ? 101 : a.recoveryPct) - (b.recoveryPct == null ? 101 : b.recoveryPct));
     const colRate = p => p >= 45 ? '#E8505B' : p >= 30 ? '#F97316' : p >= 20 ? '#FACC15' : '#2EC4B6';
     const colRec = p => p == null ? '#94A3B8' : p >= 70 ? '#2EC4B6' : p >= 50 ? '#22C55E' : p >= 33 ? '#F97316' : '#E8505B';
     // CRÍTICO = alto % con problema (>=40) Y baja recuperación (<50%) — donde deben enfocarse los managers
-    const isCritical = a => a.problemRate >= 40 && a.recoveryPct != null && a.recoveryPct < 50;
-    const critical = [...d.agents].filter(isCritical).sort((a, b) => b.problemRate - a.problemRate);
+    // en una corrida la muestra por agente es chica: sin n suficiente no se marca a nadie
+    const isCritical = a => a.problemRate >= 40 && a.recoveryPct != null && a.recoveryPct < 50 && (!d.corrida || a.contractConvs >= RES_MIN_N);
+    const critical = agents.filter(isCritical).sort((a, b) => b.problemRate - a.problemRate);
     const Seg = ({
       value,
       set,
@@ -4218,15 +4237,19 @@ function boot(D) {
     return /*#__PURE__*/React.createElement(Section, {
       title: "Manejo de Contratos",
       id: "contracts"
-    }, diasDesde(contratosMes) > DIAS_VIEJO && /*#__PURE__*/React.createElement(AvisoViejo, {
-      periodo: mesLargo(contratosMes),
+    }, diasDesde(d.fechaRef) > DIAS_VIEJO && (d.corrida ? /*#__PURE__*/React.createElement(AvisoViejo, {
+      periodo: d.periodo,
+      que: "La \xFAltima corrida que midi\xF3 contratos es de hace m\xE1s de 45 d\xEDas.",
+      detalle: "Revisa que el an\xE1lisis quincenal est\xE9 corriendo con el prompt v2."
+    }) : /*#__PURE__*/React.createElement(AvisoViejo, {
+      periodo: d.periodo,
       que: "Ninguna corrida autom\xE1tica mide todav\xEDa el manejo de contratos.",
       detalle: "Hasta que se agregue al clasificador, este dato no se actualiza."
-    }), /*#__PURE__*/React.createElement("div", {
+    })), /*#__PURE__*/React.createElement("div", {
       className: "bg-white rounded-xl p-4 mb-6 border-l-4 border-coral shadow-sm"
     }, /*#__PURE__*/React.createElement("p", {
       className: "text-sm text-gray-700 mb-1.5"
-    }, "Mide qu\xE9 tan bien maneja cada asesor los ", /*#__PURE__*/React.createElement("strong", null, "cambios al contrato"), " que pide el cliente. Sobre una muestra grande: ", /*#__PURE__*/React.createElement("strong", null, d.team.contractConvs, " conversaciones de contrato"), " (~20 por agente)."), /*#__PURE__*/React.createElement("p", {
+    }, "Mide qu\xE9 tan bien maneja cada asesor los ", /*#__PURE__*/React.createElement("strong", null, "cambios al contrato"), " que pide el cliente. ", d.corrida ? /*#__PURE__*/React.createElement(React.Fragment, null, "Corrida del ", d.periodo, ": ", /*#__PURE__*/React.createElement("strong", null, d.team.contractConvs, " conversaciones de contrato"), " dentro de la muestra de ", d.team.convsTotal, " que lee la IA. Por agente son pocas: los de menos de ", RES_MIN_N, " van en gris.") : /*#__PURE__*/React.createElement(React.Fragment, null, "Sobre una muestra grande: ", /*#__PURE__*/React.createElement("strong", null, d.team.contractConvs, " conversaciones de contrato"), " (~20 por agente).")), /*#__PURE__*/React.createElement("p", {
       className: "text-xs text-gray-500"
     }, "\u26A0\uFE0F La causa ra\xEDz de que un cambio no se aplique suele estar ", /*#__PURE__*/React.createElement("strong", null, "aguas arriba (Legal/contratos)"), ", no en el asesor. Esta vista muestra d\xF3nde se concentra y, sobre todo, ", /*#__PURE__*/React.createElement("strong", null, "qui\xE9n logra recuperarlo"), " (recuperaci\xF3n) \u2014 la se\xF1al m\xE1s atribuible al asesor.")), critical.length > 0 && /*#__PURE__*/React.createElement("div", {
       className: "rounded-xl p-5 mb-6",
@@ -4262,7 +4285,7 @@ function boot(D) {
       }
     }, /*#__PURE__*/React.createElement("div", {
       className: "text-3xl font-extrabold text-orange-500"
-    }, d.team.problemRate, "%"), /*#__PURE__*/React.createElement("div", {
+    }, d.team.problemRate == null ? '—' : d.team.problemRate + '%'), /*#__PURE__*/React.createElement("div", {
       className: "text-xs text-gray-500 mt-1"
     }, "Conversaciones de contrato con problema (equipo)")), /*#__PURE__*/React.createElement("div", {
       className: "bg-white rounded-xl p-5 shadow-sm",
@@ -4271,7 +4294,7 @@ function boot(D) {
       }
     }, /*#__PURE__*/React.createElement("div", {
       className: "text-3xl font-extrabold text-teal"
-    }, d.team.recoveryPct, "%"), /*#__PURE__*/React.createElement("div", {
+    }, d.team.recoveryPct == null ? '—' : d.team.recoveryPct + '%'), /*#__PURE__*/React.createElement("div", {
       className: "text-xs text-gray-500 mt-1"
     }, "Recuperaci\xF3n: problemas que s\xED se resolvieron")), /*#__PURE__*/React.createElement("div", {
       className: "bg-white rounded-xl p-5 shadow-sm",
@@ -4300,7 +4323,7 @@ function boot(D) {
       className: "text-sm font-bold text-navy-dark mb-0.5"
     }, "Tendencia por mes (equipo)"), /*#__PURE__*/React.createElement("p", {
       className: "text-xs text-gray-500 mb-3"
-    }, "% de contratos con problema y % de recuperaci\xF3n, por mes. Se va llenando cada corrida."), /*#__PURE__*/React.createElement("div", {
+    }, "% de contratos con problema y % de recuperaci\xF3n, por mes", d.corrida ? /*#__PURE__*/React.createElement(React.Fragment, null, ", del an\xE1lisis de julio (pull profundo, \u226470 chats por agente). No es la misma muestra que la corrida del ", d.periodo, ": comp\xE1ralo con cuidado.") : '. Se va llenando cada corrida.'), /*#__PURE__*/React.createElement("div", {
       className: "flex items-center gap-2 flex-wrap"
     }, d.by_month.map((m, i) => {
       const mn = new Date(m.month + '-01T00:00:00').toLocaleDateString('es-MX', {
@@ -4390,10 +4413,10 @@ function boot(D) {
         background: '#E8505B',
         color: 'white'
       }
-    }, "CR\xCDTICO"), !a.inRoster && /*#__PURE__*/React.createElement("span", {
+    }, "CR\xCDTICO"), a.inRoster === false && /*#__PURE__*/React.createElement("span", {
       className: "ml-2 text-[10px] text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded"
     }, "nuevo")), /*#__PURE__*/React.createElement("td", {
-      className: "py-3 px-3 text-center text-sm text-gray-600"
+      className: `py-3 px-3 text-center text-sm ${d.corrida && a.contractConvs < RES_MIN_N ? 'text-gray-400' : 'text-gray-600'}`
     }, a.contractConvs), /*#__PURE__*/React.createElement("td", {
       className: "py-3 px-3 bg-orange-500/5"
     }, /*#__PURE__*/React.createElement("div", {
@@ -4426,7 +4449,7 @@ function boot(D) {
       className: "px-4 py-3 bg-gray-50 border-t"
     }, /*#__PURE__*/React.createElement("p", {
       className: "text-xs text-gray-400"
-    }, /*#__PURE__*/React.createElement("strong", null, "% con problema"), " = de sus conversaciones de contrato, cu\xE1ntas tuvieron un cambio no aplicado / parcial / mal / demorado. ", /*#__PURE__*/React.createElement("strong", null, "% recuperaci\xF3n"), " = de esos problemas, cu\xE1ntos s\xED se resolvieron al final (alto = bueno). \xB7 3 asesores no estaban conectados en este pull (Elizabeth Bustos, Elizabeth Castro, Itzel Alarc\xF3n); 2 instancias nuevas aparecen marcadas \"nuevo\"."))), /*#__PURE__*/React.createElement("div", {
+    }, /*#__PURE__*/React.createElement("strong", null, "% con problema"), " = de sus conversaciones de contrato, cu\xE1ntas tuvieron un cambio no aplicado / parcial / mal / demorado. ", /*#__PURE__*/React.createElement("strong", null, "% recuperaci\xF3n"), " = de esos problemas, cu\xE1ntos s\xED se resolvieron al final (alto = bueno). ", d.corrida ? `· Corrida del ${d.periodo} (prompt ${d.prompt_version}). Solo aparecen agentes con al menos una conversación de contrato en la muestra.` : '· 3 asesores no estaban conectados en este pull (Elizabeth Bustos, Elizabeth Castro, Itzel Alarcón); 2 instancias nuevas aparecen marcadas "nuevo".'))), /*#__PURE__*/React.createElement("div", {
       className: "mt-6 bg-navy-dark rounded-xl p-5"
     }, /*#__PURE__*/React.createElement("p", {
       className: "text-teal text-sm font-bold mb-2"
