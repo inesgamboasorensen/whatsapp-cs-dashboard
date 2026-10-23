@@ -822,7 +822,19 @@ function boot(D) {
     }, []);
     const viejo = ref => diasDesde(ref) > DIAS_VIEJO;
     const pct = v => `${v}%`;
-    const W = F ? F.total.weeks : [];
+    // Periodo del Resumen = la última QUINCENA cerrada, la misma que agrupa la medición
+    // de la IA (frustración, resolución, contratos), para que las cinco se lean juntas.
+    const QS = F && F.quincenas || [];
+    const cerradas = QS.filter(q => q.closed);
+    const Q = cerradas[cerradas.length - 1] || null;
+    const enCurso = QS.find(q => !q.closed) || null;
+    const maxN = Math.max(1, ...cerradas.map(q => q.total.threads));
+    const parcial = q => q.total.threads < 0.5 * maxN; // antes del tiempo real solo se guardaban los chats recientes
+    const T = Q ? Q.total : F ? F['total'] : null;
+    const AG = Q ? Q.agents : F ? F['agents'] : [];
+    const LQ = Q ? Q.late : F ? F['late'] : null;
+    const serieQ = k => cerradas.map(q => q.total[k]);
+    const previasParciales = cerradas.slice(-4, -1).some(parcial);
     const frustSerie = MED.map(m => Number(medPromedio(m)));
     const frustAct = frustSerie[frustSerie.length - 1];
     const MED_ANT = MED[MED.length - 2];
@@ -835,18 +847,20 @@ function boot(D) {
       const v = serie.filter(x => x != null);
       if (v.length < 2) return null;
       const previos = v.slice(Math.max(0, v.length - 4), -1);
-      return tend(v[v.length - 1], prom(previos), menosMejor, fmt, previos.length > 1 ? `el promedio de las ${previos.length} ${unidad} anteriores` : `la ${unidad.replace(/s$/, '')} anterior`);
+      const contra = previos.length > 1 ? `en promedio las ${previos.length} ${unidad} anteriores` : `la ${unidad.replace(/s$/, '')} anterior`;
+      return tend(v[v.length - 1], prom(previos), menosMejor, fmt, contra + (unidad === 'quincenas' && previasParciales ? ' (sep: cobertura parcial)' : ''));
     };
     const tend = (act, ant, menosMejor, fmt, contra) => {
       if (act == null || ant == null) return null;
       const d = act - ant;
-      if (Math.abs(d) < 0.05) return {
-        txt: `igual que ${contra}`,
-        color: '#94A3B8'
+      // un cambio de menos de 10% (o de medio punto) es ruido: se dice "estable", sin color
+      if (Math.abs(d) <= Math.max(0.5, Math.abs(ant) * 0.1)) return {
+        txt: `Estable: ${fmt(ant)} ${contra}`,
+        color: '#64748B'
       };
       const bien = menosMejor ? d < 0 : d > 0;
       return {
-        txt: `${d < 0 ? '↓' : '↑'} desde ${fmt(ant)} ${contra}`,
+        txt: `${bien ? 'Mejora' : 'Empeora'}: ${d < 0 ? '↓' : '↑'} desde ${fmt(ant)} ${contra}`,
         color: bien ? '#1D9E75' : '#E8505B'
       };
     };
@@ -857,25 +871,25 @@ function boot(D) {
       pregunta: '¿Le contestaron?',
       metrica: 'sin respuesta en más de 24 h',
       ref: REF.over24h,
-      v: F?.total.over24hPct,
-      valor: F ? `${F.total.over24hPct}%` : '—',
-      serie: W.map(w => w.over24hPct),
-      tend: vsPrevios(W.map(w => w.over24hPct), true, pct, 'semanas'),
-      dist: distancia(F?.total.over24hPct, REF.over24h, x => `${x} pts`),
-      fuente: `Todas las conversaciones · 4 semanas` + (llamadas && llamadas.total ? ` · llamadas perdidas ${Math.round(100 * llamadas.perdidas / llamadas.total)}%` : '')
+      v: T?.over24hPct,
+      valor: T ? `${T.over24hPct}%` : '—',
+      serie: serieQ('over24hPct'),
+      tend: vsPrevios(serieQ('over24hPct'), true, pct, 'quincenas'),
+      dist: distancia(T?.over24hPct, REF.over24h, x => `${x} pts`),
+      fuente: `Todas las conversaciones · ${Q ? Q.label : '4 semanas'}` + (enCurso ? ` · en curso (${enCurso.label}): ${enCurso.total.over24hPct}%` : '') + (llamadas && llamadas.total ? ` · llamadas perdidas ${Math.round(100 * llamadas.perdidas / llamadas.total)}%` : '')
     }, {
       tab: 'response',
       pregunta: '¿Qué tan rápido?',
       metrica: 'primera respuesta (mediana, horario laboral)',
       ref: REF.primera,
-      v: F?.total.medianMin,
-      valor: F ? fmtMin(F.total.medianMin) : '—',
-      serie: W.map(w => w.medianMin),
-      tend: vsPrevios(W.map(w => w.medianMin), true, fmtMin, 'semanas'),
-      nv: F && peorNivel(nivel(F.total.medianMin, REF.primera), nivel(F.total.p90Min, REF.p90)),
-      dist: F ? `${distancia(F.total.medianMin, REF.primera, fmtMin)} · el 10% más lento: ${fmtMin(F.total.p90Min)} (meta ${REF.p90.txt})` : null,
+      v: T?.medianMin,
+      valor: T ? fmtMin(T.medianMin) : '—',
+      serie: serieQ('medianMin'),
+      tend: vsPrevios(serieQ('medianMin'), true, fmtMin, 'quincenas'),
+      nv: T && peorNivel(nivel(T.medianMin, REF.primera), nivel(T.p90Min, REF.p90)),
+      dist: T ? `${distancia(T.medianMin, REF.primera, fmtMin)} · el 10% más lento: ${fmtMin(T.p90Min)} (meta ${REF.p90.txt})` : null,
       refTxt: `${REF.primera.txt} · p90 ${REF.p90.txt}`,
-      fuente: 'Todas las conversaciones · 4 semanas'
+      fuente: `Todas las conversaciones · ${Q ? Q.label : '4 semanas'}` + (enCurso ? ` · en curso (${enCurso.label}): ${fmtMin(enCurso.total.medianMin)}` : '')
     }, {
       tab: 'resolution',
       pregunta: '¿Le resolvieron?',
@@ -920,9 +934,9 @@ function boot(D) {
     // ── 2. Qué va bien / qué mejorar ────────────────────────────────────
     const bien = [],
       mejorar = [];
-    const conMuestra = (F ? F.agents : []).filter(a => a.threads >= RES_MIN_N);
+    const conMuestra = AG.filter(a => a.threads >= RES_MIN_N);
     if (F) {
-      const L = F.late;
+      const L = LQ;
       const tasa = dias => {
         const late = dias.reduce((s, d) => s + L.byWeekday[d], 0),
           abiertas = dias.reduce((s, d) => s + L.openedByWeekday[d], 0);
@@ -957,18 +971,11 @@ function boot(D) {
           accion: 'Que la guardia del sábado empiece revisando lo que llegó el viernes en la noche.'
         });
       }
-      if (semana.pct != null && semana.pct <= REF.over24h.bien) {
-        bien.push({
-          tab: 'response',
-          titulo: `Entre semana casi nadie se queda sin respuesta: ${semana.pct}%`,
-          detalle: `${semana.abiertas.toLocaleString('es-MX')} conversaciones de lunes a viernes.`
-        });
-      }
-      if (semana.pct != null && semana.pct <= REF.over24h.atencion && sab.pct >= 2 * semana.pct) {
+      if (semana.pct != null && semana.pct <= REF.over24h.atencion) {
         bien.push({
           tab: 'response',
           titulo: `De lunes a viernes, ${(100 - semana.pct).toFixed(1)}% recibe respuesta en menos de 24 h`,
-          detalle: `${semana.abiertas.toLocaleString('es-MX')} conversaciones · el problema se concentra en el fin de semana.`
+          detalle: `${semana.abiertas.toLocaleString('es-MX')} conversaciones` + (sab.pct >= 2 * semana.pct ? ' · lo que falta se concentra en el fin de semana.' : '.')
         });
       }
       conMuestra.filter(a => a.over24hPct >= 10).forEach(a => mejorar.push({
@@ -976,7 +983,7 @@ function boot(D) {
         tab: 'feedback',
         quien: a.agent,
         titulo: `${a.agent}: ${a.over24hPct}% sin respuesta más de 24 h`,
-        detalle: `${a.over24h} de ${a.threads} conversaciones · primera respuesta ${fmtMin(a.medianMin)} · el equipo está en ${F.total.over24hPct}%`,
+        detalle: `${a.over24h} de ${a.threads} conversaciones · primera respuesta ${fmtMin(a.medianMin)} · el equipo está en ${T.over24hPct}%`,
         accion: 'Revisar con su Lead la carga y la cobertura de su línea; usar su feedback individual.'
       }));
       conMuestra.filter(a => a.over24hPct < 10 && a.medianMin > 45).forEach(a => mejorar.push({
@@ -984,20 +991,20 @@ function boot(D) {
         tab: 'schedule',
         quien: a.agent,
         titulo: `${a.agent}: primera respuesta de ${fmtMin(a.medianMin)}`,
-        detalle: `Contesta, pero tarde: ${a.under60Pct}% antes de 1 h · la mediana del equipo es ${fmtMin(F.total.medianMin)}`,
+        detalle: `Contesta, pero tarde: ${a.under60Pct}% antes de 1 h · la mediana del equipo es ${fmtMin(T.medianMin)}`,
         accion: 'Ver en Horarios en qué momento del día se le acumulan los mensajes.'
       }));
       if (L.neverAnswered >= 20) mejorar.push({
         peso: L.neverAnswered / 2,
         tab: 'response',
         titulo: `${L.neverAnswered} conversaciones nunca recibieron respuesta`,
-        detalle: 'Últimas 4 semanas. No cuenta respuestas automáticas, agradecimientos o despedidas, ni chats entre compañeras.',
+        detalle: `Quincena ${Q ? Q.label : ''}. No cuenta respuestas automáticas, agradecimientos o despedidas, ni chats entre compañeras.`,
         accion: 'Que cada Lead revise con su equipo los chats sin contestar en WhatsApp.'
       });
-      if (F.total.under60Pct >= 80) bien.push({
+      if (T.under60Pct >= 80) bien.push({
         tab: 'response',
-        titulo: `${F.total.under60Pct}% de las primeras respuestas llegan en menos de 1 h hábil`,
-        detalle: `Mediana de ${fmtMin(F.total.medianMin)}.`
+        titulo: `${T.under60Pct}% de las primeras respuestas llegan en menos de 1 h hábil`,
+        detalle: `Mediana de ${fmtMin(T.medianMin)}.`
       });
       const estrellas = conMuestra.filter(a => a.over24hPct <= 1 && a.medianMin <= 10);
       if (estrellas.length) bien.push({
@@ -1043,14 +1050,14 @@ function boot(D) {
     });
     mejorar.sort((a, b) => b.peso - a.peso);
 
-    // ── 3. tabla por agente (padrón = activos en las últimas 4 semanas) ──
+    // ── 3. tabla por agente (padrón = activos en la quincena del Resumen) ──
     const idx = (arr, k = 'agent') => Object.fromEntries((arr || []).map(a => [a[k], a]));
-    const fr = idx(F && F.agents),
+    const fr = idx(AG),
       rs = idx(R.agents),
       chA = idx(C.agents);
     const fn = idx(D.frustrationLatest && D.frustrationLatest.key === MED_ULT.key ? D.frustrationLatest.agents : null);
     const frustDe = Object.fromEntries(agentRanking.map(a => [a.name, a[MED_ULT.key]]));
-    const nombres = F ? F.agents.map(a => a.agent) : [...new Set(agentRanking.map(a => a.name))];
+    const nombres = AG.length ? AG.map(a => a.agent) : [...new Set(agentRanking.map(a => a.name))];
     const filas = nombres.map(n => ({
       agent: n,
       threads: fr[n]?.threads ?? null,
@@ -1114,6 +1121,12 @@ function boot(D) {
     const resViejo = viejo(R.fechaRef),
       chViejo = viejo(C.fechaRef);
     const pocos = a => a.threads != null && a.threads < RES_MIN_N;
+    // lo que ya logra el mejor 25% de los agentes, para explicar las metas con el dato de hoy
+    const q25 = k => {
+      const v = conMuestra.map(a => a[k]).filter(x => x != null).sort((a, b) => a - b);
+      return v.length ? v[Math.floor((v.length - 1) * 0.25)] : null;
+    };
+    const porQue = [['Sin respuesta >24 h', REF.over24h.txt, `El mejor 25% de los agentes ya está en ${q25('over24hPct') === 0 ? '0%' : `${q25('over24hPct') ?? '—'}% o menos`}, y de lunes a viernes el equipo completo ronda el 2%. El problema está concentrado en el fin de semana, así que es alcanzable.`], ['Primera respuesta', `${REF.primera.txt} · p90 ${REF.p90.txt}`, `El mejor 25% contesta en ${fmtMin(q25('medianMin'))} o menos (mediana) y su 10% más lento en ${fmtMin(q25('p90Min'))}. La mediana dice cómo le va al broker típico; el p90, al que más espera.`], ['Resueltas', REF.resueltas.txt, 'Históricamente 73–75%. La meta pide 5 puntos más: que 4 de cada 5 brokers terminen con su tema atendido.'], ['Frustración', REF.frust.txt, `Empezó en ${MED_1RA.equipo || '39.7'}% (${MED_1RA.label.toLowerCase()}) y la mejor medición es la actual. La meta es seguir bajando hasta 1 de cada 10 conversaciones.`], ['Contrato con problema', REF.contratos.txt, 'Hoy falla 1 de cada 3 cambios a contrato; en mayo fue 22%. La meta es volver a ese nivel y bajarlo.']];
     const Hallazgo = ({
       h,
       tono
@@ -1145,7 +1158,7 @@ function boot(D) {
       id: "resumen"
     }, /*#__PURE__*/React.createElement("p", {
       className: "text-sm text-gray-600 -mt-4 mb-8 max-w-3xl"
-    }, "C\xF3mo va el servicio de Customer Success con los brokers, qu\xE9 est\xE1 funcionando y d\xF3nde actuar.", F && /*#__PURE__*/React.createElement(React.Fragment, null, " Conversaciones al ", /*#__PURE__*/React.createElement("strong", null, fechaCorta(F.generatedAt)), "."), " Pr\xF3xima medici\xF3n de la IA: ", /*#__PURE__*/React.createElement("strong", null, proximaCorrida), "."), /*#__PURE__*/React.createElement("h3", {
+    }, "C\xF3mo va el servicio de Customer Success con los brokers, qu\xE9 est\xE1 funcionando y d\xF3nde actuar.", Q && /*#__PURE__*/React.createElement(React.Fragment, null, " Periodo: ", /*#__PURE__*/React.createElement("strong", null, "quincena ", Q.label), ", la misma que ley\xF3 la IA."), " El an\xE1lisis corre solo el d\xEDa 1 y el 15 de cada mes; el siguiente es el ", /*#__PURE__*/React.createElement("strong", null, proximaCorrida), "."), /*#__PURE__*/React.createElement("h3", {
       className: "text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3"
     }, "1 \xB7 C\xF3mo vamos"), /*#__PURE__*/React.createElement("div", {
       className: "bg-white border border-gray-200 rounded-xl mb-10 divide-y divide-gray-100"
@@ -1155,7 +1168,7 @@ function boot(D) {
       return /*#__PURE__*/React.createElement("button", {
         key: i,
         onClick: () => onJump && onJump(f.tab),
-        className: "w-full text-left px-4 sm:px-5 py-4 grid grid-cols-[1fr_auto] lg:grid-cols-[minmax(0,2.2fr)_110px_130px_minmax(0,1.6fr)_96px] gap-x-4 gap-y-1.5 items-center hover:bg-gray-50 transition-colors"
+        className: "w-full text-left px-4 sm:px-5 py-4 grid grid-cols-[1fr_auto] lg:grid-cols-[minmax(0,2fr)_150px_130px_minmax(0,1.7fr)_84px] gap-x-4 gap-y-1.5 items-center hover:bg-gray-50 transition-colors"
       }, /*#__PURE__*/React.createElement("div", {
         className: "min-w-0"
       }, /*#__PURE__*/React.createElement("div", {
@@ -1163,8 +1176,13 @@ function boot(D) {
       }, i + 1, ". ", f.pregunta), /*#__PURE__*/React.createElement("div", {
         className: "text-sm text-gray-700"
       }, f.metrica)), /*#__PURE__*/React.createElement("div", {
-        className: `text-2xl sm:text-3xl font-extrabold tracking-tight text-right lg:text-left tabular-nums ${f.viejo ? 'text-gray-400' : 'text-navy-dark'}`
-      }, f.valor), /*#__PURE__*/React.createElement("div", {
+        className: "text-right lg:text-left"
+      }, /*#__PURE__*/React.createElement("div", {
+        className: `text-2xl sm:text-3xl font-extrabold tracking-tight tabular-nums ${f.viejo ? 'text-gray-400' : 'text-navy-dark'}`
+      }, f.valor), (f.refTxt || f.ref.txt).split(' · ').map((m, j) => /*#__PURE__*/React.createElement("div", {
+        key: j,
+        className: "text-xs font-semibold text-gray-500 mt-0.5 whitespace-nowrap"
+      }, j ? m : `meta ${m}`))), /*#__PURE__*/React.createElement("div", {
         className: "hidden lg:block"
       }, /*#__PURE__*/React.createElement(Spark, {
         valores: f.serie,
@@ -1193,10 +1211,24 @@ function boot(D) {
           color: f.viejo ? '#94A3B8' : N.c,
           background: f.viejo ? '#F1F5F9' : N.bg
         }
-      }, N.txt), /*#__PURE__*/React.createElement("div", {
-        className: "text-[10px] text-gray-400 mt-0.5 hidden lg:block"
-      }, "meta ", f.refTxt || f.ref.txt)));
+      }, N.txt)));
     })), /*#__PURE__*/React.createElement("div", {
+      className: "-mt-6 mb-10 text-xs text-gray-600 bg-white/60 border border-gray-200 rounded-xl px-4 sm:px-5 py-4"
+    }, /*#__PURE__*/React.createElement("p", {
+      className: "font-semibold text-navy-dark mb-2"
+    }, "Por qu\xE9 estas metas ", /*#__PURE__*/React.createElement("span", {
+      className: "font-normal text-gray-400"
+    }, "\xB7 acordadas el 23 oct 2026")), /*#__PURE__*/React.createElement("ul", {
+      className: "space-y-1.5"
+    }, porQue.map(([m, meta, why]) => /*#__PURE__*/React.createElement("li", {
+      key: m
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "font-semibold text-navy-dark"
+    }, m, " (", meta, "):"), " ", why))), /*#__PURE__*/React.createElement("p", {
+      className: "mt-3 text-gray-500"
+    }, /*#__PURE__*/React.createElement("strong", {
+      className: "text-gray-700"
+    }, "C\xF3mo leer el estado:"), " ", /*#__PURE__*/React.createElement("em", null, "Bien"), " = cumple la meta; ", /*#__PURE__*/React.createElement("em", null, "Atenci\xF3n"), " = la pasa por poco (hasta 1.5 veces la meta);", /*#__PURE__*/React.createElement("em", null, " Mejorar"), " = m\xE1s lejos. El estado dice ", /*#__PURE__*/React.createElement("strong", null, "d\xF3nde estamos contra la meta"), "; la tendencia dice ", /*#__PURE__*/React.createElement("strong", null, "hacia d\xF3nde vamos"), ". Por eso una m\xE9trica puede mejorar y seguir en Atenci\xF3n: va bien, pero todav\xEDa no llega. Un cambio de menos de 10% contra el promedio anterior se marca como ", /*#__PURE__*/React.createElement("em", null, "estable"), ".")), /*#__PURE__*/React.createElement("div", {
       className: "grid grid-cols-1 lg:grid-cols-5 gap-5 mb-10"
     }, /*#__PURE__*/React.createElement("div", {
       className: "lg:col-span-3"
@@ -1240,13 +1272,13 @@ function boot(D) {
     }, /*#__PURE__*/React.createElement("th", {
       className: "py-2 px-3 text-left text-xs font-semibold text-gray-400 align-bottom"
     }, "Agente"), /*#__PURE__*/React.createElement(Th, {
-      sub: "4 sem"
+      sub: Q ? Q.label : '4 sem'
     }, "Convs."), /*#__PURE__*/React.createElement(Th, {
       k: "over24hPct",
-      sub: "4 sem"
+      sub: Q ? Q.label : '4 sem'
     }, "1 \xB7 Sin resp. >24 h"), /*#__PURE__*/React.createElement(Th, {
       k: "medianMin",
-      sub: "4 sem"
+      sub: Q ? Q.label : '4 sem'
     }, "2 \xB7 1\xAA respuesta"), /*#__PURE__*/React.createElement(Th, {
       k: "resolvedPct",
       sub: R.periodo
@@ -1295,7 +1327,7 @@ function boot(D) {
       gris: chViejo
     })))))), /*#__PURE__*/React.createElement("div", {
       className: "mt-4 text-xs text-gray-500 space-y-1"
-    }, /*#__PURE__*/React.createElement("p", null, "Clic en una columna para ordenar. Agentes activos en las \xFAltimas 4 semanas. Colores contra las mismas metas de arriba."), /*#__PURE__*/React.createElement("p", null, /*#__PURE__*/React.createElement("span", {
+    }, /*#__PURE__*/React.createElement("p", null, "Clic en una columna para ordenar. Agentes activos en la quincena ", Q ? Q.label : '', ". Colores contra las mismas metas de arriba."), /*#__PURE__*/React.createElement("p", null, /*#__PURE__*/React.createElement("span", {
       className: "text-gray-400 font-semibold"
     }, "En gris"), ": menos de ", RES_MIN_N, " conversaciones o dato anterior a ", DIAS_VIEJO, " d\xEDas. \xDAsalo como pista, no para comparar agentes."), /*#__PURE__*/React.createElement("p", null, "1\u20132 se calculan sobre todas las conversaciones; 3\u20135 salen de una muestra que lee la IA cada quincena."))));
   }
