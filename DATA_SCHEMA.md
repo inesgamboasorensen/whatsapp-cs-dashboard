@@ -17,7 +17,7 @@ python3 update_dashboard_data.py             # 3. escribir las secciones mecáni
 
 Luego, en Claude Code: **"finish the WhatsApp analysis"** para la mitad de juicio.
 
-## Las 17 secciones
+## Las 18 secciones
 
 `update_dashboard_data.py` escribe las **mecánicas**; las de **juicio** las produce
 Claude leyendo conversaciones y no son scriptables.
@@ -33,6 +33,7 @@ Claude leyendo conversaciones y no son scriptables.
 | `volumeData` | mecánico | `volume.json` (mensajes por CS) |
 | `contractHandling` | mecánico | `contract_handling.json` |
 | `resolutionMonthly` | mecánico | `resolution_monthly.json` |
+| `firstResponse` | mecánico | `first_response.json` (`compute_first_response.py`, lee Postgres: últimas 4 semanas) |
 | `agentRanking` | juicio | % de frustración por agente y por corrida |
 | `resolutionData` | juicio | resolución por agente (acumulado) |
 | `topRequests` | juicio | temas más pedidos |
