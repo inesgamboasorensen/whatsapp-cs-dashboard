@@ -98,7 +98,9 @@
    "color": "#ECFDF5",
    "clase": "text-green-400",
    "equipo": null,
-   "agentes": 23
+   "agentes": 23,
+   "invalida": true,
+   "motivo": "esas corridas contaban también la frustración leve y la data estaba congelada desde julio, así que volvieron a medir conversaciones de julio. No reflejan septiembre."
   },
   {
    "key": "sep1526",
@@ -108,7 +110,9 @@
    "color": "#ECFDF5",
    "clase": "text-green-400",
    "equipo": null,
-   "agentes": 25
+   "agentes": 25,
+   "invalida": true,
+   "motivo": "esas corridas contaban también la frustración leve y la data estaba congelada desde julio, así que volvieron a medir conversaciones de julio. No reflejan septiembre."
   },
   {
    "key": "oct1526",

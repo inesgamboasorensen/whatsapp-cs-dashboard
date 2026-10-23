@@ -120,7 +120,10 @@
     // así que publicar una nueva exigía editar ~40 lugares. Ahora la lista viene
     // de data.json: agregar una medición es agregar una entrada ahí, sin tocar
     // este archivo. mediciones[] va de la más vieja a la más reciente.
-    const MED       = D.mediciones;
+    // Una medición marcada "invalida" en data.json se deja fuera de todas las
+    // tendencias (no se borra: queda el registro y su motivo). Hoy: sep 1 y sep 15.
+    const MED_EXCLUIDAS = D.mediciones.filter(m => m.invalida);
+    const MED       = D.mediciones.filter(m => !m.invalida);
     const MED_ULT   = MED[MED.length - 1];              // la medición actual
     const MED_1RA   = MED[0];
     const medKeys   = MED.map(m => m.key);
@@ -148,6 +151,17 @@
       { label: "Agentes en Última Corrida", value: String(runsMeta.agentsLastRun),       sub: "Cuentas conectadas a Evolution API", icon: "👥", accent: "#F97316" },
       { label: "Total Agentes Analizados",  value: String(runsMeta.totalAgentsAnalyzed), sub: "Histórico desde Mar 11",             icon: "📊", accent: "#E8505B" },
     ];
+
+    // Nota que explica las mediciones excluidas — va junto a cada tendencia de frustración
+    function NotaExcluidas({ dark }) {
+      if (!MED_EXCLUIDAS.length) return null;
+      return (
+        <p className={`text-xs mt-3 ${dark ? 'text-gray-400' : 'text-gray-500'}`}>
+          <span className="font-semibold">Se excluyen {MED_EXCLUIDAS.map(m => m.label.toLowerCase()).join(' y ')}:</span>{' '}
+          {MED_EXCLUIDAS[0].motivo}
+        </p>
+      );
+    }
 
     // ─── COMPONENTS ───
     function Header({ onToggleNav, activeLabel }) {
@@ -375,6 +389,7 @@
               </div>
             ))}
           </div>
+          <div className="-mt-6 mb-10"><NotaExcluidas dark /></div>
           {/* Per-agent sparkline - clearer trajectory view */}
           <div className="bg-navy-card rounded-xl p-6 sm:p-8">
             <div className="flex items-baseline justify-between flex-wrap gap-2 mb-6">
@@ -676,7 +691,7 @@
       return (
         <Section title="Resumen Ejecutivo" id="exec">
           <p className="text-sm text-gray-600 mb-6 max-w-3xl">
-            En ~3.5 meses (7 mediciones) la <strong>frustración del equipo bajó de {fBase}% a {fNow}%</strong> — una mejora de ~{Math.round(fBase - fNow)} puntos. Hoy: resolución <strong>{jun.resolvedPct}%</strong> ({jun.unresolvedPct}% sin resolver), respuesta mediana <strong>{teamMedian.toFixed(1)} min</strong>, contratos con problema <strong>{ch.problemRate}%</strong>. Detalle en cada pestaña.
+            En {MED.length} mediciones ({MED_1RA.label.toLowerCase()} → {MED_ULT.label.toLowerCase()}) la <strong>frustración del equipo bajó de {fBase}% a {fNow}%</strong> — una mejora de ~{Math.round(fBase - fNow)} puntos. Hoy: resolución <strong>{jun.resolvedPct}%</strong> ({jun.unresolvedPct}% sin resolver), respuesta mediana <strong>{teamMedian.toFixed(1)} min</strong>, contratos con problema <strong>{ch.problemRate}%</strong>. Detalle en cada pestaña.
           </p>
 
           {/* Frustration over time — the spine */}
@@ -698,6 +713,7 @@
                 );
               })}
             </div>
+            <NotaExcluidas />
           </div>
 
           {/* Pillar snapshot */}
