@@ -113,6 +113,7 @@
     const contractHandling    = D.contractHandling;
     const volumeData          = D.volumeData;
     const metricsMonthly      = D.metricsMonthly;
+    const firstResponse       = D.firstResponse;   // opcional: lo escribe compute_first_response.py
 
     // ── Mediciones ──────────────────────────────────────────────────────────
     // Antes cada medición estaba escrita a mano en el código (a.aug13, a.jul22…),
@@ -658,6 +659,17 @@
         { key: 'resolution', label: 'Resolución (jun)', value: jun.resolvedPct + '%', status: dirStatus(jun.resolvedPct, may ? may.resolvedPct : null, false), trend: <Trend good={may ? jun.resolvedPct >= may.resolvedPct : true} txt={may ? (jun.resolvedPct >= may.resolvedPct ? '↑' : '↓') + ' vs may ' + may.resolvedPct + '%' : 'jun'} /> },
         { key: 'resolution', label: 'Sin resolver (rojo)', value: jun.unresolvedPct + '%', status: dirStatus(jun.unresolvedPct, may ? may.unresolvedPct : null, true), trend: <Trend good={may ? jun.unresolvedPct <= may.unresolvedPct : true} txt={may ? (jun.unresolvedPct <= may.unresolvedPct ? '↓' : '↑') + ' vs may ' + may.unresolvedPct + '%' : 'meta: bajar'} /> },
         { key: 'response', label: 'Respuesta (mediana)', value: teamMedian.toFixed(1) + ' min', status: mPrev ? dirStatus(mLast.response_median_min, mPrev.response_median_min, true) : 'yellow', trend: <Trend dir={mPrev ? '' : 'flat'} good={mPrev ? mLast.response_median_min <= mPrev.response_median_min : false} txt={mPrev ? `${mLast.response_median_min <= mPrev.response_median_min ? '↓' : '↑'} ${mLast.response_median_min}min vs ${mn2(mPrev)} ${mPrev.response_median_min}min` : 'horario laboral'} /> },
+        ...(firstResponse ? (() => {
+          // semana más reciente vs la anterior (las más viejas tienen menos cobertura)
+          const W = firstResponse.total.weeks, wl = W[W.length - 1], wp = W[W.length - 2];
+          const T = firstResponse.total;
+          return [
+            { key: 'response', label: '1ª respuesta (4 sem)', value: fmtMin(T.medianMin), status: wp ? dirStatus(wl.medianMin, wp.medianMin, true) : 'yellow',
+              trend: <Trend good={wp ? wl.medianMin <= wp.medianMin : false} dir={wp ? '' : 'flat'} txt={wp ? `${wl.medianMin <= wp.medianMin ? '↓' : '↑'} ${fmtMin(wl.medianMin)} última sem vs ${fmtMin(wp.medianMin)}` : 'mediana, horario laboral'} /> },
+            { key: 'response', label: 'Sin respuesta >24 h (4 sem)', value: T.over24hPct + '%', status: wp ? dirStatus(wl.over24hPct, wp.over24hPct, true, 0.5) : 'yellow',
+              trend: <Trend good={wp ? wl.over24hPct <= wp.over24hPct : false} dir={wp ? '' : 'flat'} txt={wp ? `${wl.over24hPct <= wp.over24hPct ? '↓' : '↑'} ${wl.over24hPct}% última sem vs ${wp.over24hPct}%` : `${T.over24h} conversaciones`} /> },
+          ];
+        })() : []),
         { key: 'contracts', label: 'Contratos c/ problema', value: ch.problemRate + '%', status: chPrev ? dirStatus(chLast.problemRate, chPrev.problemRate, true) : 'yellow', trend: <Trend good={false} txt={'recuperación ' + ch.recoveryPct + '%'} /> },
         { key: 'writing', label: 'Escritura', value: writeAvg + '/100', status: mPrev ? dirStatus(mLast.writing_grade, mPrev.writing_grade, false) : 'yellow', trend: <Trend dir={mPrev ? '' : 'flat'} good={mPrev ? mLast.writing_grade >= mPrev.writing_grade : false} txt={mPrev ? `${mLast.writing_grade >= mPrev.writing_grade ? '↑' : '↓'} ${mLast.writing_grade}/100 vs ${mn2(mPrev)} ${mPrev.writing_grade}/100` : 'promedio equipo'} /> },
       ];
@@ -689,7 +701,7 @@
           </div>
 
           {/* Pillar snapshot */}
-          <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className={`grid grid-cols-2 ${pillars.length % 4 === 0 ? 'lg:grid-cols-4' : 'lg:grid-cols-3'} gap-4`}>
             {pillars.map((p, i) => (
               <button key={i} onClick={() => onJump && onJump(p.key)} className="text-left bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-coral/40">
                 <div className="flex items-center justify-between">
@@ -1330,6 +1342,123 @@
               <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-sm bg-teal"></span>Bajo 5 min</span>
               <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-sm" style={{background: 'rgba(249,115,22,0.7)'}}></span>5-30 min</span>
               <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-sm" style={{background: 'rgba(232,80,91,0.6)'}}></span>{'> 30 min'}</span>
+            </div>
+          </div>
+        </Section>
+      );
+    }
+
+    // Minutos hábiles → texto corto (8 h hábiles = 1 día)
+    const fmtMin = (m) => m == null ? '—'
+      : m < 60 ? `${Math.round(m)} min`
+      : m < 60 * 8 ? `${(m / 60).toFixed(1)} h háb.`
+      : `${(m / 60 / 8).toFixed(1)} días háb.`;
+
+    // Primera respuesta y conversaciones sin respuesta >24 h — últimas 4 semanas.
+    // A diferencia de ResponseTimeSection (cada mensaje, solo pares del mismo día),
+    // aquí la unidad es la conversación que abre el broker, y SÍ cuenta lo que se
+    // queda para el día siguiente. Definiciones: compute_first_response.py.
+    function FirstResponseSection() {
+      const F = firstResponse;
+      const [sortBy, setSortBy] = React.useState('over24hPct');
+      const MIN_N = 30;   // por debajo, el % se mueve mucho con 1–2 casos
+      const d = (iso) => new Date(iso.length === 10 ? iso + 'T12:00:00-06:00' : iso).toLocaleDateString('es-MX', { day: 'numeric', month: 'short', timeZone: 'America/Mexico_City' });
+      const lateColor = (p) => p == null ? '#9CA3AF' : p >= 10 ? '#E8505B' : p >= 5 ? '#F97316' : '#2EC4B6';
+      const firstColor = (m) => m == null ? '#9CA3AF' : m <= 30 ? '#2EC4B6' : m <= 60 ? '#F97316' : '#E8505B';
+      const rows = [...F.agents].sort((a, b) => sortBy === 'medianMin'
+        ? (b.medianMin ?? -1) - (a.medianMin ?? -1)
+        : (b.over24hPct ?? -1) - (a.over24hPct ?? -1) || b.threads - a.threads);
+      const T = F.total;
+      const Th = ({ k, children, className = '' }) => (
+        <th onClick={k ? () => setSortBy(k) : undefined}
+            className={`py-2 px-3 text-xs font-semibold ${k ? 'cursor-pointer select-none hover:text-navy-dark' : ''} ${sortBy === k ? 'text-navy-dark' : 'text-gray-400'} ${className}`}>
+          {children}{sortBy === k ? ' ↓' : ''}
+        </th>
+      );
+      return (
+        <Section title="Primera Respuesta y Sin Respuesta >24 h" id="first-response">
+          <p className="text-sm text-gray-500 mb-6 max-w-3xl">
+            Conversaciones que abrió un broker del {d(F.window.from)} al {d(F.window.to)} (últimas {F.window.days / 7} semanas).
+            Una conversación abre cuando el broker escribe tras {F.gapHours} h sin actividad en el chat.
+            La primera respuesta se mide en horario laboral; las 24 h, en horas de reloj sin contar domingos.
+          </p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-8">
+            <div className="bg-white rounded-xl p-6 shadow-sm">
+              <div className="text-gray-400 text-xs uppercase tracking-wide mb-1">Primera respuesta · mediana</div>
+              <div className="text-4xl font-extrabold" style={{color: firstColor(T.medianMin)}}>{fmtMin(T.medianMin)}</div>
+              <div className="text-gray-500 text-xs mt-1">{T.under60Pct}% antes de 1 h hábil · 1 de cada 10 tarda más de {fmtMin(T.p90Min)}</div>
+            </div>
+            <div className="bg-white rounded-xl p-6 shadow-sm">
+              <div className="text-gray-400 text-xs uppercase tracking-wide mb-1">Sin respuesta en 24 h</div>
+              <div className="text-4xl font-extrabold" style={{color: lateColor(T.over24hPct)}}>{T.over24hPct}%</div>
+              <div className="text-gray-500 text-xs mt-1">{T.over24h.toLocaleString('es-MX')} de {T.threads.toLocaleString('es-MX')} conversaciones · {T.threads - T.answered} nunca respondidas</div>
+            </div>
+            <div className="bg-white rounded-xl p-6 shadow-sm">
+              <div className="text-gray-400 text-xs uppercase tracking-wide mb-2">Sin respuesta en 24 h · por semana</div>
+              <div className="flex items-end gap-3 h-16">
+                {T.weeks.map((w, i) => {
+                  const max = Math.max(...T.weeks.map(x => x.over24hPct || 0), 1);
+                  return (
+                    <div key={i} className="flex-1 flex flex-col items-center justify-end h-full" title={`${w.n} conversaciones`}>
+                      <div className="text-xs font-semibold text-navy-dark">{w.over24hPct ?? '—'}%</div>
+                      <div className="w-full rounded-sm" style={{height: `${Math.max(2, (w.over24hPct || 0) / max * 36)}px`, background: lateColor(w.over24hPct)}}></div>
+                    </div>
+                  );
+                })}
+              </div>
+              <div className="flex gap-3 mt-1">
+                {F.weeks.map((w, i) => <div key={i} className="flex-1 text-center text-[10px] text-gray-400">{d(w)}</div>)}
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-xl p-6 sm:p-8 shadow-sm">
+            <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
+              <h3 className="text-navy-dark text-lg font-bold">Por Agente</h3>
+              <p className="text-gray-400 text-xs">Clic en una columna para ordenar · semanas = % sin respuesta >24 h</p>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[760px]">
+                <thead>
+                  <tr className="border-b border-gray-200">
+                    <Th className="text-left">Agente</Th>
+                    <Th className="text-right">Convs.</Th>
+                    <Th k="medianMin" className="text-right">1ª resp. mediana</Th>
+                    <Th className="text-right">{'< 1 h'}</Th>
+                    <Th k="over24hPct" className="text-right">{'> 24 h'}</Th>
+                    {F.weeks.map((w, i) => <Th key={i} className="text-right">{d(w)}</Th>)}
+                  </tr>
+                </thead>
+                <tbody>
+                  {rows.map(r => {
+                    const thin = r.threads < MIN_N;
+                    return (
+                      <tr key={r.agent} className="border-b border-gray-100">
+                        <td className="py-2.5 px-3 text-sm text-navy-dark font-medium">
+                          {r.agent}{thin && <span className="ml-2 text-[10px] text-gray-400">muestra chica</span>}
+                        </td>
+                        <td className="py-2.5 px-3 text-right text-sm text-gray-500 tabular-nums">{r.threads}</td>
+                        <td className="py-2.5 px-3 text-right text-sm font-semibold tabular-nums" style={{color: firstColor(r.medianMin)}}>{fmtMin(r.medianMin)}</td>
+                        <td className="py-2.5 px-3 text-right text-sm text-gray-500 tabular-nums">{r.under60Pct ?? '—'}%</td>
+                        <td className="py-2.5 px-3 text-right text-sm font-bold tabular-nums" style={{color: thin ? '#9CA3AF' : lateColor(r.over24hPct)}}>
+                          {r.over24hPct}% <span className="text-xs font-normal text-gray-400">({r.over24h})</span>
+                        </td>
+                        {r.weeks.map((w, i) => (
+                          <td key={i} className="py-2.5 px-3 text-right text-xs tabular-nums" title={`${w.n} conversaciones`}
+                              style={{color: w.n ? lateColor(w.over24hPct) : '#D1D5DB'}}>
+                            {w.n ? `${w.over24hPct}%` : '—'}
+                          </td>
+                        ))}
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+            <div className="mt-4 text-xs text-gray-500 space-y-1">
+              <p>No cuentan como respuesta los mensajes automáticos (fuera de horario, bienvenida). No abren conversación los mensajes del broker que solo agradecen o confirman ("gracias", "ok", stickers).</p>
+              <p>Las semanas más viejas tienen menos conversaciones ({T.weeks.map(w => w.n).join(' · ')}): antes del tiempo real solo se guardaban los chats más recientes de cada agente.</p>
             </div>
           </div>
         </Section>
@@ -3505,7 +3634,7 @@
           {tab === 'agents' && <ComparisonSection />}
           {tab === 'resolution' && <ResolutionSection />}
           {tab === 'contracts' && <ContractHandlingSection />}
-          {tab === 'response' && <ResponseTimeSection />}
+          {tab === 'response' && <><ResponseTimeSection />{firstResponse && <FirstResponseSection />}</>}
           {tab === 'schedule' && <ScheduleSection />}
           {tab === 'volume' && <VolumeSection />}
           {tab === 'writing' && <WritingQualitySection />}

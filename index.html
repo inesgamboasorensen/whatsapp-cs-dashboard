@@ -113,6 +113,7 @@ function boot(D) {
   const contractHandling = D.contractHandling;
   const volumeData = D.volumeData;
   const metricsMonthly = D.metricsMonthly;
+  const firstResponse = D.firstResponse; // opcional: lo escribe compute_first_response.py
 
   // ── Mediciones ──────────────────────────────────────────────────────────
   // Antes cada medición estaba escrita a mano en el código (a.aug13, a.jul22…),
@@ -1029,7 +1030,34 @@ function boot(D) {
         good: mPrev ? mLast.response_median_min <= mPrev.response_median_min : false,
         txt: mPrev ? `${mLast.response_median_min <= mPrev.response_median_min ? '↓' : '↑'} ${mLast.response_median_min}min vs ${mn2(mPrev)} ${mPrev.response_median_min}min` : 'horario laboral'
       })
-    }, {
+    }, ...(firstResponse ? (() => {
+      // semana más reciente vs la anterior (las más viejas tienen menos cobertura)
+      const W = firstResponse.total.weeks,
+        wl = W[W.length - 1],
+        wp = W[W.length - 2];
+      const T = firstResponse.total;
+      return [{
+        key: 'response',
+        label: '1ª respuesta (4 sem)',
+        value: fmtMin(T.medianMin),
+        status: wp ? dirStatus(wl.medianMin, wp.medianMin, true) : 'yellow',
+        trend: /*#__PURE__*/React.createElement(Trend, {
+          good: wp ? wl.medianMin <= wp.medianMin : false,
+          dir: wp ? '' : 'flat',
+          txt: wp ? `${wl.medianMin <= wp.medianMin ? '↓' : '↑'} ${fmtMin(wl.medianMin)} última sem vs ${fmtMin(wp.medianMin)}` : 'mediana, horario laboral'
+        })
+      }, {
+        key: 'response',
+        label: 'Sin respuesta >24 h (4 sem)',
+        value: T.over24hPct + '%',
+        status: wp ? dirStatus(wl.over24hPct, wp.over24hPct, true, 0.5) : 'yellow',
+        trend: /*#__PURE__*/React.createElement(Trend, {
+          good: wp ? wl.over24hPct <= wp.over24hPct : false,
+          dir: wp ? '' : 'flat',
+          txt: wp ? `${wl.over24hPct <= wp.over24hPct ? '↓' : '↑'} ${wl.over24hPct}% última sem vs ${wp.over24hPct}%` : `${T.over24h} conversaciones`
+        })
+      }];
+    })() : []), {
       key: 'contracts',
       label: 'Contratos c/ problema',
       value: ch.problemRate + '%',
@@ -1089,7 +1117,7 @@ function boot(D) {
         className: "text-[10px] text-gray-400"
       }, t.l));
     }))), /*#__PURE__*/React.createElement("div", {
-      className: "grid grid-cols-2 lg:grid-cols-3 gap-4"
+      className: `grid grid-cols-2 ${pillars.length % 4 === 0 ? 'lg:grid-cols-4' : 'lg:grid-cols-3'} gap-4`
     }, pillars.map((p, i) => /*#__PURE__*/React.createElement("button", {
       key: i,
       onClick: () => onJump && onJump(p.key),
@@ -2088,6 +2116,156 @@ function boot(D) {
         background: 'rgba(232,80,91,0.6)'
       }
     }), '> 30 min'))));
+  }
+
+  // Minutos hábiles → texto corto (8 h hábiles = 1 día)
+  const fmtMin = m => m == null ? '—' : m < 60 ? `${Math.round(m)} min` : m < 60 * 8 ? `${(m / 60).toFixed(1)} h háb.` : `${(m / 60 / 8).toFixed(1)} días háb.`;
+
+  // Primera respuesta y conversaciones sin respuesta >24 h — últimas 4 semanas.
+  // A diferencia de ResponseTimeSection (cada mensaje, solo pares del mismo día),
+  // aquí la unidad es la conversación que abre el broker, y SÍ cuenta lo que se
+  // queda para el día siguiente. Definiciones: compute_first_response.py.
+  function FirstResponseSection() {
+    const F = firstResponse;
+    const [sortBy, setSortBy] = React.useState('over24hPct');
+    const MIN_N = 30; // por debajo, el % se mueve mucho con 1–2 casos
+    const d = iso => new Date(iso.length === 10 ? iso + 'T12:00:00-06:00' : iso).toLocaleDateString('es-MX', {
+      day: 'numeric',
+      month: 'short',
+      timeZone: 'America/Mexico_City'
+    });
+    const lateColor = p => p == null ? '#9CA3AF' : p >= 10 ? '#E8505B' : p >= 5 ? '#F97316' : '#2EC4B6';
+    const firstColor = m => m == null ? '#9CA3AF' : m <= 30 ? '#2EC4B6' : m <= 60 ? '#F97316' : '#E8505B';
+    const rows = [...F.agents].sort((a, b) => sortBy === 'medianMin' ? (b.medianMin ?? -1) - (a.medianMin ?? -1) : (b.over24hPct ?? -1) - (a.over24hPct ?? -1) || b.threads - a.threads);
+    const T = F.total;
+    const Th = ({
+      k,
+      children,
+      className = ''
+    }) => /*#__PURE__*/React.createElement("th", {
+      onClick: k ? () => setSortBy(k) : undefined,
+      className: `py-2 px-3 text-xs font-semibold ${k ? 'cursor-pointer select-none hover:text-navy-dark' : ''} ${sortBy === k ? 'text-navy-dark' : 'text-gray-400'} ${className}`
+    }, children, sortBy === k ? ' ↓' : '');
+    return /*#__PURE__*/React.createElement(Section, {
+      title: "Primera Respuesta y Sin Respuesta >24 h",
+      id: "first-response"
+    }, /*#__PURE__*/React.createElement("p", {
+      className: "text-sm text-gray-500 mb-6 max-w-3xl"
+    }, "Conversaciones que abri\xF3 un broker del ", d(F.window.from), " al ", d(F.window.to), " (\xFAltimas ", F.window.days / 7, " semanas). Una conversaci\xF3n abre cuando el broker escribe tras ", F.gapHours, " h sin actividad en el chat. La primera respuesta se mide en horario laboral; las 24 h, en horas de reloj sin contar domingos."), /*#__PURE__*/React.createElement("div", {
+      className: "grid grid-cols-1 sm:grid-cols-3 gap-5 mb-8"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "bg-white rounded-xl p-6 shadow-sm"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "text-gray-400 text-xs uppercase tracking-wide mb-1"
+    }, "Primera respuesta \xB7 mediana"), /*#__PURE__*/React.createElement("div", {
+      className: "text-4xl font-extrabold",
+      style: {
+        color: firstColor(T.medianMin)
+      }
+    }, fmtMin(T.medianMin)), /*#__PURE__*/React.createElement("div", {
+      className: "text-gray-500 text-xs mt-1"
+    }, T.under60Pct, "% antes de 1 h h\xE1bil \xB7 1 de cada 10 tarda m\xE1s de ", fmtMin(T.p90Min))), /*#__PURE__*/React.createElement("div", {
+      className: "bg-white rounded-xl p-6 shadow-sm"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "text-gray-400 text-xs uppercase tracking-wide mb-1"
+    }, "Sin respuesta en 24 h"), /*#__PURE__*/React.createElement("div", {
+      className: "text-4xl font-extrabold",
+      style: {
+        color: lateColor(T.over24hPct)
+      }
+    }, T.over24hPct, "%"), /*#__PURE__*/React.createElement("div", {
+      className: "text-gray-500 text-xs mt-1"
+    }, T.over24h.toLocaleString('es-MX'), " de ", T.threads.toLocaleString('es-MX'), " conversaciones \xB7 ", T.threads - T.answered, " nunca respondidas")), /*#__PURE__*/React.createElement("div", {
+      className: "bg-white rounded-xl p-6 shadow-sm"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "text-gray-400 text-xs uppercase tracking-wide mb-2"
+    }, "Sin respuesta en 24 h \xB7 por semana"), /*#__PURE__*/React.createElement("div", {
+      className: "flex items-end gap-3 h-16"
+    }, T.weeks.map((w, i) => {
+      const max = Math.max(...T.weeks.map(x => x.over24hPct || 0), 1);
+      return /*#__PURE__*/React.createElement("div", {
+        key: i,
+        className: "flex-1 flex flex-col items-center justify-end h-full",
+        title: `${w.n} conversaciones`
+      }, /*#__PURE__*/React.createElement("div", {
+        className: "text-xs font-semibold text-navy-dark"
+      }, w.over24hPct ?? '—', "%"), /*#__PURE__*/React.createElement("div", {
+        className: "w-full rounded-sm",
+        style: {
+          height: `${Math.max(2, (w.over24hPct || 0) / max * 36)}px`,
+          background: lateColor(w.over24hPct)
+        }
+      }));
+    })), /*#__PURE__*/React.createElement("div", {
+      className: "flex gap-3 mt-1"
+    }, F.weeks.map((w, i) => /*#__PURE__*/React.createElement("div", {
+      key: i,
+      className: "flex-1 text-center text-[10px] text-gray-400"
+    }, d(w)))))), /*#__PURE__*/React.createElement("div", {
+      className: "bg-white rounded-xl p-6 sm:p-8 shadow-sm"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "flex items-center justify-between mb-4 flex-wrap gap-2"
+    }, /*#__PURE__*/React.createElement("h3", {
+      className: "text-navy-dark text-lg font-bold"
+    }, "Por Agente"), /*#__PURE__*/React.createElement("p", {
+      className: "text-gray-400 text-xs"
+    }, "Clic en una columna para ordenar \xB7 semanas = % sin respuesta >24 h")), /*#__PURE__*/React.createElement("div", {
+      className: "overflow-x-auto"
+    }, /*#__PURE__*/React.createElement("table", {
+      className: "w-full min-w-[760px]"
+    }, /*#__PURE__*/React.createElement("thead", null, /*#__PURE__*/React.createElement("tr", {
+      className: "border-b border-gray-200"
+    }, /*#__PURE__*/React.createElement(Th, {
+      className: "text-left"
+    }, "Agente"), /*#__PURE__*/React.createElement(Th, {
+      className: "text-right"
+    }, "Convs."), /*#__PURE__*/React.createElement(Th, {
+      k: "medianMin",
+      className: "text-right"
+    }, "1\xAA resp. mediana"), /*#__PURE__*/React.createElement(Th, {
+      className: "text-right"
+    }, '< 1 h'), /*#__PURE__*/React.createElement(Th, {
+      k: "over24hPct",
+      className: "text-right"
+    }, '> 24 h'), F.weeks.map((w, i) => /*#__PURE__*/React.createElement(Th, {
+      key: i,
+      className: "text-right"
+    }, d(w))))), /*#__PURE__*/React.createElement("tbody", null, rows.map(r => {
+      const thin = r.threads < MIN_N;
+      return /*#__PURE__*/React.createElement("tr", {
+        key: r.agent,
+        className: "border-b border-gray-100"
+      }, /*#__PURE__*/React.createElement("td", {
+        className: "py-2.5 px-3 text-sm text-navy-dark font-medium"
+      }, r.agent, thin && /*#__PURE__*/React.createElement("span", {
+        className: "ml-2 text-[10px] text-gray-400"
+      }, "muestra chica")), /*#__PURE__*/React.createElement("td", {
+        className: "py-2.5 px-3 text-right text-sm text-gray-500 tabular-nums"
+      }, r.threads), /*#__PURE__*/React.createElement("td", {
+        className: "py-2.5 px-3 text-right text-sm font-semibold tabular-nums",
+        style: {
+          color: firstColor(r.medianMin)
+        }
+      }, fmtMin(r.medianMin)), /*#__PURE__*/React.createElement("td", {
+        className: "py-2.5 px-3 text-right text-sm text-gray-500 tabular-nums"
+      }, r.under60Pct ?? '—', "%"), /*#__PURE__*/React.createElement("td", {
+        className: "py-2.5 px-3 text-right text-sm font-bold tabular-nums",
+        style: {
+          color: thin ? '#9CA3AF' : lateColor(r.over24hPct)
+        }
+      }, r.over24hPct, "% ", /*#__PURE__*/React.createElement("span", {
+        className: "text-xs font-normal text-gray-400"
+      }, "(", r.over24h, ")")), r.weeks.map((w, i) => /*#__PURE__*/React.createElement("td", {
+        key: i,
+        className: "py-2.5 px-3 text-right text-xs tabular-nums",
+        title: `${w.n} conversaciones`,
+        style: {
+          color: w.n ? lateColor(w.over24hPct) : '#D1D5DB'
+        }
+      }, w.n ? `${w.over24hPct}%` : '—')));
+    })))), /*#__PURE__*/React.createElement("div", {
+      className: "mt-4 text-xs text-gray-500 space-y-1"
+    }, /*#__PURE__*/React.createElement("p", null, "No cuentan como respuesta los mensajes autom\xE1ticos (fuera de horario, bienvenida). No abren conversaci\xF3n los mensajes del broker que solo agradecen o confirman (\"gracias\", \"ok\", stickers)."), /*#__PURE__*/React.createElement("p", null, "Las semanas m\xE1s viejas tienen menos conversaciones (", T.weeks.map(w => w.n).join(' · '), "): antes del tiempo real solo se guardaban los chats m\xE1s recientes de cada agente."))));
   }
 
   // Calls section — fetches live from Cloudflare Worker, auto-refreshes every 30s
@@ -5079,7 +5257,7 @@ function boot(D) {
       onJump: setTabAndHash
     }), /*#__PURE__*/React.createElement(FocusScorecard, {
       onJump: setTabAndHash
-    }), /*#__PURE__*/React.createElement(StatsCards, null)), tab === 'agents' && /*#__PURE__*/React.createElement(ComparisonSection, null), tab === 'resolution' && /*#__PURE__*/React.createElement(ResolutionSection, null), tab === 'contracts' && /*#__PURE__*/React.createElement(ContractHandlingSection, null), tab === 'response' && /*#__PURE__*/React.createElement(ResponseTimeSection, null), tab === 'schedule' && /*#__PURE__*/React.createElement(ScheduleSection, null), tab === 'volume' && /*#__PURE__*/React.createElement(VolumeSection, null), tab === 'writing' && /*#__PURE__*/React.createElement(WritingQualitySection, null), tab === 'calls' && /*#__PURE__*/React.createElement(CallsSection, null), tab === 'feedback' && /*#__PURE__*/React.createElement(FeedbackSection, null), tab === 'correlations' && /*#__PURE__*/React.createElement(CorrelationsSection, null), tab === 'insights' && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(EvolutionOfProblemsSection, null), /*#__PURE__*/React.createElement(TopRequestsChart, null), /*#__PURE__*/React.createElement(FrustrationOverview, null), /*#__PURE__*/React.createElement(ImprovementAreasSection, null)), tab === 'coverage' && /*#__PURE__*/React.createElement(DataCoverageSection, null), /*#__PURE__*/React.createElement(Footer, null));
+    }), /*#__PURE__*/React.createElement(StatsCards, null)), tab === 'agents' && /*#__PURE__*/React.createElement(ComparisonSection, null), tab === 'resolution' && /*#__PURE__*/React.createElement(ResolutionSection, null), tab === 'contracts' && /*#__PURE__*/React.createElement(ContractHandlingSection, null), tab === 'response' && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(ResponseTimeSection, null), firstResponse && /*#__PURE__*/React.createElement(FirstResponseSection, null)), tab === 'schedule' && /*#__PURE__*/React.createElement(ScheduleSection, null), tab === 'volume' && /*#__PURE__*/React.createElement(VolumeSection, null), tab === 'writing' && /*#__PURE__*/React.createElement(WritingQualitySection, null), tab === 'calls' && /*#__PURE__*/React.createElement(CallsSection, null), tab === 'feedback' && /*#__PURE__*/React.createElement(FeedbackSection, null), tab === 'correlations' && /*#__PURE__*/React.createElement(CorrelationsSection, null), tab === 'insights' && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(EvolutionOfProblemsSection, null), /*#__PURE__*/React.createElement(TopRequestsChart, null), /*#__PURE__*/React.createElement(FrustrationOverview, null), /*#__PURE__*/React.createElement(ImprovementAreasSection, null)), tab === 'coverage' && /*#__PURE__*/React.createElement(DataCoverageSection, null), /*#__PURE__*/React.createElement(Footer, null));
   }
   ReactDOM.createRoot(document.getElementById('root')).render(/*#__PURE__*/React.createElement(App, null));
 } // ─── fin de boot() ───
