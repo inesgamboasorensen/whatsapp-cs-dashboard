@@ -2822,8 +2822,13 @@
       );
     }
 
+    // Correlaciones: frustración de la ÚLTIMA medición contra las otras métricas del
+    // Resumen, solo con datos del mismo periodo. Antes tomaba la "última frustración"
+    // de cada agente (oct 15 para unos, ago 13 para otros) y la cruzaba con la
+    // resolución de julio: mezclaba periodos y los coeficientes no decían nada.
     function CorrelationsSection() {
       const [callStats, setCallStats] = React.useState(null);
+      const sinAcentos = (s) => (s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim();
       React.useEffect(() => {
         let cancelled = false;
         fetch('https://delicate-poetry-a88a.ines-25d.workers.dev/whatsapp-calls', { cache: 'no-store' })
@@ -2836,17 +2841,17 @@
               if (day === 6) return hour >= 9 && hour < 15;
               return hour >= 9 && hour < 19;
             };
+            // mismas 4 semanas que la primera respuesta
+            const desde = firstResponse ? new Date(firstResponse.window.from) : new Date(Date.now() - 28 * 86400000);
             const stats = {};
             d.forEach(c => {
-              const inst = (c.instance || '').replace(/^Whats App /, '').replace(/^WhatsApp /, '').trim();
-              const key = inst.split(' ')[0].toLowerCase();
+              const key = sinAcentos((c.instance || '').replace(/^Whats App /, '').replace(/^WhatsApp /, ''));
               if (!key) return;
-              if (!stats[key]) stats[key] = { totalBiz: 0, missedBiz: 0 };
               const dt = new Date(c.raw?.data?.date || c.ts);
-              if (isBiz(dt)) {
-                stats[key].totalBiz++;
-                if (c.missed) stats[key].missedBiz++;
-              }
+              if (dt < desde || !isBiz(dt)) return;
+              if (!stats[key]) stats[key] = { totalBiz: 0, missedBiz: 0 };
+              stats[key].totalBiz++;
+              if (c.missed) stats[key].missedBiz++;
             });
             setCallStats(stats);
           })
@@ -2854,108 +2859,123 @@
         return () => { cancelled = true; };
       }, []);
 
-      // Build per-agent points: only agents with frustration data
-      const data = agentRanking.map(a => {
-        const fAll = medValores(a);
-        const frust = fAll.length ? fAll[fAll.length - 1] : null;
-        const resp = responseTimes.find(r => r.agent === a.name)?.median ?? null;
-        const writingObj = writingQuality.find(w => w.agent === a.name);
-        const writingScore = writingObj?.score ?? null;
-        const writingGrade = writingScore !== null ? Math.max(0, Math.min(100, Math.round(100 - writingScore * 1.2))) : null;
-        const resolution = resolutionData.find(r => r.agent === a.name)?.resolvedPct ?? null;
-        const firstName = a.name.split(' ')[0].toLowerCase();
-        const cs = callStats?.[firstName];
-        const callsBiz = (cs && cs.totalBiz > 0) ? Math.round(cs.missedBiz / cs.totalBiz * 100) : null;
-        return { name: a.name, frust, resp, writingGrade, writingScore, resolution, callsBiz };
-      }).filter(d => d.frust !== null);
+      // Llamadas por agente: nombre completo sin acentos; si no, primer nombre solo si es único
+      const llamadasDe = (nombre) => {
+        if (!callStats) return null;
+        const full = sinAcentos(nombre);
+        let cs = callStats[full];
+        if (!cs) {
+          const pn = full.split(' ')[0];
+          const cand = Object.keys(callStats).filter(k => k.split(' ')[0] === pn);
+          if (cand.length === 1) cs = callStats[cand[0]];
+        }
+        return cs && cs.totalBiz >= 5 ? Math.round(cs.missedBiz / cs.totalBiz * 100) : null;
+      };
 
-      const respPoints   = data.map(d => ({ name: d.name, x: d.resp, y: d.frust }));
-      const writPoints   = data.map(d => ({ name: d.name, x: d.writingGrade, y: d.frust }));
-      const resPoints    = data.map(d => ({ name: d.name, x: d.resolution, y: d.frust }));
-      const callsPoints  = data.map(d => ({ name: d.name, x: d.callsBiz, y: d.frust }));
+      const fr = Object.fromEntries((firstResponse ? firstResponse.agents : []).map(a => [a.agent, a]));
+      const mismoCorte = (x) => x && x.fecha === MED_ULT.fecha;
+      const resL = mismoCorte(D.resolutionLatest) ? Object.fromEntries(D.resolutionLatest.agents.map(a => [a.agent, a])) : null;
+      const chL  = mismoCorte(D.contractLatest)   ? Object.fromEntries(D.contractLatest.agents.map(a => [a.agent, a])) : null;
 
-      // Compute headline insights from r values
-      const rResp  = pearsonR(respPoints.filter(p => p.x !== null).map(p => p.x), respPoints.filter(p => p.x !== null).map(p => p.y));
-      const rWrit  = pearsonR(writPoints.filter(p => p.x !== null).map(p => p.x), writPoints.filter(p => p.x !== null).map(p => p.y));
-      const rRes   = pearsonR(resPoints.filter(p => p.x !== null).map(p => p.x), resPoints.filter(p => p.x !== null).map(p => p.y));
-      const rCalls = pearsonR(callsPoints.filter(p => p.x !== null).map(p => p.x), callsPoints.filter(p => p.x !== null).map(p => p.y));
+      const data = agentRanking
+        .filter(a => a[MED_ULT.key] !== null && a[MED_ULT.key] !== undefined)
+        .map(a => ({
+          name: a.name, frust: a[MED_ULT.key],
+          over24h: fr[a.name]?.over24hPct ?? null,
+          primera: fr[a.name]?.medianMin ?? null,
+          calls: llamadasDe(a.name),
+          res: resL?.[a.name]?.resolvedPct ?? null,
+          ch: chL?.[a.name]?.problemRate ?? null,
+        }));
 
-      const nResp = respPoints.filter(p => p.x !== null).length;
-      const nWrit = writPoints.filter(p => p.x !== null).length;
-      const nRes  = resPoints.filter(p => p.x !== null).length;
-      const nCalls = callsPoints.filter(p => p.x !== null).length;
+      const pts = (k) => data.map(d => ({ name: d.name, x: d[k], y: d.frust }));
+      const vars = [
+        { k: 'over24h', titulo: 'Frustración vs Sin respuesta >24 h', eje: '% sin respuesta en más de 24 h', var: '1 · Sin respuesta >24 h', fuente: 'últimas 4 semanas, todas las conversaciones', esperado: 1 },
+        { k: 'primera', titulo: 'Frustración vs Primera respuesta', eje: 'Mediana de primera respuesta (min hábiles)', var: '2 · Primera respuesta', fuente: 'últimas 4 semanas, todas las conversaciones', esperado: 1 },
+        { k: 'res', titulo: 'Frustración vs % Resueltas', eje: '% conversaciones resueltas', var: '3 · Resueltas', pendiente: !resL, esperado: -1, xMax: 100 },
+        { k: 'ch', titulo: 'Frustración vs Contratos con problema', eje: '% contratos con problema', var: '5 · Contrato con problema', pendiente: !chL, esperado: 1, xMax: 100 },
+        { k: 'calls', titulo: 'Frustración vs Llamadas perdidas', eje: '% perdidas en horario laboral', var: 'Llamadas perdidas', fuente: 'webhook en vivo, mismas 4 semanas (≥5 llamadas)', esperado: 1, xMax: 100 },
+      ].map(v => {
+        const p = pts(v.k).filter(x => x.x !== null);
+        const r = v.pendiente ? null : pearsonR(p.map(x => x.x), p.map(x => x.y));
+        const xMax = v.xMax || Math.max(8, Math.ceil(Math.max(0, ...p.map(x => x.x)) * 1.15 / 4) * 4);   // múltiplo de 4: ScatterChart dibuja 4 marcas
+        return { ...v, points: pts(v.k), n: p.length, r, xMax };
+      });
 
       const fmtR = (r) => r === null ? '—' : `${r >= 0 ? '+' : ''}${r.toFixed(2)}`;
+      const lectura = (v) => {
+        if (v.pendiente) return `Pendiente: llega con la corrida del ${proximaCorrida}`;
+        if (v.n < 5) return 'Datos insuficientes';
+        if (v.r === null || Math.abs(v.r) < 0.5) return 'Sin patrón distinguible del ruido';
+        const esperado = Math.sign(v.r) === v.esperado;
+        return `${Math.abs(v.r) >= 0.75 ? 'Relación fuerte' : 'Indicio'} ${esperado ? '(en la dirección esperada)' : '(dirección inesperada: revisar)'}`;
+      };
 
       return (
         <Section title="Correlaciones con Frustración" id="correlations">
-          {/* Caveat banner */}
-          <div className="bg-orange-50 border border-orange-200 rounded-xl p-4 mb-6 text-xs text-orange-900 leading-relaxed">
-            <p className="font-bold mb-1">⚠️ Lectura con cautela</p>
+          <p className="text-sm text-gray-600 -mt-4 mb-6 max-w-3xl">
+            ¿Los agentes con más frustración son también los que tardan, dejan sin responder o resuelven menos?
+            Frustración de la medición del <strong>{MED_ULT.label.toLowerCase()}</strong> ({data.length} agentes), cruzada solo con datos del mismo periodo.
+          </p>
+
+          <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6 text-xs text-amber-900 leading-relaxed">
+            <p className="font-bold mb-1">Es una pista, no una prueba</p>
             <p>
-              Solo tenemos {data.length} agentes con datos. Para que un coeficiente sea estadísticamente significativo
-              al 5% con ese n, |r| tendría que ser mayor a <strong>0.75</strong>. Esta vista está pensada para detectar tendencias direccionales,
-              no para concluir causalidad. Se enriquecerá con cada nueva corrida.
+              Con {data.length} agentes, un |r| menor a <strong>0.5</strong> no se distingue del ruido, y para ser significativo al 5% tendría
+              que pasar de ~<strong>0.55</strong>–<strong>0.75</strong>. Sirve para decidir qué revisar, no para concluir causas.
             </p>
           </div>
 
-          {/* Correlation summary table */}
-          <div className="bg-white rounded-xl shadow-sm overflow-hidden mb-6">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="bg-navy-dark text-white">
-                  <th className="py-3 px-4 text-left text-xs font-semibold">Variable</th>
-                  <th className="py-3 px-4 text-center text-xs font-semibold">Coef. Pearson r</th>
-                  <th className="py-3 px-4 text-center text-xs font-semibold">n</th>
-                  <th className="py-3 px-4 text-left text-xs font-semibold">Lectura direccional</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr className="border-b border-gray-100">
-                  <td className="py-3 px-4 font-semibold">Tiempo de respuesta (mediana)</td>
-                  <td className="py-3 px-4 text-center font-mono font-bold">{fmtR(rResp)}</td>
-                  <td className="py-3 px-4 text-center text-gray-500">{nResp}</td>
-                  <td className="py-3 px-4 text-gray-600 text-xs">{rResp !== null && rResp > 0.2 ? 'Más lento → más frustración (esperado)' : rResp !== null && rResp < -0.2 ? 'Más lento → menos frustración (inesperado)' : 'Sin patrón claro'}</td>
-                </tr>
-                <tr className="border-b border-gray-100">
-                  <td className="py-3 px-4 font-semibold">Calidad de escritura (/100)</td>
-                  <td className="py-3 px-4 text-center font-mono font-bold">{fmtR(rWrit)}</td>
-                  <td className="py-3 px-4 text-center text-gray-500">{nWrit}</td>
-                  <td className="py-3 px-4 text-gray-600 text-xs">{rWrit !== null && rWrit < -0.2 ? 'Mejor escritura → menos frustración' : rWrit !== null && rWrit > 0.2 ? 'Mejor escritura → MÁS frustración (probable confounding por antigüedad)' : 'Sin patrón claro'}</td>
-                </tr>
-                <tr className="border-b border-gray-100">
-                  <td className="py-3 px-4 font-semibold">% Resolución</td>
-                  <td className="py-3 px-4 text-center font-mono font-bold">{fmtR(rRes)}</td>
-                  <td className="py-3 px-4 text-center text-gray-500">{nRes}</td>
-                  <td className="py-3 px-4 text-gray-600 text-xs">{rRes !== null && rRes < -0.2 ? 'Más resolución → menos frustración (esperado)' : rRes !== null && rRes > 0.2 ? 'Más resolución → más frustración (inesperado)' : 'Sin patrón claro'}</td>
-                </tr>
-                <tr>
-                  <td className="py-3 px-4 font-semibold">% Llamadas perdidas (laboral)</td>
-                  <td className="py-3 px-4 text-center font-mono font-bold">{fmtR(rCalls)}</td>
-                  <td className="py-3 px-4 text-center text-gray-500">{nCalls}</td>
-                  <td className="py-3 px-4 text-gray-600 text-xs">{nCalls < 3 ? 'Datos insuficientes (webhook live, se acumula)' : rCalls !== null && rCalls > 0.2 ? 'Más perdidas → más frustración (esperado)' : rCalls !== null && rCalls < -0.2 ? 'Más perdidas → menos frustración (inesperado)' : 'Sin patrón claro'}</td>
-                </tr>
-              </tbody>
-            </table>
+          <div className="bg-white border border-gray-200 rounded-xl overflow-hidden mb-6">
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm min-w-[560px]">
+                <thead>
+                  <tr className="border-b border-gray-200">
+                    <th className="py-2.5 px-4 text-left text-xs font-semibold text-gray-400">Variable</th>
+                    <th className="py-2.5 px-4 text-center text-xs font-semibold text-gray-400">r de Pearson</th>
+                    <th className="py-2.5 px-4 text-center text-xs font-semibold text-gray-400">n</th>
+                    <th className="py-2.5 px-4 text-left text-xs font-semibold text-gray-400">Lectura</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {vars.map(v => (
+                    <tr key={v.k} className="border-b border-gray-100 last:border-0">
+                      <td className="py-3 px-4 font-semibold text-navy-dark">{v.var}</td>
+                      <td className="py-3 px-4 text-center font-mono font-bold">{fmtR(v.r)}</td>
+                      <td className="py-3 px-4 text-center text-gray-500">{v.pendiente ? '—' : v.n}</td>
+                      <td className="py-3 px-4 text-gray-600 text-xs">{lectura(v)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
 
-          {/* Scatter plots grid */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-            <ScatterChart title="Frustración vs Tiempo de Respuesta" xLabel="Mediana de respuesta (min)" points={respPoints} xMin={0} xMax={35}/>
-            <ScatterChart title="Frustración vs Calidad de Escritura" xLabel="Calificación de escritura (/100)" points={writPoints} xMin={0} xMax={100}/>
-            <ScatterChart title="Frustración vs % Resolución" xLabel="% conversaciones resueltas" points={resPoints} xMin={0} xMax={100}/>
-            <ScatterChart title="Frustración vs Llamadas Perdidas" xLabel="% perdidas en horario laboral" points={callsPoints} xMin={0} xMax={100}/>
+            {vars.map(v => v.pendiente ? (
+              <div key={v.k} className="bg-white border border-dashed border-gray-300 rounded-xl p-6 flex flex-col justify-center">
+                <h3 className="font-bold text-sm text-navy-dark">{v.titulo}</h3>
+                <p className="text-sm text-gray-500 mt-2">
+                  Pendiente: llega con la corrida del <strong>{proximaCorrida}</strong>. El dato que hay hoy es de julio y la frustración es
+                  del {MED_ULT.label.toLowerCase()}: cruzarlos mezclaría periodos.
+                </p>
+              </div>
+            ) : (
+              <div key={v.k}>
+                <ScatterChart title={v.titulo} xLabel={v.eje} points={v.points} xMin={0} xMax={v.xMax} />
+                {v.fuente && <p className="text-[11px] text-gray-400 mt-1.5 px-1">{v.fuente}</p>}
+              </div>
+            ))}
           </div>
 
-          {/* Methodology */}
-          <div className="mt-8 bg-navy-dark rounded-xl p-5 text-xs text-gray-300 leading-relaxed">
-            <p className="text-teal text-sm font-bold mb-2">Notas metodológicas</p>
+          <div className="mt-8 bg-white border border-gray-200 rounded-xl p-5 text-xs text-gray-600 leading-relaxed">
+            <p className="text-navy-dark text-sm font-bold mb-2">Notas metodológicas</p>
             <ul className="space-y-1.5 list-disc list-inside">
-              <li>Cada punto del scatter es un asesor. Eje Y = % frustración (última medición disponible). Eje X = la variable indicada.</li>
-              <li>La línea punteada gris es la recta de regresión simple (mínimos cuadrados).</li>
-              <li>El coeficiente r de Pearson va de −1 a +1. Cerca de 0 = sin relación; +1 = relación lineal positiva perfecta; −1 = perfectamente negativa.</li>
-              <li><strong className="text-white">Limitación principal:</strong> son correlaciones agregadas por agente — no comparan conversación contra conversación. Para detectar causalidad real habría que cruzar mensajes con frustración a nivel de hilo individual.</li>
-              <li>Conforme se acumulen más corridas, los coeficientes se estabilizan y se vuelven interpretables. Hoy son sugerencias direccionales.</li>
+              <li>Cada punto es un asesor. Eje Y = % de conversaciones con frustración moderada o severa en la medición del {MED_ULT.label.toLowerCase()}. Eje X = la variable indicada.</li>
+              <li>Solo entran agentes con dato en ambos ejes y en el mismo periodo; por eso n cambia entre gráficas.</li>
+              <li>La línea punteada es la recta de regresión simple. r va de −1 a +1; cerca de 0 = sin relación.</li>
+              <li>Llamadas: se empata la instancia con el agente por nombre completo (sin acentos); si no coincide, por primer nombre solo cuando es único. Solo agentes con 5 llamadas o más en horario laboral.</li>
+              <li>Son correlaciones por agente, no por conversación: no prueban causa.</li>
             </ul>
           </div>
         </Section>

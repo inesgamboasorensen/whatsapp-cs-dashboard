@@ -3895,8 +3895,14 @@ function boot(D) {
       fontWeight: "600"
     }, p.name.split(' ')[0])))));
   }
+
+  // Correlaciones: frustración de la ÚLTIMA medición contra las otras métricas del
+  // Resumen, solo con datos del mismo periodo. Antes tomaba la "última frustración"
+  // de cada agente (oct 15 para unos, ago 13 para otros) y la cruzaba con la
+  // resolución de julio: mezclaba periodos y los coeficientes no decían nada.
   function CorrelationsSection() {
     const [callStats, setCallStats] = React.useState(null);
+    const sinAcentos = s => (s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim();
     React.useEffect(() => {
       let cancelled = false;
       fetch('https://delicate-poetry-a88a.ines-25d.workers.dev/whatsapp-calls', {
@@ -3910,20 +3916,20 @@ function boot(D) {
           if (day === 6) return hour >= 9 && hour < 15;
           return hour >= 9 && hour < 19;
         };
+        // mismas 4 semanas que la primera respuesta
+        const desde = firstResponse ? new Date(firstResponse.window.from) : new Date(Date.now() - 28 * 86400000);
         const stats = {};
         d.forEach(c => {
-          const inst = (c.instance || '').replace(/^Whats App /, '').replace(/^WhatsApp /, '').trim();
-          const key = inst.split(' ')[0].toLowerCase();
+          const key = sinAcentos((c.instance || '').replace(/^Whats App /, '').replace(/^WhatsApp /, ''));
           if (!key) return;
+          const dt = new Date(c.raw?.data?.date || c.ts);
+          if (dt < desde || !isBiz(dt)) return;
           if (!stats[key]) stats[key] = {
             totalBiz: 0,
             missedBiz: 0
           };
-          const dt = new Date(c.raw?.data?.date || c.ts);
-          if (isBiz(dt)) {
-            stats[key].totalBiz++;
-            if (c.missed) stats[key].missedBiz++;
-          }
+          stats[key].totalBiz++;
+          if (c.missed) stats[key].missedBiz++;
         });
         setCallStats(stats);
       }).catch(() => setCallStats({}));
@@ -3932,153 +3938,156 @@ function boot(D) {
       };
     }, []);
 
-    // Build per-agent points: only agents with frustration data
-    const data = agentRanking.map(a => {
-      const fAll = medValores(a);
-      const frust = fAll.length ? fAll[fAll.length - 1] : null;
-      const resp = responseTimes.find(r => r.agent === a.name)?.median ?? null;
-      const writingObj = writingQuality.find(w => w.agent === a.name);
-      const writingScore = writingObj?.score ?? null;
-      const writingGrade = writingScore !== null ? Math.max(0, Math.min(100, Math.round(100 - writingScore * 1.2))) : null;
-      const resolution = resolutionData.find(r => r.agent === a.name)?.resolvedPct ?? null;
-      const firstName = a.name.split(' ')[0].toLowerCase();
-      const cs = callStats?.[firstName];
-      const callsBiz = cs && cs.totalBiz > 0 ? Math.round(cs.missedBiz / cs.totalBiz * 100) : null;
+    // Llamadas por agente: nombre completo sin acentos; si no, primer nombre solo si es único
+    const llamadasDe = nombre => {
+      if (!callStats) return null;
+      const full = sinAcentos(nombre);
+      let cs = callStats[full];
+      if (!cs) {
+        const pn = full.split(' ')[0];
+        const cand = Object.keys(callStats).filter(k => k.split(' ')[0] === pn);
+        if (cand.length === 1) cs = callStats[cand[0]];
+      }
+      return cs && cs.totalBiz >= 5 ? Math.round(cs.missedBiz / cs.totalBiz * 100) : null;
+    };
+    const fr = Object.fromEntries((firstResponse ? firstResponse.agents : []).map(a => [a.agent, a]));
+    const mismoCorte = x => x && x.fecha === MED_ULT.fecha;
+    const resL = mismoCorte(D.resolutionLatest) ? Object.fromEntries(D.resolutionLatest.agents.map(a => [a.agent, a])) : null;
+    const chL = mismoCorte(D.contractLatest) ? Object.fromEntries(D.contractLatest.agents.map(a => [a.agent, a])) : null;
+    const data = agentRanking.filter(a => a[MED_ULT.key] !== null && a[MED_ULT.key] !== undefined).map(a => ({
+      name: a.name,
+      frust: a[MED_ULT.key],
+      over24h: fr[a.name]?.over24hPct ?? null,
+      primera: fr[a.name]?.medianMin ?? null,
+      calls: llamadasDe(a.name),
+      res: resL?.[a.name]?.resolvedPct ?? null,
+      ch: chL?.[a.name]?.problemRate ?? null
+    }));
+    const pts = k => data.map(d => ({
+      name: d.name,
+      x: d[k],
+      y: d.frust
+    }));
+    const vars = [{
+      k: 'over24h',
+      titulo: 'Frustración vs Sin respuesta >24 h',
+      eje: '% sin respuesta en más de 24 h',
+      var: '1 · Sin respuesta >24 h',
+      fuente: 'últimas 4 semanas, todas las conversaciones',
+      esperado: 1
+    }, {
+      k: 'primera',
+      titulo: 'Frustración vs Primera respuesta',
+      eje: 'Mediana de primera respuesta (min hábiles)',
+      var: '2 · Primera respuesta',
+      fuente: 'últimas 4 semanas, todas las conversaciones',
+      esperado: 1
+    }, {
+      k: 'res',
+      titulo: 'Frustración vs % Resueltas',
+      eje: '% conversaciones resueltas',
+      var: '3 · Resueltas',
+      pendiente: !resL,
+      esperado: -1,
+      xMax: 100
+    }, {
+      k: 'ch',
+      titulo: 'Frustración vs Contratos con problema',
+      eje: '% contratos con problema',
+      var: '5 · Contrato con problema',
+      pendiente: !chL,
+      esperado: 1,
+      xMax: 100
+    }, {
+      k: 'calls',
+      titulo: 'Frustración vs Llamadas perdidas',
+      eje: '% perdidas en horario laboral',
+      var: 'Llamadas perdidas',
+      fuente: 'webhook en vivo, mismas 4 semanas (≥5 llamadas)',
+      esperado: 1,
+      xMax: 100
+    }].map(v => {
+      const p = pts(v.k).filter(x => x.x !== null);
+      const r = v.pendiente ? null : pearsonR(p.map(x => x.x), p.map(x => x.y));
+      const xMax = v.xMax || Math.max(8, Math.ceil(Math.max(0, ...p.map(x => x.x)) * 1.15 / 4) * 4); // múltiplo de 4: ScatterChart dibuja 4 marcas
       return {
-        name: a.name,
-        frust,
-        resp,
-        writingGrade,
-        writingScore,
-        resolution,
-        callsBiz
+        ...v,
+        points: pts(v.k),
+        n: p.length,
+        r,
+        xMax
       };
-    }).filter(d => d.frust !== null);
-    const respPoints = data.map(d => ({
-      name: d.name,
-      x: d.resp,
-      y: d.frust
-    }));
-    const writPoints = data.map(d => ({
-      name: d.name,
-      x: d.writingGrade,
-      y: d.frust
-    }));
-    const resPoints = data.map(d => ({
-      name: d.name,
-      x: d.resolution,
-      y: d.frust
-    }));
-    const callsPoints = data.map(d => ({
-      name: d.name,
-      x: d.callsBiz,
-      y: d.frust
-    }));
-
-    // Compute headline insights from r values
-    const rResp = pearsonR(respPoints.filter(p => p.x !== null).map(p => p.x), respPoints.filter(p => p.x !== null).map(p => p.y));
-    const rWrit = pearsonR(writPoints.filter(p => p.x !== null).map(p => p.x), writPoints.filter(p => p.x !== null).map(p => p.y));
-    const rRes = pearsonR(resPoints.filter(p => p.x !== null).map(p => p.x), resPoints.filter(p => p.x !== null).map(p => p.y));
-    const rCalls = pearsonR(callsPoints.filter(p => p.x !== null).map(p => p.x), callsPoints.filter(p => p.x !== null).map(p => p.y));
-    const nResp = respPoints.filter(p => p.x !== null).length;
-    const nWrit = writPoints.filter(p => p.x !== null).length;
-    const nRes = resPoints.filter(p => p.x !== null).length;
-    const nCalls = callsPoints.filter(p => p.x !== null).length;
+    });
     const fmtR = r => r === null ? '—' : `${r >= 0 ? '+' : ''}${r.toFixed(2)}`;
+    const lectura = v => {
+      if (v.pendiente) return `Pendiente: llega con la corrida del ${proximaCorrida}`;
+      if (v.n < 5) return 'Datos insuficientes';
+      if (v.r === null || Math.abs(v.r) < 0.5) return 'Sin patrón distinguible del ruido';
+      const esperado = Math.sign(v.r) === v.esperado;
+      return `${Math.abs(v.r) >= 0.75 ? 'Relación fuerte' : 'Indicio'} ${esperado ? '(en la dirección esperada)' : '(dirección inesperada: revisar)'}`;
+    };
     return /*#__PURE__*/React.createElement(Section, {
       title: "Correlaciones con Frustraci\xF3n",
       id: "correlations"
-    }, /*#__PURE__*/React.createElement("div", {
-      className: "bg-orange-50 border border-orange-200 rounded-xl p-4 mb-6 text-xs text-orange-900 leading-relaxed"
+    }, /*#__PURE__*/React.createElement("p", {
+      className: "text-sm text-gray-600 -mt-4 mb-6 max-w-3xl"
+    }, "\xBFLos agentes con m\xE1s frustraci\xF3n son tambi\xE9n los que tardan, dejan sin responder o resuelven menos? Frustraci\xF3n de la medici\xF3n del ", /*#__PURE__*/React.createElement("strong", null, MED_ULT.label.toLowerCase()), " (", data.length, " agentes), cruzada solo con datos del mismo periodo."), /*#__PURE__*/React.createElement("div", {
+      className: "bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6 text-xs text-amber-900 leading-relaxed"
     }, /*#__PURE__*/React.createElement("p", {
       className: "font-bold mb-1"
-    }, "\u26A0\uFE0F Lectura con cautela"), /*#__PURE__*/React.createElement("p", null, "Solo tenemos ", data.length, " agentes con datos. Para que un coeficiente sea estad\xEDsticamente significativo al 5% con ese n, |r| tendr\xEDa que ser mayor a ", /*#__PURE__*/React.createElement("strong", null, "0.75"), ". Esta vista est\xE1 pensada para detectar tendencias direccionales, no para concluir causalidad. Se enriquecer\xE1 con cada nueva corrida.")), /*#__PURE__*/React.createElement("div", {
-      className: "bg-white rounded-xl shadow-sm overflow-hidden mb-6"
+    }, "Es una pista, no una prueba"), /*#__PURE__*/React.createElement("p", null, "Con ", data.length, " agentes, un |r| menor a ", /*#__PURE__*/React.createElement("strong", null, "0.5"), " no se distingue del ruido, y para ser significativo al 5% tendr\xEDa que pasar de ~", /*#__PURE__*/React.createElement("strong", null, "0.55"), "\u2013", /*#__PURE__*/React.createElement("strong", null, "0.75"), ". Sirve para decidir qu\xE9 revisar, no para concluir causas.")), /*#__PURE__*/React.createElement("div", {
+      className: "bg-white border border-gray-200 rounded-xl overflow-hidden mb-6"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "overflow-x-auto"
     }, /*#__PURE__*/React.createElement("table", {
-      className: "w-full text-sm"
+      className: "w-full text-sm min-w-[560px]"
     }, /*#__PURE__*/React.createElement("thead", null, /*#__PURE__*/React.createElement("tr", {
-      className: "bg-navy-dark text-white"
+      className: "border-b border-gray-200"
     }, /*#__PURE__*/React.createElement("th", {
-      className: "py-3 px-4 text-left text-xs font-semibold"
+      className: "py-2.5 px-4 text-left text-xs font-semibold text-gray-400"
     }, "Variable"), /*#__PURE__*/React.createElement("th", {
-      className: "py-3 px-4 text-center text-xs font-semibold"
-    }, "Coef. Pearson r"), /*#__PURE__*/React.createElement("th", {
-      className: "py-3 px-4 text-center text-xs font-semibold"
+      className: "py-2.5 px-4 text-center text-xs font-semibold text-gray-400"
+    }, "r de Pearson"), /*#__PURE__*/React.createElement("th", {
+      className: "py-2.5 px-4 text-center text-xs font-semibold text-gray-400"
     }, "n"), /*#__PURE__*/React.createElement("th", {
-      className: "py-3 px-4 text-left text-xs font-semibold"
-    }, "Lectura direccional"))), /*#__PURE__*/React.createElement("tbody", null, /*#__PURE__*/React.createElement("tr", {
-      className: "border-b border-gray-100"
+      className: "py-2.5 px-4 text-left text-xs font-semibold text-gray-400"
+    }, "Lectura"))), /*#__PURE__*/React.createElement("tbody", null, vars.map(v => /*#__PURE__*/React.createElement("tr", {
+      key: v.k,
+      className: "border-b border-gray-100 last:border-0"
     }, /*#__PURE__*/React.createElement("td", {
-      className: "py-3 px-4 font-semibold"
-    }, "Tiempo de respuesta (mediana)"), /*#__PURE__*/React.createElement("td", {
+      className: "py-3 px-4 font-semibold text-navy-dark"
+    }, v.var), /*#__PURE__*/React.createElement("td", {
       className: "py-3 px-4 text-center font-mono font-bold"
-    }, fmtR(rResp)), /*#__PURE__*/React.createElement("td", {
+    }, fmtR(v.r)), /*#__PURE__*/React.createElement("td", {
       className: "py-3 px-4 text-center text-gray-500"
-    }, nResp), /*#__PURE__*/React.createElement("td", {
+    }, v.pendiente ? '—' : v.n), /*#__PURE__*/React.createElement("td", {
       className: "py-3 px-4 text-gray-600 text-xs"
-    }, rResp !== null && rResp > 0.2 ? 'Más lento → más frustración (esperado)' : rResp !== null && rResp < -0.2 ? 'Más lento → menos frustración (inesperado)' : 'Sin patrón claro')), /*#__PURE__*/React.createElement("tr", {
-      className: "border-b border-gray-100"
-    }, /*#__PURE__*/React.createElement("td", {
-      className: "py-3 px-4 font-semibold"
-    }, "Calidad de escritura (/100)"), /*#__PURE__*/React.createElement("td", {
-      className: "py-3 px-4 text-center font-mono font-bold"
-    }, fmtR(rWrit)), /*#__PURE__*/React.createElement("td", {
-      className: "py-3 px-4 text-center text-gray-500"
-    }, nWrit), /*#__PURE__*/React.createElement("td", {
-      className: "py-3 px-4 text-gray-600 text-xs"
-    }, rWrit !== null && rWrit < -0.2 ? 'Mejor escritura → menos frustración' : rWrit !== null && rWrit > 0.2 ? 'Mejor escritura → MÁS frustración (probable confounding por antigüedad)' : 'Sin patrón claro')), /*#__PURE__*/React.createElement("tr", {
-      className: "border-b border-gray-100"
-    }, /*#__PURE__*/React.createElement("td", {
-      className: "py-3 px-4 font-semibold"
-    }, "% Resoluci\xF3n"), /*#__PURE__*/React.createElement("td", {
-      className: "py-3 px-4 text-center font-mono font-bold"
-    }, fmtR(rRes)), /*#__PURE__*/React.createElement("td", {
-      className: "py-3 px-4 text-center text-gray-500"
-    }, nRes), /*#__PURE__*/React.createElement("td", {
-      className: "py-3 px-4 text-gray-600 text-xs"
-    }, rRes !== null && rRes < -0.2 ? 'Más resolución → menos frustración (esperado)' : rRes !== null && rRes > 0.2 ? 'Más resolución → más frustración (inesperado)' : 'Sin patrón claro')), /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("td", {
-      className: "py-3 px-4 font-semibold"
-    }, "% Llamadas perdidas (laboral)"), /*#__PURE__*/React.createElement("td", {
-      className: "py-3 px-4 text-center font-mono font-bold"
-    }, fmtR(rCalls)), /*#__PURE__*/React.createElement("td", {
-      className: "py-3 px-4 text-center text-gray-500"
-    }, nCalls), /*#__PURE__*/React.createElement("td", {
-      className: "py-3 px-4 text-gray-600 text-xs"
-    }, nCalls < 3 ? 'Datos insuficientes (webhook live, se acumula)' : rCalls !== null && rCalls > 0.2 ? 'Más perdidas → más frustración (esperado)' : rCalls !== null && rCalls < -0.2 ? 'Más perdidas → menos frustración (inesperado)' : 'Sin patrón claro'))))), /*#__PURE__*/React.createElement("div", {
+    }, lectura(v)))))))), /*#__PURE__*/React.createElement("div", {
       className: "grid grid-cols-1 lg:grid-cols-2 gap-5"
+    }, vars.map(v => v.pendiente ? /*#__PURE__*/React.createElement("div", {
+      key: v.k,
+      className: "bg-white border border-dashed border-gray-300 rounded-xl p-6 flex flex-col justify-center"
+    }, /*#__PURE__*/React.createElement("h3", {
+      className: "font-bold text-sm text-navy-dark"
+    }, v.titulo), /*#__PURE__*/React.createElement("p", {
+      className: "text-sm text-gray-500 mt-2"
+    }, "Pendiente: llega con la corrida del ", /*#__PURE__*/React.createElement("strong", null, proximaCorrida), ". El dato que hay hoy es de julio y la frustraci\xF3n es del ", MED_ULT.label.toLowerCase(), ": cruzarlos mezclar\xEDa periodos.")) : /*#__PURE__*/React.createElement("div", {
+      key: v.k
     }, /*#__PURE__*/React.createElement(ScatterChart, {
-      title: "Frustraci\xF3n vs Tiempo de Respuesta",
-      xLabel: "Mediana de respuesta (min)",
-      points: respPoints,
+      title: v.titulo,
+      xLabel: v.eje,
+      points: v.points,
       xMin: 0,
-      xMax: 35
-    }), /*#__PURE__*/React.createElement(ScatterChart, {
-      title: "Frustraci\xF3n vs Calidad de Escritura",
-      xLabel: "Calificaci\xF3n de escritura (/100)",
-      points: writPoints,
-      xMin: 0,
-      xMax: 100
-    }), /*#__PURE__*/React.createElement(ScatterChart, {
-      title: "Frustraci\xF3n vs % Resoluci\xF3n",
-      xLabel: "% conversaciones resueltas",
-      points: resPoints,
-      xMin: 0,
-      xMax: 100
-    }), /*#__PURE__*/React.createElement(ScatterChart, {
-      title: "Frustraci\xF3n vs Llamadas Perdidas",
-      xLabel: "% perdidas en horario laboral",
-      points: callsPoints,
-      xMin: 0,
-      xMax: 100
-    })), /*#__PURE__*/React.createElement("div", {
-      className: "mt-8 bg-navy-dark rounded-xl p-5 text-xs text-gray-300 leading-relaxed"
+      xMax: v.xMax
+    }), v.fuente && /*#__PURE__*/React.createElement("p", {
+      className: "text-[11px] text-gray-400 mt-1.5 px-1"
+    }, v.fuente)))), /*#__PURE__*/React.createElement("div", {
+      className: "mt-8 bg-white border border-gray-200 rounded-xl p-5 text-xs text-gray-600 leading-relaxed"
     }, /*#__PURE__*/React.createElement("p", {
-      className: "text-teal text-sm font-bold mb-2"
+      className: "text-navy-dark text-sm font-bold mb-2"
     }, "Notas metodol\xF3gicas"), /*#__PURE__*/React.createElement("ul", {
       className: "space-y-1.5 list-disc list-inside"
-    }, /*#__PURE__*/React.createElement("li", null, "Cada punto del scatter es un asesor. Eje Y = % frustraci\xF3n (\xFAltima medici\xF3n disponible). Eje X = la variable indicada."), /*#__PURE__*/React.createElement("li", null, "La l\xEDnea punteada gris es la recta de regresi\xF3n simple (m\xEDnimos cuadrados)."), /*#__PURE__*/React.createElement("li", null, "El coeficiente r de Pearson va de \u22121 a +1. Cerca de 0 = sin relaci\xF3n; +1 = relaci\xF3n lineal positiva perfecta; \u22121 = perfectamente negativa."), /*#__PURE__*/React.createElement("li", null, /*#__PURE__*/React.createElement("strong", {
-      className: "text-white"
-    }, "Limitaci\xF3n principal:"), " son correlaciones agregadas por agente \u2014 no comparan conversaci\xF3n contra conversaci\xF3n. Para detectar causalidad real habr\xEDa que cruzar mensajes con frustraci\xF3n a nivel de hilo individual."), /*#__PURE__*/React.createElement("li", null, "Conforme se acumulen m\xE1s corridas, los coeficientes se estabilizan y se vuelven interpretables. Hoy son sugerencias direccionales."))));
+    }, /*#__PURE__*/React.createElement("li", null, "Cada punto es un asesor. Eje Y = % de conversaciones con frustraci\xF3n moderada o severa en la medici\xF3n del ", MED_ULT.label.toLowerCase(), ". Eje X = la variable indicada."), /*#__PURE__*/React.createElement("li", null, "Solo entran agentes con dato en ambos ejes y en el mismo periodo; por eso n cambia entre gr\xE1ficas."), /*#__PURE__*/React.createElement("li", null, "La l\xEDnea punteada es la recta de regresi\xF3n simple. r va de \u22121 a +1; cerca de 0 = sin relaci\xF3n."), /*#__PURE__*/React.createElement("li", null, "Llamadas: se empata la instancia con el agente por nombre completo (sin acentos); si no coincide, por primer nombre solo cuando es \xFAnico. Solo agentes con 5 llamadas o m\xE1s en horario laboral."), /*#__PURE__*/React.createElement("li", null, "Son correlaciones por agente, no por conversaci\xF3n: no prueban causa."))));
   }
 
   // Coverage section — when do we have data up to per agent?
