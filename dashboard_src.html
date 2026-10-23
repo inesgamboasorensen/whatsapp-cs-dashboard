@@ -521,18 +521,28 @@
       );
     }
 
-    // Referencias para decir "bien / atención / mejorar". Son un punto de partida para
-    // leer el tablero, no metas acordadas: ajústalas aquí cuando el equipo las defina.
+    // Metas acordadas con Inés (23 oct 2026). bien = cumple la meta; atencion = la
+    // pasa por poco (hasta 1.5× la meta, o 10 pts abajo en resueltas); mejorar = más lejos.
     const REF = {
-      over24h:   { bien: 2,  atencion: 5,  menosMejor: true,  txt: 'menos de 2%' },
-      primera:   { bien: 15, atencion: 30, menosMejor: true,  txt: 'menos de 15 min' },
-      resueltas: { bien: 80, atencion: 70, menosMejor: false, txt: '80% o más' },
-      frust:     { bien: 10, atencion: 15, menosMejor: true,  txt: 'menos de 10%' },
-      contratos: { bien: 20, atencion: 30, menosMejor: true,  txt: 'menos de 20%' },
+      over24h:   { bien: 2,  atencion: 3,  menosMejor: true,  txt: '≤ 2%' },
+      primera:   { bien: 15, atencion: 22.5, menosMejor: true,  txt: '≤ 15 min' },
+      p90:       { bien: 60, atencion: 90, menosMejor: true,  txt: '≤ 1 h hábil' },
+      resueltas: { bien: 80, atencion: 70, menosMejor: false, txt: '≥ 80%' },
+      frust:     { bien: 10, atencion: 15, menosMejor: true,  txt: '≤ 10%' },
+      contratos: { bien: 20, atencion: 30, menosMejor: true,  txt: '≤ 20%' },
     };
     const nivel = (v, r) => v == null ? null
       : (r.menosMejor ? v <= r.bien : v >= r.bien) ? 'bien'
       : (r.menosMejor ? v <= r.atencion : v >= r.atencion) ? 'atencion' : 'mejorar';
+    const ORDEN_NIVEL = { bien: 0, atencion: 1, mejorar: 2 };
+    const peorNivel = (...ns) => ns.filter(Boolean).sort((a, b) => ORDEN_NIVEL[b] - ORDEN_NIVEL[a])[0] || null;
+    // "a 1.2 pts de la meta" / "cumple la meta"
+    const distancia = (v, r, fmt) => {
+      if (v == null) return null;
+      const d = r.menosMejor ? v - r.bien : r.bien - v;
+      return d <= 0 ? 'cumple la meta' : `${fmt(Math.round(d * 10) / 10)} arriba de la meta`.replace('arriba', r.menosMejor ? 'arriba' : 'abajo');
+    };
+    const prom = (xs) => { const v = xs.filter(x => x != null); return v.length ? Math.round(10 * v.reduce((s, x) => s + x, 0) / v.length) / 10 : null; };
     const NIVEL = {
       bien:     { txt: 'Bien',     c: '#0F6E56', bg: '#E1F5EE' },
       atencion: { txt: 'Atención', c: '#92400E', bg: '#FEF3C7' },
@@ -582,14 +592,20 @@
       const viejo = (ref) => diasDesde(ref) > DIAS_VIEJO;
       const pct = v => `${v}%`;
       const W = F ? F.total.weeks : [];
-      const wl = W[W.length - 1], wp = W[W.length - 2];
       const frustSerie = MED.map(m => Number(medPromedio(m)));
       const frustAct = frustSerie[frustSerie.length - 1];
       const MED_ANT = MED[MED.length - 2];
       const resSerie = [...resolutionMonthly.months.map(k => resolutionMonthly.by_month[k].team.resolvedPct), ...(D.resolutionLatest ? [D.resolutionLatest.team.resolvedPct] : [])];
       const chSerie = [...contractHandling.by_month.filter(m => m.contractConvs >= 40).map(m => m.problemRate), ...(C.corrida ? [CH.problemRate] : [])];
 
-      // tendencia contra el punto anterior de la misma serie
+      // tendencia contra el promedio de los puntos anteriores (hasta 3) de la misma serie:
+      // una sola semana se mueve mucho por azar
+      const vsPrevios = (serie, menosMejor, fmt, unidad) => {
+        const v = serie.filter(x => x != null);
+        if (v.length < 2) return null;
+        const previos = v.slice(Math.max(0, v.length - 4), -1);
+        return tend(v[v.length - 1], prom(previos), menosMejor, fmt, previos.length > 1 ? `el promedio de las ${previos.length} ${unidad} anteriores` : `la ${unidad.replace(/s$/, '')} anterior`);
+      };
       const tend = (act, ant, menosMejor, fmt, contra) => {
         if (act == null || ant == null) return null;
         const d = act - ant;
@@ -602,23 +618,26 @@
       const filasEstado = [
         { tab: 'response', pregunta: '¿Le contestaron?', metrica: 'sin respuesta en más de 24 h', ref: REF.over24h,
           v: F?.total.over24hPct, valor: F ? `${F.total.over24hPct}%` : '—', serie: W.map(w => w.over24hPct),
-          tend: wp && tend(wl.over24hPct, wp.over24hPct, true, pct, 'la semana anterior'),
+          tend: vsPrevios(W.map(w => w.over24hPct), true, pct, 'semanas'), dist: distancia(F?.total.over24hPct, REF.over24h, x => `${x} pts`),
           fuente: `Todas las conversaciones · 4 semanas` + (llamadas && llamadas.total ? ` · llamadas perdidas ${Math.round(100 * llamadas.perdidas / llamadas.total)}%` : '') },
         { tab: 'response', pregunta: '¿Qué tan rápido?', metrica: 'primera respuesta (mediana, horario laboral)', ref: REF.primera,
           v: F?.total.medianMin, valor: F ? fmtMin(F.total.medianMin) : '—', serie: W.map(w => w.medianMin),
-          tend: wp && tend(wl.medianMin, wp.medianMin, true, fmtMin, 'la semana anterior'),
-          fuente: F ? `El 10% más lento espera más de ${fmtMin(F.total.p90Min)}` : '' },
+          tend: vsPrevios(W.map(w => w.medianMin), true, fmtMin, 'semanas'),
+          nv: F && peorNivel(nivel(F.total.medianMin, REF.primera), nivel(F.total.p90Min, REF.p90)),
+          dist: F ? `${distancia(F.total.medianMin, REF.primera, fmtMin)} · el 10% más lento: ${fmtMin(F.total.p90Min)} (meta ${REF.p90.txt})` : null,
+          refTxt: `${REF.primera.txt} · p90 ${REF.p90.txt}`,
+          fuente: 'Todas las conversaciones · 4 semanas' },
         { tab: 'resolution', pregunta: '¿Le resolvieron?', metrica: 'conversaciones resueltas', ref: REF.resueltas,
           v: R.team.resolvedPct, valor: `${R.team.resolvedPct}%`, serie: resSerie, viejo: viejo(R.fechaRef), periodo: R.periodo,
-          tend: resSerie.length > 1 && tend(resSerie[resSerie.length - 1], resSerie[resSerie.length - 2], false, pct, 'el periodo anterior'),
+          tend: vsPrevios(resSerie, false, pct, 'mediciones'), dist: distancia(R.team.resolvedPct, REF.resueltas, x => `${x} pts`),
           fuente: `Muestra de ${R.team.total} conversaciones · ${R.periodo}` },
         { tab: 'agents', pregunta: '¿Cómo se sintió?', metrica: 'con frustración moderada o severa', ref: REF.frust,
           v: frustAct, valor: `${frustAct}%`, serie: frustSerie, viejo: viejo(MED_ULT.fecha), periodo: MED_ULT.label.toLowerCase(),
-          tend: MED_ANT && tend(frustAct, frustSerie[frustSerie.length - 2], true, pct, `el ${MED_ANT.label.toLowerCase()}`),
+          tend: vsPrevios(frustSerie, true, pct, 'mediciones'), dist: distancia(frustAct, REF.frust, x => `${x} pts`),
           fuente: `Muestra · ${MED_ULT.label.toLowerCase()} · ${MED_ULT.agentes} agentes` },
         { tab: 'contracts', pregunta: '¿Su contrato salió bien?', metrica: 'conversaciones de contrato con un problema', ref: REF.contratos,
           v: CH.problemRate, valor: `${CH.problemRate}%`, serie: chSerie, viejo: viejo(C.fechaRef), periodo: C.periodo,
-          tend: chSerie.length > 1 && tend(chSerie[chSerie.length - 1], chSerie[chSerie.length - 2], true, pct, 'el mes anterior'),
+          tend: vsPrevios(chSerie, true, pct, 'meses'), dist: distancia(CH.problemRate, REF.contratos, x => `${x} pts`),
           fuente: `Muestra de ${CH.contractConvs} conversaciones · ${C.periodo} · se recuperó el ${CH.recoveryPct}%` },
       ];
 
@@ -632,12 +651,22 @@
           return { late, abiertas, pct: abiertas ? Math.round(1000 * late / abiertas) / 10 : null };
         };
         const semana = tasa([0, 1, 2, 3, 4]), sab = tasa([5]);
-        if (sab.pct != null && semana.pct != null && sab.pct >= 2 * semana.pct && sab.late >= 10) {
-          mejorar.push({ peso: sab.late, tab: 'response',
-            titulo: `Sábado: ${sab.pct}% se queda sin respuesta más de 24 h`,
-            detalle: `Entre semana es ${semana.pct}%. ${sab.late} de los ${F.total.over24h} casos >24 h empezaron en sábado.`,
-            accion: 'Definir quién cubre los sábados de 9 a 15 h y que la respuesta automática diga quién atiende y cuándo.' });
-        } else if (semana.pct != null && semana.pct <= REF.over24h.bien) {
+        const Fr = L.franjas || {};
+        const tasaF = (k) => Fr[k] && Fr[k].opened ? Math.round(1000 * Fr[k].late / Fr[k].opened) / 10 : null;
+        const lv = tasaF('lv_horario'), sabH = tasaF('sabado_horario'), vieN = tasaF('viernes_noche');
+        if (sabH != null && lv != null && sabH >= 2 * lv && Fr.sabado_horario.late >= 10) {
+          mejorar.push({ peso: Fr.sabado_horario.late, tab: 'response',
+            titulo: `Sábado en horario (9–15 h): ${sabH}% se queda sin respuesta más de 24 h`,
+            detalle: `Entre semana en horario es ${lv}%. ${Fr.sabado_horario.late} de ${Fr.sabado_horario.opened} conversaciones del sábado en horario; casi todas se contestan hasta el lunes.`,
+            accion: 'Revisar la guardia del sábado: quién cubre a cada agente y que conteste ese mismo día, no solo el mensaje automático.' });
+        }
+        if (vieN != null && Fr.viernes_noche.late >= 5 && vieN >= 25) {
+          mejorar.push({ peso: Fr.viernes_noche.late, tab: 'response',
+            titulo: `Viernes después de las 19 h: ${vieN}% espera más de 24 h`,
+            detalle: `${Fr.viernes_noche.late} de ${Fr.viernes_noche.opened} conversaciones. La guardia del sábado no las está tomando.`,
+            accion: 'Que la guardia del sábado empiece revisando lo que llegó el viernes en la noche.' });
+        }
+        if (semana.pct != null && semana.pct <= REF.over24h.bien) {
           bien.push({ tab: 'response', titulo: `Entre semana casi nadie se queda sin respuesta: ${semana.pct}%`, detalle: `${semana.abiertas.toLocaleString('es-MX')} conversaciones de lunes a viernes.` });
         }
         if (semana.pct != null && semana.pct <= REF.over24h.atencion && sab.pct >= 2 * semana.pct) {
@@ -653,7 +682,7 @@
           accion: 'Ver en Horarios en qué momento del día se le acumulan los mensajes.' }));
         if (L.neverAnswered >= 20) mejorar.push({ peso: L.neverAnswered / 2, tab: 'response',
           titulo: `${L.neverAnswered} conversaciones nunca recibieron respuesta`,
-          detalle: 'En las últimas 4 semanas, sin contar mensajes automáticos.',
+          detalle: 'Últimas 4 semanas. No cuenta respuestas automáticas, agradecimientos o despedidas, ni chats entre compañeras.',
           accion: 'Que cada Lead revise con su equipo los chats sin contestar en WhatsApp.' });
         if (F.total.under60Pct >= 80) bien.push({ tab: 'response', titulo: `${F.total.under60Pct}% de las primeras respuestas llegan en menos de 1 h hábil`, detalle: `Mediana de ${fmtMin(F.total.medianMin)}.` });
         const estrellas = conMuestra.filter(a => a.over24hPct <= 1 && a.medianMin <= 10);
@@ -740,7 +769,7 @@
           <h3 className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3">1 · Cómo vamos</h3>
           <div className="bg-white border border-gray-200 rounded-xl mb-10 divide-y divide-gray-100">
             {filasEstado.map((f, i) => {
-              const nv = nivel(f.v, f.ref), N = nv && NIVEL[nv];
+              const nv = f.nv !== undefined ? f.nv : nivel(f.v, f.ref), N = nv && NIVEL[nv];
               return (
                 <button key={i} onClick={() => onJump && onJump(f.tab)}
                   className="w-full text-left px-4 sm:px-5 py-4 grid grid-cols-[1fr_auto] lg:grid-cols-[minmax(0,2.2fr)_110px_130px_minmax(0,1.6fr)_96px] gap-x-4 gap-y-1.5 items-center hover:bg-gray-50 transition-colors">
@@ -753,12 +782,15 @@
                   <div className="text-xs min-w-0">
                     {f.viejo
                       ? <span className="text-gray-500">Dato de {f.periodo} · llega uno nuevo el <strong>{proximaCorrida}</strong></span>
-                      : f.tend ? <span className="font-semibold" style={{ color: f.tend.color }}>{f.tend.txt}</span> : <span className="text-gray-400">sin punto anterior</span>}
+                      : <>
+                          {f.dist && <div className="font-semibold text-navy-dark">{f.dist}</div>}
+                          {f.tend ? <div className="font-semibold" style={{ color: f.tend.color }}>{f.tend.txt}</div> : <div className="text-gray-400">sin punto anterior</div>}
+                        </>}
                     <div className="text-[11px] text-gray-400 mt-0.5">{f.fuente}</div>
                   </div>
-                  <div className="lg:text-right" title={`Referencia: ${f.ref.txt}`}>
+                  <div className="lg:text-right" title={`Meta: ${f.refTxt || f.ref.txt}`}>
                     {N && <span className="inline-block text-[11px] font-semibold rounded px-2 py-0.5" style={{ color: f.viejo ? '#94A3B8' : N.c, background: f.viejo ? '#F1F5F9' : N.bg }}>{N.txt}</span>}
-                    <div className="text-[10px] text-gray-400 mt-0.5 hidden lg:block">ref. {f.ref.txt}</div>
+                    <div className="text-[10px] text-gray-400 mt-0.5 hidden lg:block">meta {f.refTxt || f.ref.txt}</div>
                   </div>
                 </button>
               );
@@ -771,7 +803,7 @@
               <h3 className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3">2 · Qué mejorar y dónde actuar</h3>
               <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
                 {mejorar.length ? mejorar.slice(0, 6).map((h, i) => <Hallazgo key={i} h={h} tono="#E8505B" />)
-                  : <p className="px-4 py-4 text-sm text-gray-500">Nada fuera de referencia en este periodo.</p>}
+                  : <p className="px-4 py-4 text-sm text-gray-500">Todo dentro de meta en este periodo.</p>}
               </div>
             </div>
             <div className="lg:col-span-2">
@@ -818,7 +850,7 @@
               </table>
             </div>
             <div className="mt-4 text-xs text-gray-500 space-y-1">
-              <p>Clic en una columna para ordenar. Agentes activos en las últimas 4 semanas. Mismos colores que las referencias de arriba.</p>
+              <p>Clic en una columna para ordenar. Agentes activos en las últimas 4 semanas. Colores contra las mismas metas de arriba.</p>
               <p><span className="text-gray-400 font-semibold">En gris</span>: menos de {RES_MIN_N} conversaciones o dato anterior a {DIAS_VIEJO} días. Úsalo como pista, no para comparar agentes.</p>
               <p>1–2 se calculan sobre todas las conversaciones; 3–5 salen de una muestra que lee la IA cada quincena.</p>
             </div>
